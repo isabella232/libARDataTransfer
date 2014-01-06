@@ -1,0 +1,7 @@
+
+# ln -s ./jni/c ~/FreeFlight3/libARDataTransfer/JNI/c
+
+# ~/dev/sdk/android-ndk-r8e/ndk-build NDK_DEBUG=1 (ndk-r9, r9b dosen't work for debugging)
+
+# ~/dev/sdk/android-ndk-r9b/ndk-gdb --launch=com.example.tstdata.MainActivity --verbose
+

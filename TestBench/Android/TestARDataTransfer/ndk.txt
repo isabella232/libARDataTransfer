@@ -1,0 +1,7 @@
+
+/home/smonat/dev/sdk/android-ndk-r9/build/tools/make-standalone-toolchain.sh --arch=arm --platform=android-14 --install-dir=./arm-standalone-r9
+
+/home/smonat/dev/sdk/android-ndk-r9/build/tools/make-standalone-toolchain.sh --arch=mips --platform=android-14 --install-dir=./mips-standalone-r9
+
+/home/smonat/dev/sdk/android-ndk-r9/build/tools/make-standalone-toolchain.sh --arch=x86 --platform=android-14 --install-dir=./x86-standalone-r9
+
