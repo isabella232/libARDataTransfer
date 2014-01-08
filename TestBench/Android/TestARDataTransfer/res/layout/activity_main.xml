@@ -37,13 +37,7 @@
         android:layout_below="@+id/testRunning"
         android:text="Test Running Signal" />
     
-    <Button
-        android:id="@+id/testUtils"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/testRunningSignal"
-        android:layout_below="@+id/testRunningSignal"
-        android:text="Test Utils" />
+
     
 
 </RelativeLayout>

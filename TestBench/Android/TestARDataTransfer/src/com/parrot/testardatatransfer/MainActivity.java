@@ -28,7 +28,7 @@ import com.parrot.arsdk.arutils.ARUtilsFileSystem;
 import com.parrot.arsdk.arutils.ARUtilsFtpConnection;
 import com.parrot.arsdk.arutils.ARUtilsFtpProgressListener;
 
-public class MainActivity extends Activity implements ARDataTransferMediasDownloaderProgressListener, ARDataTransferMediasDownloaderCompletionListener, ARUtilsFtpProgressListener 
+public class MainActivity extends Activity implements ARDataTransferMediasDownloaderProgressListener, ARDataTransferMediasDownloaderCompletionListener 
 {
 	public static String APP_TAG = "TestARDataTransfer "; 
         
@@ -42,6 +42,10 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
     @SuppressWarnings("serial")
 	public class TestException extends Exception
     {
+    	public TestException()
+    	{
+    		super("\n=============== ASSERT TestException ==============");
+    	}
     }
         
     public void assertError(boolean status) throws TestException
@@ -97,16 +101,7 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 			public void onClick(View v) {
 				TestARDataTransferRunningSignal();
 			}
-		});
-		
-		Button testUtils = (Button)this.findViewById(R.id.testUtils);
-		
-		testUtils.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				TestARUtils();
-			}
-		});
+		});		
 	}
 	
 	@Override
@@ -567,177 +562,5 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
     	else
     		err = "[" + error.toString() + "]";
     	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didComplete: " + media.getName() + ", " + err);
-    }
-    
-    public void TestARUtils()
-    {
-    	try
-    	{
-    		ARUtilsFileSystem fs = new ARUtilsFileSystem();
-    		
-    		File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
-            String tmp = sysHome.getAbsolutePath();    		
-    		
-            /* FileSystem */
-    		try { 
-    			long size = fs.getFileSize("a.txt");
-	        	Log.d("DBG", "getFileSize ERROR" + size); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "getFileSize " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FILE_NOT_FOUND ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FILE_NOT_FOUND);
-	        }
-    		
-    		try { 
-    			fs.rename("a.txt", "b.txt");
-	        	Log.d("DBG", "rename ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "rename " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM);
-	        }
-    		
-    		try { 
-    			fs.removeFile("a.txt");
-	        	Log.d("DBG", "removeFile ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "removeFile " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM);
-	        }
-    		
-    		try { 
-    			fs.removeDir(tmp + "/zzz");
-	        	Log.d("DBG", "removeDir ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "removeDir " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_SYSTEM);
-	        }
-    		
-    		try { 
-    			double space = fs.getFreeSpace(tmp);
-	        	Log.d("DBG", "getFreeSpace OK " + space); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "getFreeSpace " + (e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }
-    	
-    		/* FtpConnection */
-    		ARUtilsFtpConnection connection = new ARUtilsFtpConnection();
-    		
-    		try {
-    			connection.createFtpConnection(DRONE_IP, 21, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
-    			Log.d("DBG", "createFtpConnection OK");
-    		} catch (ARUtilsException e) { 
-	        	Log.d("DBG", "createFtpConnection " + (e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }
-    		
-    		try {
-    			String list = connection.list("zzz");
-    			Log.d("DBG", "list ERROR " + list); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "list " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-    		
-    		try {
-    			String list = connection.list("medias");
-    			Log.d("DBG", "list OK " + list); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "list " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }
-    		
-    		try {
-    			connection.rename("a.txt", "b.txt");
-    			Log.d("DBG", "rename ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "rename " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-    		
-    		try {
-    			double size = connection.size("a.txt");
-    			Log.d("DBG", "size ERROR" + size); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "size " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-
-    		try {
-    			double size = connection.size("medias/thumbnail_video_20131001_235901.jpg");
-    			Log.d("DBG", "size OK" + size); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "size " + (e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }
-
-    		
-    		try {
-    			connection.delete("a.txt");
-    			Log.d("DBG", "delete ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "delete " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-
-    		try {
-    			connection.get("a.txt", tmp + "/a.txt", this, this, ARUTILS_FTP_RESUME_ENUM.FTP_RESUME_FALSE);
-    			Log.d("DBG", "get ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "get " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-    		
-    		try {
-    			connection.get("medias/thumbnail_video_20131001_235901.jpg", tmp + "/thumbnail_video_20131001_235901.jpg", this, this, ARUTILS_FTP_RESUME_ENUM.FTP_RESUME_FALSE);
-    			Log.d("DBG", "get OK"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "get " + (e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }    		
-    		
-    		try {
-    			byte[] data = connection.getWithBuffer("a.txt", this, this);
-    			Log.d("DBG", "delete ERROR" + (data != null ? data.length : "null")); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "delete " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FTP_CODE);
-	        }
-    		
-    		try {
-    			byte[] data = connection.getWithBuffer("medias/thumbnail_video_20131001_235901.jpg", this, this);
-    			Log.d("DBG", "getWithBuffer OK " + (data != null ? data.length : "null")); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "getWithBuffer " + (e.getError() != ARUTILS_ERROR_ENUM.ARUTILS_OK ? "ERROR" : "OK"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_OK);
-	        }    		
-
-    		try {
-    			connection.put("a.txt", tmp + "/a.txt", this, this, ARUTILS_FTP_RESUME_ENUM.FTP_RESUME_FALSE);
-    			Log.d("DBG", "put ERROR"); 
-	        } catch (ARUtilsException e) { 
-	        	Log.d("DBG", "put " + (e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FILE_NOT_FOUND ? "OK" : "ERROR"));
-	        	assertError(e.getError() == ARUTILS_ERROR_ENUM.ARUTILS_ERROR_FILE_NOT_FOUND);
-	        }
-    		
-    		ARUTILS_ERROR_ENUM result = connection.cancel();
-    		Log.d("DBG", "cancel " + (result == ARUTILS_ERROR_ENUM.ARUTILS_OK ? "OK" : "ERROR"));
-    		assertError(result == ARUTILS_ERROR_ENUM.ARUTILS_OK);
-    		
-			connection.closeFtpConnection();
-			Log.d("DBG", "closeFtpConnection OK"); 
-    	}
-        catch (Exception e)
-        {
-        	Log.d("DBG", APP_TAG + e.toString());
-        }
-        catch (Throwable e)
-        {
-        	Log.d("DBG", APP_TAG + e.toString());
-        }
-    }
-    
-    public void didProgress(Object arg, int percent)
-    {
-    	Log.d("DBG", APP_TAG + "ARUtilsFtpConnection, didProgress: " + percent + "%");
     }
 }

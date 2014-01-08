@@ -11,7 +11,7 @@
 
 #include <libARSAL/ARSAL_Print.h>
 
-#define ARACADEMY_AUTOTEST_TAG          "autoTest"
+#define ARDATATRANSFER_AUTOTEST_TAG          "autoTest"
 
 extern void test_manager(const char *tmp, int opt);
 extern void test_manager_checking_running(const char *tmp);
@@ -31,8 +31,8 @@ void sigAlarmHandler(int sig)
 int main(int argc, char *argv[])
 {
     int opt = 0;
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARACADEMY_AUTOTEST_TAG, "options <-s, -a>, -s: sync tests, -a: async tests");
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARACADEMY_AUTOTEST_TAG, "autoTest Starting");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_AUTOTEST_TAG, "options <-s, -a>, -s: sync tests, -a: async tests");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_AUTOTEST_TAG, "autoTest Starting");
     
     if (argc > 1)
     {
@@ -58,6 +58,6 @@ int main(int argc, char *argv[])
     //test_manager_checking_running(tmpPath);
     test_manager(tmpPath, opt);
 
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARACADEMY_AUTOTEST_TAG, "autoTest Completed");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_AUTOTEST_TAG, "autoTest Completed");
     return 0;
 }
