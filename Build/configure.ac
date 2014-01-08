@@ -5,6 +5,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR(m4)
 
+m4_include([../../ARBuildUtils/Utils/m4/ARSDK.m4])
+
 # automake initialisation and check for minimal automake API version 1.9
 AM_INIT_AUTOMAKE
 
@@ -43,160 +45,21 @@ AC_ARG_ENABLE([so-version],
 AC_MSG_RESULT([$sover])
 
 ##########################################################################
-# Define libraries directories
-##########################################################################
-
-# get the directories of liblibARUtils
-AC_ARG_WITH([libARUtilsInstallDir],
-            AS_HELP_STRING([--with-libARUtilsInstallDir=DIR],[directory of the libARUtils installation @<:@default=PREFIX@:>@]),
-            [if test x$withval = xno; then
-                libARUtilsInstallDir=""
-            else
-                libARUtilsInstallDir="$withval"
-            fi], 
-            [if test x$prefix = xNONE; then
-                libARUtilsInstallDir=""
-            else
-                libARUtilsInstallDir="$prefix"
-            fi])
-
-AC_ARG_WITH([libARUtilsIncludeDir],
-            AS_HELP_STRING([--with-libARUtilsIncludeDir=DIR],[directory of the libARUtils headers @<:@default=ARUtilsInstallDir/include@:>@]),
-            [if test x$withval = xno; then
-                [if test ! -z $libARUtilsInstallDir; then
-                    libARUtilsIncludeDir="$libARUtilsInstallDir/include"
-                else
-                    libARUtilsIncludeDir=""
-                fi]
-            else
-                libARUtilsIncludeDir="$withval"
-            fi],
-                [if test ! -z $libARUtilsInstallDir; then
-                    libARUtilsIncludeDir="$libARUtilsInstallDir/include"
-                else
-                    libARUtilsIncludeDir=""
-                fi])
-
-AC_ARG_WITH([libARUtilsLibDir],
-            AS_HELP_STRING([--with-libARUtilsLibDir=DIR],[directory of the libARUtils libraries @<:@default=ARUtilsInstallDir/lib@:>@]),
-            [if test x$withval = xno; then
-              [if test ! -z $libARUtilsInstallDir; then
-                libARUtilsLibDir="$libARUtilsInstallDir/lib"
-              else
-                libARUtilsLibDir=""
-              fi]
-            else
-              libARUtilsLibDir="$withval"
-            fi],
-              [if test ! -z $libARUtilsInstallDir; then
-                libARUtilsLibDir="$libARUtilsInstallDir/lib"
-              else
-                libARUtilsLibDir=""
-              fi])
-          
-# get the directories of libARSAL
-AC_ARG_WITH([libARSALInstallDir],
-            AS_HELP_STRING([--with-libARSALInstallDir=DIR],[directory of the libARSAL installation @<:@default=PREFIX@:>@]),
-            [if test x$withval = xno; then
-                libARSALInstallDir=""
-            else
-                libARSALInstallDir="$withval"
-            fi], 
-            [if test x$prefix = xNONE; then
-                libARSALInstallDir=""
-            else
-                libARSALInstallDir="$prefix"
-            fi])
-
-AC_ARG_WITH([libARSALIncludeDir],
-            AS_HELP_STRING([--with-libARSALIncludeDir=DIR],[directory of the libARSAL headers @<:@default=ARSALInstallDir/include@:>@]),
-            [if test x$withval = xno; then
-                [if test ! -z $libARSALInstallDir; then
-                    libARSALIncludeDir="$libARSALInstallDir/include"
-                else
-                    libARSALIncludeDir=""
-                fi]
-            else
-                libARSALIncludeDir="$withval"
-            fi],
-                [if test ! -z $libARSALInstallDir; then
-                    libARSALIncludeDir="$libARSALInstallDir/include"
-                else
-                    libARSALIncludeDir=""
-                fi])
-
-AC_ARG_WITH([libARSALLibDir],
-            AS_HELP_STRING([--with-libARSALLibDir=DIR],[directory of the libARSAL libraries @<:@default=ARSALInstallDir/lib@:>@]),
-            [if test x$withval = xno; then
-              [if test ! -z $libARSALInstallDir; then
-                libARSALLibDir="$libARSALInstallDir/lib"
-              else
-                libARSALLibDir=""
-              fi]
-            else
-              libARSALLibDir="$withval"
-            fi],
-              [if test ! -z $libARSALInstallDir; then
-                libARSALLibDir="$libARSALInstallDir/lib"
-              else
-                libARSALLibDir=""
-              fi])
-
-# get the directories of libCurl
-AC_ARG_WITH([libCurlInstallDir],
-            AS_HELP_STRING([--with-libCurlInstallDir=DIR],[directory of the libCurl libraries @<:@default=PREFIX/lib@:>@]),
-            [if test x$withval = xno; then
-                libCurlLibDir=""
-                libCurlIncludeDir=""
-            else
-              libCurlLibDir="$withval/lib"
-              libCurlIncludeDir="$withval/include"
-            fi])
-
-##########################################################################
 # Define includes directories
 ##########################################################################
 
 # include local headers first
 LOCAL_CFLAGS+=" -I$srcdir/../Includes -I$srcdir/../Sources"
 
-# add the headers directory of libARUtils
-if test ! -z $libARUtilsIncludeDir; then
-  LOCAL_CFLAGS+=" -I$libARUtilsIncludeDir"
-fi
-
-# add the headers directory of libARSAL
-if test ! -z $libARSALIncludeDir; then
-  LOCAL_CFLAGS+=" -I$libARSALIncludeDir"
-fi
-
-# add the headers directory of libCurl
-if test ! -z $libCurlIncludeDir; then
-  LOCAL_CFLAGS+=" -I$libCurlIncludeDir"
-fi
-
 CFLAGS+="$LOCAL_CFLAGS"
 CPPFLAGS+="$LOCAL_CFLAGS"
 OBJCFLAGS+="$LOCAL_CFLAGS"
 
-##########################################################################
-# Define binaries directories
-##########################################################################
+# Add libARxxx deps
 
-# add the binaries directory of libARUtils
-if test ! -z $libARUtilsLibDir; then
-  LDFLAGS+=" -L$libARUtilsLibDir"
-fi
-
-# add the binaries directory of libARSAL
-if test ! -z $libARSALLibDir; then
-  LDFLAGS+=" -L$libARSALLibDir"
-fi
-
-# add the binaries directory of libCurl
-if test ! -z $libCurlLibDir; then
-  LDFLAGS+=" -L$libCurlLibDir"
-fi
+AR_DEPENDS([libARUtils], [Y], [libARUtils/ARUtils.h])
+AR_DEPENDS([libARSAL], [Y], [libARSAL/ARSAL.h])
+AR_DEPENDS([libCurl], [Y], [curl/curl.h curl/curlbuild.h curl/curlver.h])
 
 ##########################################################################
 # Checks for programs.
@@ -232,52 +95,12 @@ AC_HEADER_STDC
 # Check headers
 ##########################################################################
 
+# Checks for generic headers
+AC_CHECK_HEADERS([inttypes.h],,AC_MSG_ERROR(The inttypes.h header is required in order to build the library!))
+AC_CHECK_HEADERS([stdlib.h],,AC_MSG_ERROR(The stdlib.h header is required in order to build the library!))
+
 # Checks for libs
 AC_CHECK_HEADERS([sys/statfs.h sys/mount.h ftw.h])
-
-# Checks for libARUtils headers
-AC_CHECK_HEADERS([libARUtils/ARUTILS_Error.h libARUtils/ARUTILS_FileSystem.h libARUtils/ARUTILS_Ftp.h],,
-	AC_MSG_ERROR(The libARUtils headers are required in order to build the library !
-- Use --with-libARUtilsInstallDir of --with-libARUtilsIncludeDir to indicate a specific include path.))
-
-# Checks for libARSAL headers
-AC_CHECK_HEADERS([libARSAL/ARSAL_Print.h libARSAL/ARSAL_Thread.h libARSAL/ARSAL_Mutex.h \
-libARSAL/ARSAL_Socket.h libARSAL/ARSAL_Time.h],,
-	AC_MSG_ERROR(The libARSAL headers are required in order to build the library !
-- Use --with-libARSALInstallDir of --with-libARSALIncludeDir to indicate a specific include path.))
-
-# Checks for libCurl.h
-#AC_CHECK_HEADERS([curl/curl.h curl/curlbuild.h curl/curlrules.h curl/curlver.h \
-#curl/easy.h curl/mprinf.h curl/multi.h curl/stdcheaders.h curl/typecheck-gcc.h],,
-AC_CHECK_HEADERS([curl/curl.h curl/curlbuild.h curl/curlver.h],,
-	AC_MSG_ERROR(The libCurl headers are required in order to build the library !
-- Use --with-libCurlInstallDir to indicate a specific include path.))
-
-
-#Objective C part
-# Check for Foundation.h
-AC_LANG_PUSH([Objective C])
-
-if test x$ac_cv_objc_compiler_gnu = xyes; then
-
-    AC_CHECK_HEADERS([Foundation/Foundation.h],
-        AC_COMPILE_IFELSE(
-            [AC_LANG_SOURCE([[  #import <Foundation/Foundation.h>
-                                void check (void)
-                                {
-                                    NSString *obj = @"check";
-                                    const void *cObj = CFBridgingRetain (obj);
-                                    NSString *obj2 = (__bridge NSString *) cObj;
-                                }
-                            ]])],
-            [ OBJC_ARC_MODE_AVAILABLE=yes ],
-            [AC_MSG_WARN(Objective C ARC mode NOT available !)] ),
-        AC_MSG_WARN(Objective C headers not found !))
-
-fi
-AM_CONDITIONAL([HAVE_OBJC_ARC], [test x"$OBJC_ARC_MODE_AVAILABLE" = x"yes"])
-
-AC_LANG_POP([Objective C])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
