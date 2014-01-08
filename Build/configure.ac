@@ -59,7 +59,7 @@ OBJCFLAGS+="$LOCAL_CFLAGS"
 
 AR_DEPENDS([libARUtils], [Y], [libARUtils/ARUtils.h])
 AR_DEPENDS([libARSAL], [Y], [libARSAL/ARSAL.h])
-AR_DEPENDS([libCurl], [Y], [curl/curl.h curl/curlbuild.h curl/curlver.h])
+AR_DEPENDS([libCurl], [Y], [curl/curl.h curl/curlbuild.h curl/curlver.h], [N])
 
 ##########################################################################
 # Checks for programs.
