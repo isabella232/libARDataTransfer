@@ -129,40 +129,27 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
     {
     	try
         {
-    		if (false == debug)
+    		if (debug == false)
     		{
+    			System.loadLibrary("curl");
     			System.loadLibrary("arsal");
     			System.loadLibrary("arsal_android");
     			System.loadLibrary("arutils");
     			System.loadLibrary("arutils_android");    			
+        		System.loadLibrary("ardatatransfer");
+        		System.loadLibrary("ardatatransfer_android");
     		}
     		else
     		{
+    			System.loadLibrary("curl");
+    			//System.loadLibrary("curl_dbg");
     			System.loadLibrary("arsal_dbg");
     			System.loadLibrary("arsal_android_dbg");
     			System.loadLibrary("arutils_dbg");
     			System.loadLibrary("arutils_android_dbg");    			
-    		}
-    			
-    		//if (false == debug)
-    		{
-    			System.loadLibrary("curl");
-    		}
-    		/*else
-    		{
-    			System.loadLibrary("curl_dbg");
-    		}*/
-        	
-        	if (false == debug)
-        	{
-        		System.loadLibrary("ardatatransfer");
-        		System.loadLibrary("ardatatransfer_android");
-        	}
-        	else
-        	{
         		System.loadLibrary("ardatatransfer_dbg");
         		System.loadLibrary("ardatatransfer_android_dbg");
-        	}
+    		}
         }
         catch (Exception e)
         {
