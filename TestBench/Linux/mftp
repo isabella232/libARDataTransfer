@@ -1,36 +1,64 @@
 #!/bin/bash -v
 
-#sudo mkdir /var/vsftpd/a
-#sudo chown ftp:ftp /var/vsftpd/a
-#sudo mkdir /var/vsftpd/b
-#sudo chown ftp:ftp /var/vsftpd/b
+#AR.Drone
+ARDRONE_PATH=/var/vsftpd/AR.Drone
+sudo rm -rf $ARDRONE_PATH
 
-#echo "123" | sudo tee -a /var/vsftpd/a/test.txt
-#sudo truncate -s 3 /var/vsftpd/a/test.txt
-#sudo chown -R ftp:ftp /var/vsftpd/a
+ARDRONE_DATA_PATH=$ARDRONE_PATH/data
+sudo mkdir -p $ARDRONE_DATA_PATH
 
-sudo rm -rf /var/vsftpd/data
-sudo mkdir /var/vsftpd/data
-echo "data1" | sudo tee -a /var/vsftpd/data/data_20131001_235901.pub
-echo "data2" | sudo tee -a /var/vsftpd/data/data_20131002_235902.pub
-sudo chown -R ftp:ftp /var/vsftpd/data
+#echo "data1" | sudo tee -a $ARDRONE_DATA_PATH/data_20131001_235901.pub
+#echo "data2" | sudo tee -a $ARDRONE_DATA_PATH/data_20131002_235902.pub
+echo "data1" | sudo tee -a $ARDRONE_DATA_PATH/UUID0001_2014-01-21T16:01:01+0100.pub
+echo "data2" | sudo tee -a $ARDRONE_DATA_PATH/UUID0002_2014-02-22T16:02:02+0100.pub
+sudo chown -R ftp:ftp $ARDRONE_DATA_PATH
 
-sudo rm -rf /var/vsftpd/medias
-sudo mkdir /var/vsftpd/medias
-echo "photo1" | sudo tee -a /var/vsftpd/medias/photo_20131001_235901.jpg
-echo "photo2" | sudo tee -a /var/vsftpd/medias/photo_20131002_235902.jpg
-#echo "video1" | sudo tee -a /var/vsftpd/medias/video_20131001_235901.mp4
-#echo "video2" | sudo tee -a /var/vsftpd/medias/video_20131002_235902.mp4
-sudo dd if=/dev/zero of=/var/vsftpd/medias/video_20131001_235901.mp4 bs=1024 count=0 seek=$[1024*1]
-sudo dd if=/dev/zero of=/var/vsftpd/medias/video_20131002_235902.mp4 bs=1024 count=0 seek=$[1024*2]
+ARDRONE_MEDIAS_PATH=$ARDRONE_PATH/medias
+sudo mkdir -p $ARDRONE_MEDIAS_PATH
 
-echo "thumbnail video1" | sudo tee -a /var/vsftpd/medias/thumbnail_video_20131001_235901.jpg
-echo "thumbnail video2" | sudo tee -a /var/vsftpd/medias/thumbnail_video_20131002_235902.jpg
-sudo chown -R ftp:ftp /var/vsftpd/medias
+#echo "photo1" | sudo tee -a $ARDRONE_MEDIAS_PATH/photo_20131001_235901.jpg
+#echo "photo2" | sudo tee -a $ARDRONE_MEDIAS_PATH/photo_20131002_235902.jpg
+##echo "video1" | sudo tee -a $ARDRONE_MEDIAS_PATH/video_20131001_235901.mp4
+##echo "video2" | sudo tee -a $ARDRONE_MEDIAS_PATH/video_20131002_235902.mp4
+#sudo dd if=/dev/zero of=$ARDRONE_MEDIAS_PATH/video_20131001_235901.mp4 bs=1024 count=0 seek=$[1024*1]
+#sudo dd if=/dev/zero of=$ARDRONE_MEDIAS_PATH/video_20131002_235902.mp4 bs=1024 count=0 seek=$[1024*2]
+#echo "thumbnail video1" | sudo tee -a $ARDRONE_MEDIAS_PATH/thumbnail_video_20131001_235901.jpg
+#echo "thumbnail video2" | sudo tee -a $ARDRONE_MEDIAS_PATH/medias/thumbnail_video_20131002_235902.jpg
+
+sudo cp photo_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/photo_UUID0001_2014-01-21T16:01:01+0100.jpg
+sudo cp photo_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/photo_UUID0002_2014-02-22T16:02:02+0100.jpg
+sudo cp video_20131001_235901.mp4 $ARDRONE_MEDIAS_PATH/video_UUID0001_2014-01-21T16:01:01+0100.mp4
+sudo cp video_20131002_235902.mp4 $ARDRONE_MEDIAS_PATH/video_UUID0002_2014-02-22T16:02:02+0100.mp4
+sudo cp thumbnail_video_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/thumbnail_video_UUID0001_2014-01-21T16:01:01+0100.jpg
+sudo cp thumbnail_video_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/thumbnail_video_UUID0002_2014-02-22T16:02:02+0100.jpg
+sudo cp thumbnail_photo_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/thumbnail_photo_UUID0001_2014-01-21T16:01:01+0100.jpg
+sudo cp thumbnail_photo_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/thumbnail_photo_UUID0002_2014-02-22T16:02:02+0100.jpg
+
+video_UUID0002_2014-02-22T16:02:02+0100.mp4
+
+sudo chown -R ftp:ftp $ARDRONE_PATH
+sudo ls -l $ARDRONE_DATA_PATH
+sudo ls -l $ARDRONE_MEDIAS_PATH
+
+#Jumping Sumo
+JS_PATH="/var/vsftpd/Jumping Sumo"
+sudo rm -rf "$JS_PATH"
+
+JS_DATA_PATH="$JS_PATH/data"
+sudo mkdir -p "$JS_DATA_PATH"
+
+echo "data1" | sudo tee -a "$JS_DATA_PATH/UUID0001_2014-01-21T16:01:01+0100.pub"
+sudo chown -R ftp:ftp "$JS_DATA_PATH"
+
+JS_MEDIAS_PATH="$JS_PATH/medias"
+sudo mkdir -p "$JS_PATH/medias"
+
+sudo cp photo_20131001_235901.jpg "$JS_MEDIAS_PATH/UUID0001_2014-01-21T16:01:01+0100.jpg"
+
+sudo chown -R ftp:ftp "$JS_PATH"
+sudo ls -l "$JS_DATA_PATH"
+sudo ls -l "$JS_MEDIAS_PATH"
 
 sudo service vsftpd stop
 sudo service vsftpd start
-
-sudo ls -l  /var/vsftpd/data
-sudo ls -l /var/vsftpd/medias
 
