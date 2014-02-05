@@ -18,7 +18,8 @@
  * @param ftp The FTP medias body MediasDownloader connection
  * @param localDirectory The local directory where MediasDownloader download files
  * @param listSem The semaphore to cancel the DataDownloader FTP List connection
- * @param sem The semaphore to cancel the DataDownloader Thread and its FTP connection
+ * @param queueSem The semaphore to cancel the DataDownloader Queue
+ * @param threadSem The semaphore to cancel the DataDownloader Thread and its FTP connection
  * @param queue The medias queue
  * @see ARDATATRANSFER_MediasDownloader_New ()
  */
@@ -27,10 +28,11 @@ typedef struct
     int isRunning;
     int isCanceled;
     ARUTILS_Ftp_Connection_t *listFtp;
+    ARUTILS_Ftp_Connection_t *deleteFtp;
     ARUTILS_Ftp_Connection_t *ftp;
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
-    ARSAL_Sem_t queueSem;
     ARSAL_Sem_t listSem;
+    ARSAL_Sem_t queueSem;
     ARSAL_Sem_t threadSem;
     ARDATATRANSFER_MediasQueue_t queue;
 
@@ -57,14 +59,29 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_
 void ARDATATRANSFER_MediasDownloader_Clear(ARDATATRANSFER_Manager_t *manager);
 
 /**
+ * @brief Get the medias list available form the Device
+ * @warning This function allocates memory
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @param [out] mediaList The list of medias if not null
+ * @param availableMediaCallback The available media callback if not null
+ * @param availableMediaArg The pointer of the user custom argument
+ * @param withThumbnail The flag to return thumbnail, 0 no thumbnail is returned, 1 thumbnails are returned 
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_FreeMediaList ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasInternal(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediaList_t *mediaList, ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t availableMediaCallback, void *availableMediaArg, int withThumbnail);
+
+/**
  * @brief Get the media thumbnail from the device FTP server
  * @warning This function allocates memory
  * @param manager The address of the pointer on the ARDataTransfer Manager
+ * @param fileList The list of file where to search the thumbnail
+ * @param remoteDir The server path where get the thumbnail
  * @param media The media for which the thumbnail is requested
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFER_Manager_t *manager, const char *fileList, const char *remoteDir, ARDATATRANSFER_Media_t *media);
 
 /**
  * @brief Progress callback of the FtpMedia download

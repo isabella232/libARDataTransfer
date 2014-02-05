@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		631703A6189A660400EA0374 /* libARDiscovery.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 631703A5189A660400EA0374 /* libARDiscovery.framework */; };
 		634FEBEE1863447E002CA7FB /* libARUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 634FEBED1863447E002CA7FB /* libARUtils.framework */; };
 		634FEBF01863454C002CA7FB /* libARSAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 634FEBEF1863454C002CA7FB /* libARSAL.framework */; };
 		634FEBFC1869D388002CA7FB /* test_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 634FEBFB1869D388002CA7FB /* test_manager.c */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		631703A5189A660400EA0374 /* libARDiscovery.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARDiscovery.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARDiscovery.framework; sourceTree = "<group>"; };
 		634FEBED1863447E002CA7FB /* libARUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARUtils.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARUtils.framework; sourceTree = "<group>"; };
 		634FEBEF1863454C002CA7FB /* libARSAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARSAL.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARSAL.framework; sourceTree = "<group>"; };
 		634FEBFB1869D388002CA7FB /* test_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_manager.c; path = ../../Linux/test_manager.c; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				631703A6189A660400EA0374 /* libARDiscovery.framework in Frameworks */,
 				634FEBF01863454C002CA7FB /* libARSAL.framework in Frameworks */,
 				634FEBEE1863447E002CA7FB /* libARUtils.framework in Frameworks */,
 				6369E0E51844FAA000C3F64D /* libARDataTransfer.framework in Frameworks */,
@@ -86,6 +89,7 @@
 		63F74E78183F92B30031D036 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				631703A5189A660400EA0374 /* libARDiscovery.framework */,
 				634FEBEF1863454C002CA7FB /* libARSAL.framework */,
 				634FEBED1863447E002CA7FB /* libARUtils.framework */,
 				6369E0E41844FAA000C3F64D /* libARDataTransfer.framework */,

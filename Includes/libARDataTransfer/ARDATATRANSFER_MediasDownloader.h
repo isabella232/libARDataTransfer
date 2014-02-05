@@ -5,6 +5,8 @@
  * @author david.flattin.ext@parrot.com
  **/
 
+#include <libARDiscovery/ARDISCOVERY_Discovery.h>
+
 #ifndef _ARDATATRANSFER_MEDIAS_DOWNLOADER_H_
 #define _ARDATATRANSFER_MEDIAS_DOWNLOADER_H_
 
@@ -12,7 +14,7 @@
  * @brief Defines the media name size in characters
  * @see ARDATATRANSFER_Media_t
  */
-#define ARDATATRANSFER_MEDIA_NAME_SIZE  64
+#define ARDATATRANSFER_MEDIA_NAME_SIZE  128
 /**
  * @brief Defines the media date size in characters
  * @see ARDATATRANSFER_Media_t
@@ -21,7 +23,9 @@
 
 /**
  * @brief Media structure
+ * @param product The the product that the media belong to
  * @param name The name of the media
+ * @param fileName The file name of the media
  * @param date The date of the media
  * @param size The size of the media
  * @param thumbnail The media thumbnail data
@@ -30,11 +34,13 @@
  */
 typedef struct
 {
+    eARDISCOVERY_PRODUCT product;
     char name[ARDATATRANSFER_MEDIA_NAME_SIZE];
+    char fileName[ARDATATRANSFER_MEDIA_NAME_SIZE];
     char date[ARDATATRANSFER_MEDIA_DATE_SIZE];
+    double size;
     uint8_t *thumbnail;
     uint32_t thumbnailSize;
-    double size;
     
 } ARDATATRANSFER_Media_t;
 
@@ -50,6 +56,14 @@ typedef struct
     int count;
     
 } ARDATATRANSFER_MediaList_t;
+
+/**
+ * @brief Available media callback called for each media found
+ * @param arg The pointer of the user custom argument
+ * @param media The availble media found
+ * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
+ */
+typedef void (*ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t) (void* arg, ARDATATRANSFER_Media_t *media);
 
 /**
  * @brief Progress callback of the Media download
@@ -92,10 +106,30 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete (ARDATATRANSFER_Man
  * @warning This function allocates memory
  * @param manager The pointer of the ARDataTransfer Manager
  * @param [out] mediaList The list of medias
+ * @param withThumbnail The flag to return thumbnail, 0 no thumbnail is returned, 1 thumbnails are returned
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
- * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
+ * @see ARDATATRANSFER_MediasDownloader_FreeMediaList ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMedias (ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediaList_t *mediaList);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediaList_t *mediaList, int withThumbnail);
+
+/**
+ * @brief Get the medias list available form the Device
+ * @warning This function allocates memory
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @param availableMediaCallback The available media callback
+ * @param availableMediaArg The pointer of the user custom argument
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync (ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t availableMediaCallback, void *availableMediaArg);
+
+/**
+ * @brief Send a cancel to the get media list function
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (), ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(ARDATATRANSFER_Manager_t *manager);
 
 /**
  * @brief Free a medias list
@@ -103,6 +137,15 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMedias (ARDATA
  * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
  */
 void ARDATATRANSFER_MediasDownloader_FreeMediaList(ARDATATRANSFER_MediaList_t *mediaList);
+
+/**
+ * @brief Delete the media form the Device
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @param media The media to delete
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media);
 
 /**
  * @brief Add a media to the download process queue
