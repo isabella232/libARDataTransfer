@@ -16,10 +16,13 @@ public class ARDataTransferMediasDownloader
     private native static boolean nativeStaticInit();
     private native int nativeNew(long manager, String deviceIP, int port, String localDirectory);
     private native int nativeDelete(long manager);    
-    private native int nativeGetAvailableMedias(long manager, List<ARDataTransferMedia> mediaList);
+    private native int nativeGetAvailableMediasSync(long manager, List<ARDataTransferMedia> mediaList, boolean withThumbnail);
+    private native int nativeGetAvailableMediasAsync(long manager, ARDataTransferMediasDownloaderAvailableMediaListener availableMediaListener, Object availableMediaArg);
     private native int nativeAddMediaToQueue(long manager, ARDataTransferMedia media, ARDataTransferMediasDownloaderProgressListener progressListener, Object progressArg, ARDataTransferMediasDownloaderCompletionListener completionListener, Object completionArg);
+    private native int nativeDeleteMedia(long manager, ARDataTransferMedia media);
     private native void nativeQueueThreadRun(long manager);
     private native int nativeCancelQueueThread(long manager);
+    private native int nativeCancelGetAvailableMedias(long manager);
     
     /*  Members  */
     private boolean isInit = false;
@@ -78,14 +81,15 @@ public class ARDataTransferMediasDownloader
     
     /**
      * Gets the {@link List} of available {@link ARDataTransferMedia} medias in the ARDataTransfer MediasDownloader
+     * @param withThumbnail The true to return thumnail, else false
      * @return List<ARDataTransferMedia> available ARDataTransferMedia medias List
      * @throws ARDataTransferException if error
      */
-    public List<ARDataTransferMedia> getAvailableMedias() throws ARDataTransferException
+    public List<ARDataTransferMedia> getAvailableMediasSync(boolean withThumbnail) throws ARDataTransferException
     {
         Vector<ARDataTransferMedia> mediaList = new Vector<ARDataTransferMedia>();
         
-        int result = nativeGetAvailableMedias(nativeManager, mediaList);
+        int result = nativeGetAvailableMediasSync(nativeManager, mediaList, withThumbnail);
         
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
         
@@ -95,6 +99,52 @@ public class ARDataTransferMediasDownloader
         }
         
         return mediaList;
+    }
+    
+    /**
+     * Gets the availables medias in the ARDataTransfer MediasDownloader and signal each Media found with the ARDataTransferMediasDownloaderAvailableMediaListener listener
+     * @param availableMediaListener The available Media listener
+     * @param availableMediaArg The availale Media listener arg 
+     * @return void
+     * @throws ARDataTransferException if error
+     */
+    public void getAvailableMediasAsync(ARDataTransferMediasDownloaderAvailableMediaListener availableMediaListener, Object availableMediaArg)  throws ARDataTransferException
+    {
+        int result = nativeGetAvailableMediasAsync(nativeManager, availableMediaListener, availableMediaArg);
+        
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+
+        if (error != ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+        {
+            throw new ARDataTransferException(error);
+        }
+    }
+
+    /**
+     * Cancels get available Medias getAvailableMediasSync or getAvailableMediasAsync of the ARDataTransfer MediasDownloader
+     * @return ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
+     */    
+    public ARDATATRANSFER_ERROR_ENUM cancelGetAvailableMedias()
+    {
+         int result = nativeCancelGetAvailableMedias(nativeManager);
+    
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+        
+        return error;
+    }
+    
+    /**
+     * Deletes a remote media of the ARDataTransfer MediasDownloader
+     * @param media The media to delete
+     * @return ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
+     */
+    public ARDATATRANSFER_ERROR_ENUM deleteMedia(ARDataTransferMedia media)
+    {
+        int result = nativeDeleteMedia(nativeManager, media);
+        
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+        
+        return error;
     }
     
     /**

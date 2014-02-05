@@ -1,6 +1,8 @@
 
 package com.parrot.arsdk.ardatatransfer;
 
+import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
+
 /**
  * ARDataTransfer Media
  * @author david.flattin.ext@parrot.com
@@ -9,7 +11,9 @@ package com.parrot.arsdk.ardatatransfer;
 public class ARDataTransferMedia
 {
     /*  Members  */
+    private ARDISCOVERY_PRODUCT_ENUM product = null;
     private String name = null;
+    private String fileName = null;
     private String date = null;
     private float size = 0.f;
     private byte[] thumbnail = null;
@@ -25,12 +29,34 @@ public class ARDataTransferMedia
      * @param thumbnail byte[] Media Thumbnail
      * @return void
      */
-    protected ARDataTransferMedia(String name, String date, float size, byte[] thumbnail)
+    protected ARDataTransferMedia(int productValue, String name, String fileName, String date, float size, byte[] thumbnail)
     {
+        this.product = ARDISCOVERY_PRODUCT_ENUM.getFromValue(productValue);
         this.name = name;
+        this.fileName = fileName;
         this.date = date;
         this.size = size;
         this.thumbnail = thumbnail;
+    }
+    
+    /**
+     * Gets the Media product it belong to
+     * @note get the Media Product
+     * @return String media Product
+     */
+    public ARDISCOVERY_PRODUCT_ENUM getProduct()
+    {
+        return this.product;
+    }
+    
+    /**
+     * Gets the Media product it belong to
+     * @note get the Media Product
+     * @return String media Product
+     */
+    public int getProductValue()
+    {
+        return this.product.getValue();
     }
     
     /**
@@ -43,6 +69,16 @@ public class ARDataTransferMedia
         return this.name;
     }
     
+    /**
+     * Gets the Media file Name
+     * @note get the Media file Name
+     * @return String media file Name
+     */
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+        
     /**
      * Gets the Media Date
      * @note get the Media Date

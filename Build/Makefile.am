@@ -44,15 +44,21 @@ ___TestBench_Linux_autoTest_SOURCES                         =   ../TestBench/Lin
 
 if DEBUG_MODE
 ___TestBench_Linux_autoTest_LDADD                           =   libardatatransfer_dbg.la \
-                                                                -larsal_dbg         \
+                                                                -lardiscovery_dbg    \
                                                                 -larutils_dbg       \
+                                                                -larsal_dbg         \
                                                                 -lcurl
 else
 ___TestBench_Linux_autoTest_LDADD                           =   libardatatransfer.la     \
-                                                                -larsal             \
+                                                                -lardiscovery        \
                                                                 -larutils           \
+                                                                -larsal             \
                                                                 -lcurl
 endif
+
+if HAVE_AVAHI
+___TestBench_Linux_autoTest_LDADD                           += -lavahi-client -lavahi-common
+endif # HAVE_AVAHI
 
 
 CLEAN_FILES                                                 =   libardatatransfer.la       \

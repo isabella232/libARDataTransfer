@@ -35,9 +35,15 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/testRunning"
         android:layout_below="@+id/testRunning"
+        android:layout_marginTop="50dp"
         android:text="Test Running Signal" />
-    
 
-    
+    <Button
+        android:id="@+id/testAvailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/testRunningSignal"
+        android:layout_below="@+id/testRunning"
+        android:text="Test Media Available" />
 
 </RelativeLayout>

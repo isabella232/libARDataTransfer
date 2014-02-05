@@ -15,5 +15,5 @@ public interface ARDataTransferMediasDownloaderCompletionListener
      * @param error ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
      * @return void
      */
-    void didComplete(Object arg, ARDataTransferMedia media, ARDATATRANSFER_ERROR_ENUM error);
+    void didMediaComplete(Object arg, ARDataTransferMedia media, ARDATATRANSFER_ERROR_ENUM error);
 }

@@ -15,5 +15,5 @@ public interface ARDataTransferMediasDownloaderProgressListener
      * @param percent The percent size of the media file already downloaded
      * @return void
      */
-     void didProgress(Object arg, ARDataTransferMedia media, int percent);
+     void didMediaProgress(Object arg, ARDataTransferMedia media, int percent);
 }

@@ -18,6 +18,7 @@
 
 #include <libARSAL/ARSAL_Sem.h>
 #include <libARSAL/ARSAL_Print.h>
+#include <libARUtils/ARUTILS_Error.h>
 
 #include "libARDataTransfer/ARDATATRANSFER_Error.h"
 #include "libARDataTransfer/ARDATATRANSFER_Manager.h"
@@ -56,12 +57,12 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
 {
     ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
- 
+
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
-    
+
     result = ARDATATRANSFER_DataDownloader_Delete(nativeManager);
-    
-    return result;   
+
+    return result;
 }
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeThreadRun(JNIEnv *env, jobject jThis, jlong jManager)

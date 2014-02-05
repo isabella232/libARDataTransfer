@@ -34,6 +34,8 @@ typedef struct _ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t_
     jobject jProgressArg;
     jobject jCompletionListener;
     jobject jCompletionArg;
+    jobject jAvailableMediaListener;
+    jobject jAvailableMediaArg;
 
 } ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t;
 
@@ -191,6 +193,15 @@ void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANS
  * @see ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI
  */
 void ARDATATRANSFER_JNI_MediasDownloader_CompletionCallback(void* arg, ARDATATRANSFER_Media_t *media, eARDATATRANSFER_ERROR nativeError);
+
+/**
+ * @brief Callback that give e new discoverd media
+ * @param arg The arg
+ * @param media The media
+ * @retval void
+ * @see ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI
+ */
+void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDATATRANSFER_Media_t *media);
 
 /**
  * @brief Free Callbacks structure

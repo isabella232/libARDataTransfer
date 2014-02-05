@@ -57,6 +57,7 @@ OBJCFLAGS+="$LOCAL_CFLAGS"
 
 # Add libARxxx deps
 
+AR_DEPENDS([libARDiscovery], [Y], [libARDiscovery/ARDiscovery.h])
 AR_DEPENDS([libARUtils], [Y], [libARUtils/ARUtils.h])
 AR_DEPENDS([libARSAL], [Y], [libARSAL/ARSAL.h])
 AR_DEPENDS([libCurl], [Y], [curl/curl.h curl/curlbuild.h curl/curlver.h], [N])
@@ -101,6 +102,12 @@ AC_CHECK_HEADERS([stdlib.h],,AC_MSG_ERROR(The stdlib.h header is required in ord
 
 # Checks for libs
 AC_CHECK_HEADERS([sys/statfs.h sys/mount.h ftw.h])
+
+# Checks for libavahi headers
+AC_CHECK_HEADERS([avahi-client/client.h avahi-client/publish.h avahi-common/error.h],,
+    AC_MSG_WARN(The libavahi-common-dev libavahi-client-dev headers are required to publish AR.Drone service !))
+AM_CONDITIONAL([HAVE_AVAHI], [test x"$ac_cv_header_avahi_client_client_h" = x"yes" &&
+        test x"$ac_cv_header_avahi_client_publish_h" = x"yes" && test x"$ac_cv_header_avahi_common_error_h" = x"yes"])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T

@@ -19,16 +19,15 @@ import com.parrot.arsdk.ardatatransfer.ARDataTransferException;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferManager;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMedia;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloader;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderAvailableMediaListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderCompletionListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderProgressListener;
-import com.parrot.arsdk.arutils.ARUTILS_ERROR_ENUM;
-import com.parrot.arsdk.arutils.ARUTILS_FTP_RESUME_ENUM;
-import com.parrot.arsdk.arutils.ARUtilsException;
-import com.parrot.arsdk.arutils.ARUtilsFileSystem;
-import com.parrot.arsdk.arutils.ARUtilsFtpConnection;
-import com.parrot.arsdk.arutils.ARUtilsFtpProgressListener;
 
-public class MainActivity extends Activity implements ARDataTransferMediasDownloaderProgressListener, ARDataTransferMediasDownloaderCompletionListener 
+public class MainActivity 
+	extends Activity 
+	implements ARDataTransferMediasDownloaderProgressListener, 
+		ARDataTransferMediasDownloaderCompletionListener,
+		ARDataTransferMediasDownloaderAvailableMediaListener
 {
 	public static String APP_TAG = "TestARDataTransfer "; 
         
@@ -88,7 +87,22 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 					public void run() {
 						TestARDataTransferParameters();
 						TestARDataTransferRunning();
-						
+					}
+				}).start();
+			}
+		});
+		
+		Button testAvailable = (Button)this.findViewById(R.id.testAvailable);
+		
+		testAvailable.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						TestARDataTransferAvailableMedia();
 					}
 				}).start();
 			}
@@ -129,24 +143,29 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
     {
     	try
         {
+    		//debug = false;
     		if (debug == false)
     		{
     			System.loadLibrary("curl");
     			System.loadLibrary("arsal");
     			System.loadLibrary("arsal_android");
     			System.loadLibrary("arutils");
-    			System.loadLibrary("arutils_android");    			
+    			System.loadLibrary("arutils_android");
+    			System.loadLibrary("ardiscovery");
+    			System.loadLibrary("ardiscovery_android");
         		System.loadLibrary("ardatatransfer");
         		System.loadLibrary("ardatatransfer_android");
     		}
     		else
     		{
     			System.loadLibrary("curl");
-    			//System.loadLibrary("curl_dbg");
+
     			System.loadLibrary("arsal_dbg");
     			System.loadLibrary("arsal_android_dbg");
     			System.loadLibrary("arutils_dbg");
-    			System.loadLibrary("arutils_android_dbg");    			
+    			System.loadLibrary("arutils_android_dbg");
+    			System.loadLibrary("ardiscovery_dbg");
+    			System.loadLibrary("ardiscovery_android_dbg");
         		System.loadLibrary("ardatatransfer_dbg");
         		System.loadLibrary("ardatatransfer_android_dbg");
     		}
@@ -237,7 +256,7 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
         	
         	//mediasManager.cancelQueueThread();
         	
-        	List<ARDataTransferMedia> medias = mediasManager.getAvailableMedias();
+        	List<ARDataTransferMedia> medias = mediasManager.getAvailableMediasSync(true);
         	
         	for (ARDataTransferMedia media : medias)
         	{
@@ -378,7 +397,7 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 	        assertError(result == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED);
 	        
 	        try { 
-	        	mediaList = mediasManager.getAvailableMedias(); 
+	        	mediaList = mediasManager.getAvailableMediasSync(true); 
 	        	Log.d("DBG", "getAvailableMedias ERROR"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "getAvailableMedias " + (e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED ? "OK" : "ERROR"));
@@ -410,7 +429,7 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 	        }
 	        	        
 	        try {
-	        	mediaList = mediasManager.getAvailableMedias();
+	        	mediaList = mediasManager.getAvailableMediasSync(true);
 	        	Log.d("DBG", "getAvailableMedias OK"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "getAvailableMedias " + e.toString());
@@ -482,7 +501,7 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
             
             do
             {
-                List<ARDataTransferMedia> medias = mediasManager.getAvailableMedias();
+                List<ARDataTransferMedia> medias = mediasManager.getAvailableMediasSync(true);
         	
 				for (ARDataTransferMedia media : medias)
 				{
@@ -490,6 +509,9 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 					//Log.d("DBG", APP_TAG + "thumbnail: " + new String(media.getThumbnail()));
 				
 					mediasManager.addMediaToQueue(media, this, this, this, this);
+					
+					//ARDATATRANSFER_ERROR_ENUM error = mediasManager.deleteMedia(media);
+					//Log.d("DBG", APP_TAG + error.toString());
 				}
             }
             while (false == semRunning.tryAcquire(20, TimeUnit.SECONDS));
@@ -501,6 +523,42 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
 	        mediasManager.closeMediasDownloader();
             managerRunning.closeManager();
         }
+        catch (Exception e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+        catch (Throwable e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+    }
+    
+    public void didMediaAvailable(Object arg, ARDataTransferMedia media)
+    {
+    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaAvailable: " + 
+    		media.getName() + ", " + media.getFileName() +  ", " + media.getProduct().toString());
+    }
+    
+    public void TestARDataTransferAvailableMedia()
+    {
+    	try
+    	{
+	    	ARDataTransferManager manager = new ARDataTransferManager();
+	    	manager.createManager();
+	    	
+	    	ARDataTransferMediasDownloader mediasManager = manager.getARDataTransferMediasDownloader();        	
+	    	
+	    	String tmp = "/var";
+	    	File sysTmp = this.getCacheDir();// /data/data/com.example.tstdata/cache
+	    	tmp = sysTmp.getAbsolutePath();
+	    	
+	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
+	    	tmp = sysHome.getAbsolutePath();
+	    	
+	    	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp);
+	    	
+	    	mediasManager.getAvailableMediasAsync(this, this);
+    	}
         catch (Exception e)
         {
         	Log.d("DBG", APP_TAG + e.toString());
@@ -536,18 +594,18 @@ public class MainActivity extends Activity implements ARDataTransferMediasDownlo
         }
     }
     
-    public void didProgress(Object arg, ARDataTransferMedia media, int percent)
+    public void didMediaProgress(Object arg, ARDataTransferMedia media, int percent)
     {
-    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didProgress: " + media.getName() + ", " + percent + "%");
+    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaProgress: " + media.getName() + ", " + percent + "%");
     }
     
-    public void didComplete(Object arg, ARDataTransferMedia media, ARDATATRANSFER_ERROR_ENUM error)
+    public void didMediaComplete(Object arg, ARDataTransferMedia media, ARDATATRANSFER_ERROR_ENUM error)
     {
     	String err;
     	if (error == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
     		err = "ARDATATRANSFER_OK";
     	else
     		err = "[" + error.toString() + "]";
-    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didComplete: " + media.getName() + ", " + err);
+    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaComplete: " + media.getName() + ", " + err);
     }
 }
