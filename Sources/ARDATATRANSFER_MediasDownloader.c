@@ -376,6 +376,11 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasInternal
     {
         free(productFtpList);
     }
+    
+    if (result != ARDATATRANSFER_OK)
+    {
+        ARDATATRANSFER_MediasDownloader_FreeMediaList(mediaList);
+    }
 
     return result;
 }
