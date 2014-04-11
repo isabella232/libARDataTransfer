@@ -1,62 +1,74 @@
 #!/bin/bash -v
 
+# FTP
+FTP_PATH=/var/vsftpd
+
 #AR.Drone
-ARDRONE_PATH=/var/vsftpd/AR.Drone
+ARDRONE_PATH=$FTP_PATH/AR.Drone
 sudo rm -rf $ARDRONE_PATH
 
-ARDRONE_DATA_PATH=$ARDRONE_PATH/data
-sudo mkdir -p $ARDRONE_DATA_PATH
+ARDRONE_ACADEMY_PATH=$ARDRONE_PATH/academy
+sudo mkdir -p $ARDRONE_ACADEMY_PATH
 
-#echo "data1" | sudo tee -a $ARDRONE_DATA_PATH/data_20131001_235901.pub
-#echo "data2" | sudo tee -a $ARDRONE_DATA_PATH/data_20131002_235902.pub
-echo "data1" | sudo tee -a $ARDRONE_DATA_PATH/UUID0001_2014-01-21T16:01:01+0100.pub
-echo "data2" | sudo tee -a $ARDRONE_DATA_PATH/UUID0002_2014-02-22T16:02:02+0100.pub
-sudo chown -R ftp:ftp $ARDRONE_DATA_PATH
+echo "data1" | sudo tee -a $ARDRONE_ACADEMY_PATH/0901_UUID0001_2014-01-21T160101+0100.pub
+echo "data2" | sudo tee -a $ARDRONE_ACADEMY_PATH/0901_UUID0002_2014-02-22T160202+0100.pub
+sudo chown -R ftp:ftp $ARDRONE_ACADEMY_PATH
 
-ARDRONE_MEDIAS_PATH=$ARDRONE_PATH/medias
-sudo mkdir -p $ARDRONE_MEDIAS_PATH
+ARDRONE_MEDIA_PATH=$ARDRONE_PATH/media
+sudo mkdir -p $ARDRONE_MEDIA_PATH
 
-#echo "photo1" | sudo tee -a $ARDRONE_MEDIAS_PATH/photo_20131001_235901.jpg
-#echo "photo2" | sudo tee -a $ARDRONE_MEDIAS_PATH/photo_20131002_235902.jpg
-##echo "video1" | sudo tee -a $ARDRONE_MEDIAS_PATH/video_20131001_235901.mp4
-##echo "video2" | sudo tee -a $ARDRONE_MEDIAS_PATH/video_20131002_235902.mp4
-#sudo dd if=/dev/zero of=$ARDRONE_MEDIAS_PATH/video_20131001_235901.mp4 bs=1024 count=0 seek=$[1024*1]
-#sudo dd if=/dev/zero of=$ARDRONE_MEDIAS_PATH/video_20131002_235902.mp4 bs=1024 count=0 seek=$[1024*2]
-#echo "thumbnail video1" | sudo tee -a $ARDRONE_MEDIAS_PATH/thumbnail_video_20131001_235901.jpg
-#echo "thumbnail video2" | sudo tee -a $ARDRONE_MEDIAS_PATH/medias/thumbnail_video_20131002_235902.jpg
+sudo cp photo_20131001_235901.jpg $ARDRONE_MEDIA_PATH/AR.Drone_UUID0001_2014-01-21T160101+0100.jpg
+sudo cp photo_20131002_235902.jpg $ARDRONE_MEDIA_PATH/AR.Drone_UUID0002_2014-02-22T160202+0100.jpg
+sudo cp video_20131001_235901.mp4 $ARDRONE_MEDIA_PATH/AR.Drone_UUID0001_2014-01-21T160101+0100.mp4
+sudo cp video_20131002_235902.mp4 $ARDRONE_MEDIA_PATH/AR.Drone_UUID0002_2014-02-22T160202+0100.mp4
 
-sudo cp photo_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/UUID0001_2014-01-21T16:01:01+0100.jpg
-sudo cp photo_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/UUID0002_2014-02-22T16:02:02+0100.jpg
-sudo cp video_20131001_235901.mp4 $ARDRONE_MEDIAS_PATH/UUID0001_2014-01-21T16:01:01+0100.mp4
-sudo cp video_20131002_235902.mp4 $ARDRONE_MEDIAS_PATH/UUID0002_2014-02-22T16:02:02+0100.mp4
-sudo cp thumbnail_video_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/thumbnail_video_UUID0001_2014-01-21T16:01:01+0100.jpg
-sudo cp thumbnail_video_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/thumbnail_video_UUID0002_2014-02-22T16:02:02+0100.jpg
-sudo cp thumbnail_photo_20131001_235901.jpg $ARDRONE_MEDIAS_PATH/thumbnail_photo_UUID0001_2014-01-21T16:01:01+0100.jpg
-sudo cp thumbnail_photo_20131002_235902.jpg $ARDRONE_MEDIAS_PATH/thumbnail_photo_UUID0002_2014-02-22T16:02:02+0100.jpg
+ARDRONE_THUMB_PATH=$ARDRONE_PATH/thumb
+sudo mkdir -p $ARDRONE_THUMB_PATH
+
+sudo cp thumbnail_video_20131001_235901.jpg $ARDRONE_THUMB_PATH/AR.Drone_UUID0001_2014-01-21T160101+0100.jpg
+sudo cp thumbnail_video_20131002_235902.jpg $ARDRONE_THUMB_PATH/AR.Drone_UUID0002_2014-02-22T160202+0100.jpg
+sudo cp thumbnail_photo_20131001_235901.jpg $ARDRONE_THUMB_PATH/AR.Drone_UUID0001_2014-01-21T160101+0100.mp4.jpg
+sudo cp thumbnail_photo_20131002_235902.jpg $ARDRONE_THUMB_PATH/AR.Drone_UUID0002_2014-02-22T160202+0100.mp4.jpg
 
 sudo chown -R ftp:ftp $ARDRONE_PATH
-sudo ls -l $ARDRONE_DATA_PATH
-sudo ls -l $ARDRONE_MEDIAS_PATH
+sudo ls -l $ARDRONE_ACADEMY_PATH
+sudo ls -l $ARDRONE_MEDIA_PATH
+sudo ls -l $ARDRONE_THUMB_PATH
 
 #Jumping Sumo
-JS_PATH="/var/vsftpd/Jumping Sumo"
+JS_PATH="$FTP_PATH/Jumping Sumo"
 sudo rm -rf "$JS_PATH"
+#sudo mkdir "$JS_PATH"
 
-JS_DATA_PATH="$JS_PATH/data"
-sudo mkdir -p "$JS_DATA_PATH"
+JS_ACADEMY_PATH="$JS_PATH/academy"
+sudo mkdir -p "$JS_ACADEMY_PATH"
 
-echo "data1" | sudo tee -a "$JS_DATA_PATH/UUID0001_2014-01-21T16:01:01+0100.pub"
-sudo chown -R ftp:ftp "$JS_DATA_PATH"
+#echo "data1" | sudo tee -a "$JS_ACADEMY_PATH/0902_UUID0001_2014-01-21T160101+0100.pub"
+sudo chown -R ftp:ftp "$JS_ACADEMY_PATH"
 
-JS_MEDIAS_PATH="$JS_PATH/medias"
-sudo mkdir -p "$JS_PATH/medias"
+JS_MEDIA_PATH="$JS_PATH/media"
+sudo mkdir -p "$JS_MEDIA_PATH"
 
-sudo cp photo_20131001_235901.jpg "$JS_MEDIAS_PATH/UUID0001_2014-01-21T16:01:01+0100.jpg"
-sudo cp thumbnail_photo_20131001_235901.jpg "$JS_MEDIAS_PATH/thumbnail_photo_UUID0001_2014-01-21T16:01:01+0100.jpg"
+sudo cp photo_20131001_235901.jpg "$JS_MEDIA_PATH/Jumping Sumo_UUID0001_2014-01-21T160101+0100.jpg"
+
+JS_THUMB_PATH="$JS_PATH/thumb"
+sudo mkdir -p "$JS_THUMB_PATH"
+
+sudo cp thumbnail_photo_20131001_235901.jpg "$JS_THUMB_PATH/Jumping Sumo_UUID0001_2014-01-21T160101+0100.jpg"
 
 sudo chown -R ftp:ftp "$JS_PATH"
-sudo ls -l "$JS_DATA_PATH"
-sudo ls -l "$JS_MEDIAS_PATH"
+sudo ls -l "$JS_ACADEMY_PATH"
+sudo ls -l "$JS_MEDIA_PATH"
+sudo ls -l "$JS_THUMB_PATH"
+
+#MiniDrone
+MINIDRONE_PATH=$FTP_PATH/MiniDrone
+sudo rm -rf $MINIDRONE_PATH
+
+MINIDRONE_ACADEMY_PATH=$MINIDRONE_PATH/academy
+sudo mkdir -p $MINIDRONE_ACADEMY_PATH
+
+
 
 sudo service vsftpd stop
 sudo service vsftpd start
