@@ -41,7 +41,7 @@
 
 #define ARDATATRANSFER_DATA_DOWNLOADER_WAIT_TIME_IN_SECONDS   10
 #define ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT               ""
-#define ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA               "data"
+#define ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA               "academy"
 #define ARDATATRANSFER_DATA_DOWNLOADER_SPACE_PERCENT          20.f
 
 static ARDATATRANSFER_DataDownloader_Fwt_t dataFwt;
@@ -257,7 +257,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         {
                             char initialPath[ARUTILS_FTP_MAX_PATH_SIZE];
                             char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
-                            char productID[ARDATATRANSFER_MANAGER_DOWNLOADER_PRODUCT_ID_MAX_SIZE];
 
                             strncpy(initialPath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
                             initialPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -271,8 +270,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                             strncpy(localPath, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                             localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                             strncat(localPath, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
-                            sprintf(productID, "%04x_", ARDISCOVERY_getProductID(product));
-                            strncat(localPath, productID, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
                             strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
 
                             errorFtp = ARUTILS_Ftp_Rename(manager->dataDownloader->ftp, initialPath, remotePath);
@@ -288,7 +285,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                                strncat(restoreName, productID, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
                                 strncat(restoreName, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
 
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);

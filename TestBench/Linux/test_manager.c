@@ -20,8 +20,9 @@
 #define TAG             "test_manager"
 #define RUN_TIMEOUT     10
 #define CANCEL_TIMEOUT  3
-#define DEVICE_IP       "172.20.5.117"  /* PC */
+//#define DEVICE_IP       "172.20.5.146"  /* PC */
 //#define DEVICE_IP       "192.168.1.1" /* ARDrone2 */
+#define DEVICE_IP       "192.168.42.1" /* ARDrone3 */
 #define DEVICE_PORT     21
 
 typedef void (*test_manager_timer_tick_callback)(void *arg);
@@ -112,7 +113,7 @@ void test_manager_medias_downloader_completion_callback(void* arg, ARDATATRANSFE
     if (tmp != NULL)
     {
         strcpy(localFile, tmp);
-        strcat(localFile, "/medias/");
+        strcat(localFile, "/media/");
         strcat(localFile, media->fileName);
         
         errorFile = ARUTILS_FileSystem_RemoveFile(localFile);

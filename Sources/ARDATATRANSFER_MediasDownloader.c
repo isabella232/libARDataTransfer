@@ -31,11 +31,11 @@
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG                "MediasDownloader"
 
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT           ""
-#define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA          "medias"
-#define ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_THUMBNAIL   "thumbnail_"
-#define ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_PHOTO       "photo_"
-#define ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_VIDEO       "video_"
+#define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA          "media"
+#define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB          "thumb"
+
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG            "jpg"
+#define ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4            "mp4"
 
 /*****************************************
  *
@@ -256,107 +256,109 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasInternal
                 strncat(remoteProduct, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                 
                 error = ARUTILS_Ftp_List(manager->mediasDownloader->listFtp, remoteProduct, &mediaFtpList, &mediaFtpListLen);
-                
-                if (error != ARUTILS_OK)
+                if (error == ARUTILS_OK)
                 {
-                    result = ARDATATRANSFER_ERROR_FTP;
-                }
-        
-                nextMedia = NULL;
-                while ((result == ARDATATRANSFER_OK)
-                       && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize)) != NULL)
-                {
-                    error = ARUTILS_Ftp_IsCanceled(manager->mediasDownloader->listFtp);
-                    
-                    if (error != ARUTILS_OK)
+                    nextMedia = NULL;
+                    while ((result == ARDATATRANSFER_OK)
+                           && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize)) != NULL)
                     {
-                        result = ARDATATRANSFER_ERROR_CANCELED;
-                    }
-                    
-                    if ((result == ARDATATRANSFER_OK)
-                        && strncmp(fileName, ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_THUMBNAIL, strlen(ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_THUMBNAIL)) != 0)
-                    {
-                        char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
-                        char productID[ARDATATRANSFER_MANAGER_DOWNLOADER_PRODUCT_ID_MAX_SIZE];
-                        ARDATATRANSFER_Media_t **oldMedias;
-                        ARDATATRANSFER_Media_t *media = NULL;
-                        double fileSize;
-                        const char *begin;
-                        const char *end;
-
-                        strncpy(remotePath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
-                        remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                        strncat(remotePath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
+                        error = ARUTILS_Ftp_IsCanceled(manager->mediasDownloader->listFtp);
                         
-                        //do not pertorm ARUTILS_Ftp_Size that is too long, prefer decoding the FTP LIST
-                        if (ARUTILS_Ftp_List_GetItemSize(lineItem, lineSize, &fileSize) != NULL)
+                        if (error != ARUTILS_OK)
                         {
-                            error = ARUTILS_OK;
-                        }
-                        else
-                        {
-                            error = ARUTILS_ERROR_FTP_CODE;
+                            result = ARDATATRANSFER_ERROR_CANCELED;
                         }
                         
-                        if ((result == ARDATATRANSFER_OK) && (error == ARUTILS_OK))
-                        {
-                            media = (ARDATATRANSFER_Media_t *)calloc(1, sizeof(ARDATATRANSFER_Media_t));
-
-                            if (media == NULL)
-                            {
-                                result = ARDATATRANSFER_ERROR_ALLOC;
-                            }
-                            else
-                            {
-                                strncpy(media->name, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
-                                media->name[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
-                                sprintf(productID, "%04x_", ARDISCOVERY_getProductID(product));
-                                strncpy(media->fileName, productID, ARDATATRANSFER_MEDIA_NAME_SIZE);
-                                media->fileName[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
-                                strncat(media->fileName, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE - 1);
-                                strncpy(media->date, "", ARDATATRANSFER_MEDIA_DATE_SIZE);
-                                media->date[ARDATATRANSFER_MEDIA_DATE_SIZE - 1] = '\0';
-                                begin = strstr(media->name, "_");
-                                end = strstr(media->name, ".");
-                                if ((begin != NULL) && (end != NULL))
-                                {
-                                    int len = end - (++begin);
-                                    len = (len < ARDATATRANSFER_MEDIA_DATE_SIZE) ? len : (ARDATATRANSFER_MEDIA_DATE_SIZE - 1);
-                                    strncpy(media->date, begin, len);
-                                    media->date[len] = '\0';
-                                }
-
-                                media->size = fileSize;
-                                media->product = product;
-
-                                if (withThumbnail == 1)
-                                {
-                                    ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, mediaFtpList, remoteProduct, media);
-                                }
-                            }
-                        }
-
                         if (result == ARDATATRANSFER_OK)
                         {
-                            oldMedias = mediaList->medias;
-                            mediaList->medias = (ARDATATRANSFER_Media_t **)realloc(mediaList->medias, (mediaList->count + 1) * sizeof(ARDATATRANSFER_Media_t *));
+                            char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
+                            ARDATATRANSFER_Media_t **oldMedias;
+                            ARDATATRANSFER_Media_t *media = NULL;
+                            double fileSize;
+                            const char *begin;
+                            const char *end;
 
-                            if (mediaList->medias == NULL)
+                            strncpy(remotePath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
+                            remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                            strncat(remotePath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
+                            
+                            //do not pertorm ARUTILS_Ftp_Size that is too long, prefer decoding the FTP LIST
+                            if (ARUTILS_Ftp_List_GetItemSize(lineItem, lineSize, &fileSize) != NULL)
                             {
-                                mediaList->medias = oldMedias;
-                                result = ARDATATRANSFER_ERROR_ALLOC;
-                                free(media);
+                                error = ARUTILS_OK;
                             }
                             else
                             {
-                                mediaList->medias[mediaList->count] = media;
-                                mediaList->count++;
+                                error = ARUTILS_ERROR_FTP_CODE;
                             }
-                        }
-                        
-                        if ((result == ARDATATRANSFER_OK) && (availableMediaCallback != NULL) && (mediaList->count > 0))
-                        {
-                            availableMediaCallback(availableMediaArg, mediaList->medias[mediaList->count - 1]);
+                            
+                            if ((result == ARDATATRANSFER_OK) && (error == ARUTILS_OK))
+                            {
+                                media = (ARDATATRANSFER_Media_t *)calloc(1, sizeof(ARDATATRANSFER_Media_t));
+
+                                if (media == NULL)
+                                {
+                                    result = ARDATATRANSFER_ERROR_ALLOC;
+                                }
+                                else
+                                {
+                                    strncpy(media->name, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
+                                    media->name[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
+                                    strncpy(media->fileName, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
+                                    media->fileName[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
+                                    
+                                    strncpy(media->date, "", ARDATATRANSFER_MEDIA_DATE_SIZE);
+                                    media->date[ARDATATRANSFER_MEDIA_DATE_SIZE - 1] = '\0';
+                                    begin = strstr(media->name, "_");
+                                    if (begin != NULL)
+                                    {
+                                        begin = strstr(++begin, "_");
+                                    }
+                                    end = NULL;
+                                    if (begin != NULL)
+                                    {
+                                        end = strstr(++begin, ".");
+                                    }
+                                    if ((begin != NULL) && (end != NULL))
+                                    {
+                                        int len = end - begin;
+                                        len = (len < ARDATATRANSFER_MEDIA_DATE_SIZE) ? len : (ARDATATRANSFER_MEDIA_DATE_SIZE - 1);
+                                        strncpy(media->date, begin, len);
+                                        media->date[len] = '\0';
+                                    }
+
+                                    media->size = fileSize;
+                                    media->product = product;
+
+                                    if (withThumbnail == 1)
+                                    {
+                                        ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, mediaFtpList, remoteProduct, media);
+                                    }
+                                }
+                            }
+
+                            if (result == ARDATATRANSFER_OK)
+                            {
+                                oldMedias = mediaList->medias;
+                                mediaList->medias = (ARDATATRANSFER_Media_t **)realloc(mediaList->medias, (mediaList->count + 1) * sizeof(ARDATATRANSFER_Media_t *));
+
+                                if (mediaList->medias == NULL)
+                                {
+                                    mediaList->medias = oldMedias;
+                                    result = ARDATATRANSFER_ERROR_ALLOC;
+                                    free(media);
+                                }
+                                else
+                                {
+                                    mediaList->medias[mediaList->count] = media;
+                                    mediaList->count++;
+                                }
+                            }
+                            
+                            if ((result == ARDATATRANSFER_OK) && (availableMediaCallback != NULL) && (mediaList->count > 0))
+                            {
+                                availableMediaCallback(availableMediaArg, mediaList->medias[mediaList->count - 1]);
+                            }
                         }
                     }
                 }
@@ -433,16 +435,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
     if (result == ARDATATRANSFER_OK)
     {
         const char *prefixType = "";
-        strncpy(remotePath, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
-        remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncat(remotePath, ARDISCOVERY_getProductName(media->product), ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        
-        strncpy(remoteThumbnail, remotePath, ARUTILS_FTP_MAX_PATH_SIZE);
-        remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncat(remotePath, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        char *index = remotePath + strlen(remotePath);
-        while (index > remotePath && *index != '.')
+        char *index = media->name + strlen(media->name);
+        while (index > media->name && *index != '.')
         {
             index--;
         }
@@ -450,29 +444,30 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
         {
             index++;
             
-            if (strcmp(index, "jpg") == 0)
+            if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG) == 0)
             {
-                prefixType = ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_PHOTO;
+                prefixType = index;
             }
-            else if (strcmp(index, "mp4") == 0)
+            else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
             {
-                prefixType = ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_VIDEO;
+                prefixType = index;
             }
         }
         
-        strncat(remoteThumbnail, ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_THUMBNAIL, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
-        strncat(remoteThumbnail, prefixType, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncpy(remotePath, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncat(remotePath, ARDISCOVERY_getProductName(media->product), ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
+        strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
+        strncat(remotePath, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
+        
+        strncpy(remoteThumbnail, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncpy(remoteThumbnail, ARDISCOVERY_getProductName(media->product), ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
-        index = remoteThumbnail + strlen(remoteThumbnail);
-        while (index > remoteThumbnail && *index != '.')
+        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
         {
-            index--;
-        }        
-        if (*index == '.')
-        {
-            index++;
-            strncpy(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, strlen(ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG));
-            remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+            strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         }
         
         error = ARUTILS_Ftp_Delete(manager->mediasDownloader->deleteFtp, remotePath);
@@ -767,7 +762,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_
     
     if (result == ARDATATRANSFER_OK)
     {
-        manager->mediasDownloader->ftp = ARUTILS_Ftp_Connection_New(&manager->mediasDownloader->threadSem, deviceIP, 21, ARUTILS_FTP_ANONYMOUS, "", &error);
+        manager->mediasDownloader->ftp = ARUTILS_Ftp_Connection_New(&manager->mediasDownloader->threadSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
         
         if (error != ARUTILS_OK)
         {
@@ -807,9 +802,7 @@ void ARDATATRANSFER_MediasDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
 
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFER_Manager_t *manager, const char *fileList, const char *remoteDir, ARDATATRANSFER_Media_t *media)
 {
-    char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
-    const char* thumbailFile;
-    const char* nextFile = NULL;
+    char remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE];
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
     
@@ -832,48 +825,31 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
         {
             index++;
             
-            if (strcmp(index, "jpg") == 0)
+            if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG) == 0)
             {
-                prefixType = ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_PHOTO;
+                prefixType = index;
             }
-            else if (strcmp(index, "mp4") == 0)
+            else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
             {
-                prefixType = ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_VIDEO;
-            }
-        }
-        
-        strncpy(remotePath, remoteDir, ARUTILS_FTP_MAX_PATH_SIZE);
-        remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncat(remotePath, ARDATATRANSFER_MEDIAS_DOWNLOADER_PREFIX_THUMBNAIL, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        strncat(remotePath, prefixType, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        strncat(remotePath, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-        index = remotePath + strlen(remotePath);
-        while (index > remotePath && *index != '.')
-        {
-            index--;
-        }
-        
-        if (*index == '.')
-        {
-            index++;
-            strncpy(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, strlen(ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG));
-            remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        }
-        
-        thumbailFile = remotePath + strlen(remoteDir);
-        
-        if (ARUTILS_Ftp_List_GetNextItem(fileList, &nextFile, thumbailFile, 0, NULL, NULL) != NULL)
-        {
-            error = ARUTILS_Ftp_Get_WithBuffer(manager->mediasDownloader->listFtp, remotePath, &media->thumbnail, &media->thumbnailSize, NULL, NULL);
-            
-            if (error != ARUTILS_OK)
-            {
-                result = ARDATATRANSFER_ERROR_FTP;
+                prefixType = index;
             }
         }
-        else
+        
+        strncpy(remoteThumbnail, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncat(remoteThumbnail, ARDISCOVERY_getProductName(media->product), ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
         {
-            result = ARDATATRANSFER_ERROR_FILE;
+            strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        }
+        
+        error = ARUTILS_Ftp_Get_WithBuffer(manager->mediasDownloader->listFtp, remoteThumbnail, &media->thumbnail, &media->thumbnailSize, NULL, NULL);
+        
+        if (error != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
     
