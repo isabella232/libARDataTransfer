@@ -302,10 +302,13 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasInternal
                                 }
                                 else
                                 {
+                                    media->product = product;
                                     strncpy(media->name, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
                                     media->name[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
-                                    strncpy(media->fileName, fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
-                                    media->fileName[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
+                                    
+                                    strncpy(media->filePath, manager->mediasDownloader->localDirectory, ARDATATRANSFER_MEDIA_PATH_SIZE);
+                                    media->filePath[ARDATATRANSFER_MEDIA_PATH_SIZE - 1] = '\0';
+                                    strncat(media->filePath, fileName, ARDATATRANSFER_MEDIA_PATH_SIZE - strlen(media->filePath) - 1);
                                     
                                     strncpy(media->date, "", ARDATATRANSFER_MEDIA_DATE_SIZE);
                                     media->date[ARDATATRANSFER_MEDIA_DATE_SIZE - 1] = '\0';
@@ -328,7 +331,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasInternal
                                     }
 
                                     media->size = fileSize;
-                                    media->product = product;
 
                                     if (withThumbnail == 1)
                                     {
@@ -512,8 +514,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_AddMediaToQueue(ARDATATRAN
         {
             strncpy(newFtpMedia->media.name, media->name, ARDATATRANSFER_MEDIA_NAME_SIZE);
             newFtpMedia->media.name[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
-            strncpy(newFtpMedia->media.fileName, media->fileName, ARDATATRANSFER_MEDIA_NAME_SIZE);
-            newFtpMedia->media.fileName[ARDATATRANSFER_MEDIA_NAME_SIZE - 1] = '\0';
+            strncpy(newFtpMedia->media.filePath, media->filePath, ARDATATRANSFER_MEDIA_PATH_SIZE);
+            newFtpMedia->media.filePath[ARDATATRANSFER_MEDIA_PATH_SIZE - 1] = '\0';
             strncpy(newFtpMedia->media.date, media->date, ARDATATRANSFER_MEDIA_DATE_SIZE);
             newFtpMedia->media.date[ARDATATRANSFER_MEDIA_DATE_SIZE - 1] = '\0';
             newFtpMedia->media.size = media->size;
@@ -893,15 +895,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
         strncat(remotePath, ARDISCOVERY_getProductName(ftpMedia->media.product), ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, ftpMedia->media.name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-
-        strncpy(restorePath, manager->mediasDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+        
+        strncpy(restorePath, ftpMedia->media.filePath, ARUTILS_FTP_MAX_PATH_SIZE);
         restorePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncat(restorePath, ftpMedia->media.fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restorePath) - 1);
 
         strncpy(localPath, manager->mediasDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
         strncat(localPath, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
-        strncat(localPath, ftpMedia->media.fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
+        strncat(localPath, ftpMedia->media.name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
 
         errorResume = ARUTILS_FileSystem_GetFileSize(localPath, &localSize);
     }

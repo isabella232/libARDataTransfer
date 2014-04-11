@@ -15,6 +15,13 @@
  * @see ARDATATRANSFER_Media_t
  */
 #define ARDATATRANSFER_MEDIA_NAME_SIZE  128
+
+/**
+ * @brief Defines the media path size in characters
+ * @see ARDATATRANSFER_Media_t
+ */
+#define ARDATATRANSFER_MEDIA_PATH_SIZE  256
+
 /**
  * @brief Defines the media date size in characters
  * @see ARDATATRANSFER_Media_t
@@ -36,7 +43,7 @@ typedef struct
 {
     eARDISCOVERY_PRODUCT product;
     char name[ARDATATRANSFER_MEDIA_NAME_SIZE];
-    char fileName[ARDATATRANSFER_MEDIA_NAME_SIZE];
+    char filePath[ARDATATRANSFER_MEDIA_PATH_SIZE];
     char date[ARDATATRANSFER_MEDIA_DATE_SIZE];
     double size;
     uint8_t *thumbnail;
