@@ -37,7 +37,7 @@ jclass classMDMedia = NULL;
 jmethodID methodId_MDMedia_init = NULL;
 jmethodID methodId_MDMedia_getProductValue = NULL;
 jmethodID methodId_MDMedia_getName = NULL;
-jmethodID methodId_MDMedia_getFileName = NULL;
+jmethodID methodId_MDMedia_getFilePath = NULL;
 jmethodID methodId_MDMedia_getDate = NULL;
 jmethodID methodId_MDMedia_getSize = NULL;
 jmethodID methodId_MDMedia_getThumbnail = NULL;
@@ -617,11 +617,11 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
-            methodId_MDMedia_getFileName = (*env)->GetMethodID(env, classMDMedia, "getFileName", "()Ljava/lang/String;");
+            methodId_MDMedia_getFilePath = (*env)->GetMethodID(env, classMDMedia, "getFilePath", "()Ljava/lang/String;");
 
-            if (methodId_MDMedia_getFileName == NULL)
+            if (methodId_MDMedia_getFilePath == NULL)
             {
-                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "Media getFileName method not found");
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "Media getFilePath method not found");
                 error = JNI_FAILED;
             }
         }
@@ -678,7 +678,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(JNIEnv *env)
         methodId_MDMedia_init = NULL;
         methodId_MDMedia_getProductValue = NULL;
         methodId_MDMedia_getName = NULL;
-        methodId_MDMedia_getFileName = NULL;
+        methodId_MDMedia_getFilePath = NULL;
         methodId_MDMedia_getDate = NULL;
         methodId_MDMedia_getSize = NULL;
         methodId_MDMedia_getThumbnail = NULL;
@@ -689,11 +689,11 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
 {
     jint jProduct = 0;
     jstring jName = NULL;
-    jstring jFileName = NULL;
+    jstring jFilePath = NULL;
     jstring jDate = NULL;
     jfloat jSize = 0.f;
     const char *nativeName = NULL;
-    const char *nativeFileName = NULL;
+    const char *nativeFilePath = NULL;
     const char *nativeDate = NULL;
     int error = JNI_OK;
 
@@ -710,7 +710,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         if ((classMDMedia == NULL) ||
             (methodId_MDMedia_getProductValue == NULL) ||
             (methodId_MDMedia_getName == NULL) ||
-            (methodId_MDMedia_getFileName == NULL) ||
+            (methodId_MDMedia_getFilePath == NULL) ||
             (methodId_MDMedia_getDate == NULL) ||
             (methodId_MDMedia_getSize == NULL))
         {
@@ -723,7 +723,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         jProduct = (*env)->CallIntMethod(env, jMedia, methodId_MDMedia_getProductValue);
         jName = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getName);
-        jFileName = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getFileName);
+        jFilePath = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getFilePath);
         jDate = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getDate);
         jSize = (*env)->CallFloatMethod(env, jMedia, methodId_MDMedia_getSize);
     }
@@ -742,7 +742,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         media->product = jProduct;
         strcpy(media->name, nativeName ? nativeName : "");
-        strcpy(media->fileName, nativeFileName ? nativeFileName : "");
+        strcpy(media->filePath, nativeFilePath ? nativeFilePath : "");
         strcpy(media->date, nativeDate ? nativeDate : "");
         media->size = (double)jSize;
     }
@@ -753,9 +753,9 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         (*env)->ReleaseStringUTFChars(env, jName, nativeName);
     }
 
-    if (nativeFileName != NULL)
+    if (nativeFilePath != NULL)
     {
-        (*env)->ReleaseStringUTFChars(env, jName, nativeFileName);
+        (*env)->ReleaseStringUTFChars(env, jName, nativeFilePath);
     }
 
     if (nativeDate != NULL)
@@ -770,7 +770,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 {
     jobject jMedia = NULL;
     jstring jName = NULL;
-    jstring jFileName = NULL;
+    jstring jFilePath = NULL;
     jstring jDate = NULL;
     jbyteArray jThumbnail = NULL;
     int error = JNI_OK;
@@ -800,11 +800,11 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->fileName))
+    if ((error == JNI_OK) && (media->filePath))
     {
-        jFileName = (*env)->NewStringUTF(env, media->fileName);
+        jFilePath = (*env)->NewStringUTF(env, media->filePath);
 
-        if (jFileName == NULL)
+        if (jFilePath == NULL)
         {
             error = JNI_FAILED;
         }
@@ -837,7 +837,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 
     if (error == JNI_OK)
     {
-        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFileName, jDate, (jfloat)media->size, jThumbnail);
+        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, (jfloat)media->size, jThumbnail);
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);

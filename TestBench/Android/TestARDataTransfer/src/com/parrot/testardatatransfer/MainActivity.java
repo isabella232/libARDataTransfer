@@ -536,7 +536,7 @@ public class MainActivity
     public void didMediaAvailable(Object arg, ARDataTransferMedia media)
     {
     	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaAvailable: " + 
-    		media.getName() + ", " + media.getFileName() +  ", " + media.getProduct().toString());
+    		media.getName() + ", " + media.getFilePath() +  ", " + media.getProduct().toString());
     }
     
     public void TestARDataTransferAvailableMedia()
