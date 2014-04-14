@@ -43,18 +43,18 @@ sudo rm -rf "$JS_PATH"
 JS_ACADEMY_PATH="$JS_PATH/academy"
 sudo mkdir -p "$JS_ACADEMY_PATH"
 
-#echo "data1" | sudo tee -a "$JS_ACADEMY_PATH/0902_UUID0001_2014-01-21T160101+0100.pub"
+echo "data1" | sudo tee -a "$JS_ACADEMY_PATH/0902_UUID0101_2014-01-21T160101+0100.pub"
 sudo chown -R ftp:ftp "$JS_ACADEMY_PATH"
 
 JS_MEDIA_PATH="$JS_PATH/media"
 sudo mkdir -p "$JS_MEDIA_PATH"
 
-sudo cp photo_20131001_235901.jpg "$JS_MEDIA_PATH/Jumping Sumo_UUID0001_2014-01-21T160101+0100.jpg"
+sudo cp photo_20131001_235901.jpg "$JS_MEDIA_PATH/Jumping Sumo_UUID0101_2014-01-21T160101+0100.jpg"
 
 JS_THUMB_PATH="$JS_PATH/thumb"
 sudo mkdir -p "$JS_THUMB_PATH"
 
-sudo cp thumbnail_photo_20131001_235901.jpg "$JS_THUMB_PATH/Jumping Sumo_UUID0001_2014-01-21T160101+0100.jpg"
+sudo cp thumbnail_photo_20131001_235901.jpg "$JS_THUMB_PATH/Jumping Sumo_UUID0101_2014-01-21T160101+0100.jpg"
 
 sudo chown -R ftp:ftp "$JS_PATH"
 sudo ls -l "$JS_ACADEMY_PATH"
@@ -65,9 +65,14 @@ sudo ls -l "$JS_THUMB_PATH"
 MINIDRONE_PATH=$FTP_PATH/MiniDrone
 sudo rm -rf $MINIDRONE_PATH
 
-MINIDRONE_ACADEMY_PATH=$MINIDRONE_PATH/academy
-sudo mkdir -p $MINIDRONE_ACADEMY_PATH
+MINIDRONE_ACADEMY_PATH="$MINIDRONE_PATH/academy"
+sudo mkdir -p "$MINIDRONE_ACADEMY_PATH"
 
+echo "data1" | sudo tee -a "$MINIDRONE_ACADEMY_PATH/0902_UUID0201_2014-01-21T160101+0100.pub"
+sudo chown -R ftp:ftp "$MINIDRONE_ACADEMY_PATH"
+
+sudo chown -R ftp:ftp "$MINIDRONE_PATH"
+sudo ls -l "$MINIDRONE_ACADEMY_PATH"
 
 
 sudo service vsftpd stop
