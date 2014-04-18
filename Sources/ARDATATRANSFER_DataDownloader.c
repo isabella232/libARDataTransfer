@@ -152,6 +152,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
     char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
     char remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE];
     char localPath[ARUTILS_FTP_MAX_PATH_SIZE];
+    char productPathName[ARUTILS_FTP_MAX_PATH_SIZE];
     eARUTILS_ERROR errorFtp = ARUTILS_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
     char *productFtpList = NULL;
@@ -160,7 +161,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
     uint32_t dataFtpListLen = 0;
     const char *nextProduct = NULL;
     const char *nextData = NULL;
-    const char *productName;
     const char *fileName;
     int product;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
@@ -206,15 +206,15 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
             product = 0;
             while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
             {
-                productName = ARDISCOVERY_getProductName(product++);
+                ARDISCOVERY_getProductPathName(product, productPathName, sizeof(productPathName));
                 nextProduct = NULL;
-                fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productName, 1, NULL, NULL);
+                fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL);
 
                 if (fileName != NULL)
                 {
                     strncpy(remoteProduct, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
                     remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                    strncat(remoteProduct, productName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
+                    strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
 
                     error = ARUTILS_Ftp_List(manager->dataDownloader->ftp, remoteProduct, &dataFtpList, &dataFtpListLen);
@@ -299,6 +299,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         dataFtpListLen = 0;
                     }
                 }
+                product++;
             }
 
             if (productFtpList != NULL)
