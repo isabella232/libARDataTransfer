@@ -460,7 +460,7 @@ ARDATATRANSFER_Media_t * ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtInde
     {
         ARSAL_Mutex_Lock(&manager->mediasDownloader->mediasLock);
         
-        if (((index >= 0) || (index < manager->mediasDownloader->medias.count)))
+        if (((index >= 0) && (index < manager->mediasDownloader->medias.count)))
         {
             media = manager->mediasDownloader->medias.medias[index];
         }
