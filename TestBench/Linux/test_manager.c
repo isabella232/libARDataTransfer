@@ -149,14 +149,19 @@ void test_manager_data_downloader(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_Delete", result);
 }
 
+void test_manager_medias_downloader_available_media_callback(void* arg, ARDATATRANSFER_Media_t *media)
+{
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", media->name);
+}
+
 void test_manager_medias_downloader(const char *tmp)
 {
-    ARDATATRANSFER_MediaList_t mediaList;
     ARDATATRANSFER_Manager_t *manager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     ARSAL_Thread_t threadMediasDownloader;
     int resultSys;
     void *resultThread = NULL;
+    int count;
     int i;
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "**************************************************************");
@@ -167,14 +172,13 @@ void test_manager_medias_downloader(const char *tmp)
     result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
 
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
-
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
 
-    /*for (i=0; i<mediaList.count; i++)
+    //for (i=0; i<count; i++)
+    /*for (i=count-1; i>=0; i--)
     {
-        ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+        ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(manager, i, &result);
 
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
 
@@ -183,19 +187,20 @@ void test_manager_medias_downloader(const char *tmp)
         
         result = ARDATATRANSFER_MediasDownloader_DeleteMedia(manager, media);
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_DeleteMedia", result);
+        
+        count--;
     }*/
-
-    ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s:", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
 
     resultSys = ARSAL_Thread_Create(&threadMediasDownloader, ARDATATRANSFER_MediasDownloader_QueueThreadRun, manager);
 
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 0, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
+    
+    ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(manager, test_manager_medias_downloader_available_media_callback, NULL);
 
-    for (i=0; i<mediaList.count; i++)
+    for (i=0; i<count; i++)
     {
-        ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+        ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(manager, i, &result);
 
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
 
@@ -217,18 +222,17 @@ void test_manager_medias_downloader(const char *tmp)
 
 void test_manager_checking_parameters(const char *tmp)
 {
-    ARDATATRANSFER_MediaList_t mediaList;
     ARDATATRANSFER_Media_t media;
     ARDATATRANSFER_Manager_t *manager = NULL;
     ARSAL_Thread_t threadMediasDownloader;
     ARSAL_Thread_t threadDataDownloader;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys;
+    int count;
     void *resultThread = NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "**************************************************************");
 
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
     memset(&media, 0, sizeof(ARDATATRANSFER_Media_t));
 
     //Without Manager
@@ -262,12 +266,9 @@ void test_manager_checking_parameters(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_Delete", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_BAD_PARAMETER);
 
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_BAD_PARAMETER);
-
-    ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
 
     result = ARDATATRANSFER_MediasDownloader_AddMediaToQueue(manager, NULL, NULL, NULL, NULL, NULL);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_AddMediaToQueue", result);
@@ -297,12 +298,9 @@ void test_manager_checking_parameters(const char *tmp)
     resultSys = ARSAL_Thread_Join(threadDataDownloader, &resultThread);
 
     //Without MediasMananger
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_NOT_INITIALIZED);
-
-    ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
 
     result = ARDATATRANSFER_MediasDownloader_AddMediaToQueue(manager, NULL, NULL, NULL, NULL, NULL);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_AddMediaToQueue", result);
@@ -342,12 +340,12 @@ void test_manager_checking_parameters(const char *tmp)
 
 void test_manager_checking_run_cancel(const char *tmp)
 {
-    ARDATATRANSFER_MediaList_t mediaList;
     ARDATATRANSFER_Manager_t *manager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     ARSAL_Thread_t threadDataDownloader;
     ARSAL_Thread_t threadMediasDownloader;
     int resultSys;
+    int count;
     void *resultThread = NULL;
     int i;
 
@@ -381,15 +379,13 @@ void test_manager_checking_run_cancel(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
-
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    for (i=0; i<mediaList.count; i++)
+    for (i=0; i<count; i++)
     {
-        ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+        ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(manager, i, &result);
 
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
 
@@ -398,20 +394,17 @@ void test_manager_checking_run_cancel(const char *tmp)
         test_manager_assert(result == ARDATATRANSFER_OK);
     }
 
-    ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
-
     resultSys = ARSAL_Thread_Create(&threadMediasDownloader, ARDATATRANSFER_MediasDownloader_QueueThreadRun, manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARSAL_Thread_Create - ARDATATRANSFER_MediasDownloader_QueueThreadRun", resultSys);
     test_manager_assert(resultSys == 0);
 
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, &mediaList, 1);
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    for (i=0; i<mediaList.count; i++)
+    for (i=0; i<count; i++)
     {
-        ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+        ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(manager, i, &result);
 
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
 
@@ -444,16 +437,15 @@ void test_manager_checking_run_cancel(const char *tmp)
 
 void test_manager_checking_running(const char *tmp)
 {
-    ARDATATRANSFER_MediaList_t mediaList;
     ARSAL_Thread_t threadMediasDownloader;
     ARSAL_Thread_t threadDataDownloader;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys;
+    int count;
     void *resultThread = NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "**************************************************************");
 
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
     ARSAL_Sem_Init(&semRunning, 0, 0);
 
     managerRunning = ARDATATRANSFER_Manager_New(&result);
@@ -483,13 +475,13 @@ void test_manager_checking_running(const char *tmp)
         struct timespec tm;
         int i;
 
-        result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(managerRunning, &mediaList, 1);
+        count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(managerRunning, 1, &result);
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
         test_manager_assert(result == ARDATATRANSFER_OK);
 
-        for (i=0; i<mediaList.count; i++)
+        for (i=0; i<count; i++)
         {
-            ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+            ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(managerRunning, i, &result);
 
             ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
 
@@ -497,9 +489,6 @@ void test_manager_checking_running(const char *tmp)
             ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_AddMediaToQueue", result);
             test_manager_assert(result == ARDATATRANSFER_OK);
         }
-
-        ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-        ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
 
         tm.tv_sec = RUN_TIMEOUT;
         tm.tv_nsec = 0;
@@ -534,26 +523,25 @@ void test_manager_checking_running(const char *tmp)
 void * test_manager_checking_thread_medias_list(void *arg)
 {
     test_manager_thread_t *thread = (test_manager_thread_t*)arg;
-    ARDATATRANSFER_MediaList_t mediaList;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
+    int count;
     unsigned int timeout;
     struct timespec tm;
     int i;
     
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "");
     srand(time(NULL));
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
     
     do
     {
-        result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(thread->manager, &mediaList, 1);
+        count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(thread->manager, 1, &result);
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
         test_manager_assert(result == ARDATATRANSFER_OK);
         
-        for (i=0; i<mediaList.count; i++)
+        for (i=0; i<count; i++)
         {
-            ARDATATRANSFER_Media_t *media = mediaList.medias[i];
+            ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(thread->manager, i, &result);
             
             ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "media, name: %s, date: %s, size: %0.f, thumbnail: %d\n", media->name, media->date, media->size, media->thumbnailSize);
             
@@ -561,9 +549,6 @@ void * test_manager_checking_thread_medias_list(void *arg)
             ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_AddMediaToQueue", result);
             test_manager_assert(result == ARDATATRANSFER_OK);
         }
-    
-        ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
-        ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_MediasDownloader_FreeMediaList");
         
         timeout = ((unsigned int)rand()) & 0x0F;
         //tm.tv_sec = RUN_TIMEOUT;

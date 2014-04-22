@@ -52,19 +52,6 @@ typedef struct
 } ARDATATRANSFER_Media_t;
 
 /**
- * @brief Initialize the MediasDownloader
- * @param medias The pointer address of the media list
- * @param count The number of medias in the media list
- * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias (), ARDATATRANSFER_Media_t
- */
-typedef struct
-{
-    ARDATATRANSFER_Media_t **medias;
-    int count;
-    
-} ARDATATRANSFER_MediaList_t;
-
-/**
  * @brief Available media callback called for each media found
  * @param arg The pointer of the user custom argument
  * @param media The availble media found
@@ -109,15 +96,25 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New (ARDATATRANSFER_Manage
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete (ARDATATRANSFER_Manager_t *manager);
 
 /**
- * @brief Get the medias list available form the Device
+ * @brief Get the medias count available form the Device
  * @warning This function allocates memory
  * @param manager The pointer of the ARDataTransfer Manager
- * @param [out] mediaList The list of medias
+ * @param [out] result The On success, set ARDATATRANSFER_OK. Otherwise, it set an error number of eARDATATRANSFER_ERROR
  * @param withThumbnail The flag to return thumbnail, 0 no thumbnail is returned, 1 thumbnails are returned
- * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
- * @see ARDATATRANSFER_MediasDownloader_FreeMediaList ()
+ * @retval On success, the number of media found else 0.
+ * @see ARDATATRANSFER_MediasDownloader_New ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediaList_t *mediaList, int withThumbnail);
+int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (ARDATATRANSFER_Manager_t *manager, int withThumbnail, eARDATATRANSFER_ERROR *result);
+
+/**
+ * @brief Get the media form the the medias list at the given index
+ * @warning This function allocates memory
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @param [out] result The On success, set ARDATATRANSFER_OK. Otherwise, it set an error number of eARDATATRANSFER_ERROR
+ * @retval On success, the adresse of the media found else null.
+ * @see ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync ()
+ */
+ ARDATATRANSFER_Media_t * ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(ARDATATRANSFER_Manager_t *manager, int index, eARDATATRANSFER_ERROR *result);
 
 /**
  * @brief Get the medias list available form the Device
@@ -137,13 +134,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync (A
  * @see ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (), ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync ()
  */
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(ARDATATRANSFER_Manager_t *manager);
-
-/**
- * @brief Free a medias list
- * @param mediaList The list of medias
- * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
- */
-void ARDATATRANSFER_MediasDownloader_FreeMediaList(ARDATATRANSFER_MediaList_t *mediaList);
 
 /**
  * @brief Delete the media form the Device
