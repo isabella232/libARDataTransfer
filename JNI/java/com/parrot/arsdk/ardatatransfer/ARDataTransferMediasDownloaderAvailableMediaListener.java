@@ -15,5 +15,5 @@ public interface ARDataTransferMediasDownloaderAvailableMediaListener
      * @param error ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
      * @return void
      */
-    void didMediaAvailable(Object arg, ARDataTransferMedia media);
+    void didMediaAvailable(Object arg, ARDataTransferMedia media, int index);
 }

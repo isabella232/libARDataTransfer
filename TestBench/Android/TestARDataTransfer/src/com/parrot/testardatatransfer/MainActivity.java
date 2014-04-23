@@ -1,7 +1,6 @@
 package com.parrot.testardatatransfer;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -257,6 +256,8 @@ public class MainActivity
         	//mediasManager.cancelQueueThread();
         	
         	int count = mediasManager.getAvailableMediasSync(true);
+        	
+        	mediasManager.getAvailableMediasAsync(this, this);
         	
         	for (int i=0; i<count; i++)
         	{
@@ -536,10 +537,10 @@ public class MainActivity
         }
     }
     
-    public void didMediaAvailable(Object arg, ARDataTransferMedia media)
+    public void didMediaAvailable(Object arg, ARDataTransferMedia media, int index)
     {
-    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaAvailable: " + 
-    		media.getName() + ", " + media.getFilePath() +  ", " + media.getProduct().toString());
+    	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaAvailable: "+ index + " " +
+    		media.getName() /*+ ", " + media.getFilePath()*/ +  ", " + media.getProduct().toString());
     }
     
     public void TestARDataTransferAvailableMedia()

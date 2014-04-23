@@ -172,10 +172,11 @@ void ARDATATRANSFER_JNI_MediasDownloader_CompletionCallback(void* arg, ARDATATRA
  * @brief Callback that give e new discoverd media
  * @param arg The arg
  * @param media The media
+ * @param index The media index in the internal medias list
  * @retval void
  * @see ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI
  */
-void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDATATRANSFER_Media_t *media);
+void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDATATRANSFER_Media_t *media, int index);
 
 /**
  * @brief Free Callbacks structure

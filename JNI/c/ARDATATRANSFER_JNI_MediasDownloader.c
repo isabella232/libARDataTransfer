@@ -496,11 +496,11 @@ void ARDATATRANSFER_JNI_MediasDownloader_CompletionCallback(void* arg, ARDATATRA
     }
 }
 
-void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDATATRANSFER_Media_t *media)
+void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDATATRANSFER_Media_t *media, int index)
 {
     ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t*)arg;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%x, %s", (int)arg, media ? media->name : "null");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%d %x, %s", index, (int)arg, media ? media->name : "null");
 
     if (callbacks != NULL)
     {
@@ -536,7 +536,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDAT
 
 			if ((error == JNI_OK) && (env != NULL) && (callbacks->jAvailableMediaListener != NULL) && (methodId_MDListener_didMediaAvailable != NULL))
 			{
-				(*env)->CallVoidMethod(env, callbacks->jAvailableMediaListener, methodId_MDListener_didMediaAvailable, callbacks->jAvailableMediaArg, jMedia);
+				(*env)->CallVoidMethod(env, callbacks->jAvailableMediaListener, methodId_MDListener_didMediaAvailable, callbacks->jAvailableMediaArg, jMedia, (jint)index);
 			}
 
 	        if ((env != NULL) && (jMedia != NULL))
@@ -930,7 +930,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewListenersJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
-            methodId_MDListener_didMediaAvailable = (*env)->GetMethodID(env, classMDAvailableListener, "didMediaAvailable", "(Ljava/lang/Object;Lcom/parrot/arsdk/ardatatransfer/ARDataTransferMedia;)V");
+            methodId_MDListener_didMediaAvailable = (*env)->GetMethodID(env, classMDAvailableListener, "didMediaAvailable", "(Ljava/lang/Object;Lcom/parrot/arsdk/ardatatransfer/ARDataTransferMedia;I)V");
 
             if (methodId_MDListener_didMediaAvailable == NULL)
             {
