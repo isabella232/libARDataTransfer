@@ -149,9 +149,9 @@ void test_manager_data_downloader(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_Delete", result);
 }
 
-void test_manager_medias_downloader_available_media_callback(void* arg, ARDATATRANSFER_Media_t *media)
+void test_manager_medias_downloader_available_media_callback(void* arg, ARDATATRANSFER_Media_t *media, int index)
 {
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", media->name);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%d, %s", index, media->name);
 }
 
 void test_manager_medias_downloader(const char *tmp)
@@ -660,7 +660,7 @@ void test_manager_checking_running_signal()
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_CancelQueueThread", result);
 }
 
-void test_manager_available_media_callback(void* arg, ARDATATRANSFER_Media_t *media)
+void test_manager_available_media_callback(void* arg, ARDATATRANSFER_Media_t *media, int index)
 {
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s, %s, %s, %d, %d, %s", ARDISCOVERY_getProductName(media->product), media->name, media->date, (int)media->size, (int)media->thumbnailSize, (char *)arg);
     

@@ -55,9 +55,10 @@ typedef struct
  * @brief Available media callback called for each media found
  * @param arg The pointer of the user custom argument
  * @param media The availble media found
+ * @param index The index of the media in the internal list
  * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
  */
-typedef void (*ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t) (void* arg, ARDATATRANSFER_Media_t *media);
+typedef void (*ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t) (void* arg, ARDATATRANSFER_Media_t *media, int index);
 
 /**
  * @brief Progress callback of the Media download

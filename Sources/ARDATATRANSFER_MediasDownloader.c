@@ -432,7 +432,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
             
             ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, media);
             
-            availableMediaCallback(availableMediaArg, media);
+            availableMediaCallback(availableMediaArg, media, i);
         }
         
         ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
