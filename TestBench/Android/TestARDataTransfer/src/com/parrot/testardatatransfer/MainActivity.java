@@ -31,7 +31,7 @@ public class MainActivity
 {
 	public static String APP_TAG = "TestARDataTransfer "; 
         
-	public static String DRONE_IP = "172.20.5.117";
+	public static String DRONE_IP = "172.20.5.146";
 	//public static String DRONE_IP = "192.168.1.1";
 	public static int DRONE_PORT = 21;
 	
@@ -62,8 +62,8 @@ public class MainActivity
 		
         Log.d("DBG", APP_TAG + "onCreate");
         
-        LoadModules(true);
-        //LoadModules(false);
+        //LoadModules(true);
+        LoadModules(false);
         
         Button test = (Button)this.findViewById(R.id.testJni);
         
@@ -187,8 +187,8 @@ public class MainActivity
         //LoadModules(true);
         //LoadModules(false);
         
-        TestDataDownloader();
-        //TestMediasDownloader();
+        //TestDataDownloader();
+        TestMediasDownloader();
     }
     
     private void TestDataDownloader()
@@ -256,10 +256,11 @@ public class MainActivity
         	
         	//mediasManager.cancelQueueThread();
         	
-        	List<ARDataTransferMedia> medias = mediasManager.getAvailableMediasSync(true);
+        	int count = mediasManager.getAvailableMediasSync(true);
         	
-        	for (ARDataTransferMedia media : medias)
+        	for (int i=0; i<count; i++)
         	{
+        		ARDataTransferMedia media = mediasManager.getAvailableMediaAtIndex(i);
         		Log.d("DBG", APP_TAG + "media name:" + media.getName() + ", date: " + media.getDate() + ", size: " + media.getSize() + ", thumbnail: " + media.getThumbnail().length);
         		Log.d("DBG", APP_TAG + "thumbnail: " + new String(media.getThumbnail()));
         		
@@ -303,7 +304,7 @@ public class MainActivity
 	    	Runnable mediasDownloader = null;
 	    	Thread dataThread = null;
 	    	Thread mediasThread = null;
-	    	List<ARDataTransferMedia> mediaList = null;
+	    	int mediasCount = 0;
 	    	ARDATATRANSFER_ERROR_ENUM result = ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK;
 	    	
 	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
@@ -397,7 +398,7 @@ public class MainActivity
 	        assertError(result == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED);
 	        
 	        try { 
-	        	mediaList = mediasManager.getAvailableMediasSync(true); 
+	        	mediasCount = mediasManager.getAvailableMediasSync(true);
 	        	Log.d("DBG", "getAvailableMedias ERROR"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "getAvailableMedias " + (e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED ? "OK" : "ERROR"));
@@ -429,7 +430,7 @@ public class MainActivity
 	        }
 	        	        
 	        try {
-	        	mediaList = mediasManager.getAvailableMediasSync(true);
+	        	mediasCount = mediasManager.getAvailableMediasSync(true);
 	        	Log.d("DBG", "getAvailableMedias OK"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "getAvailableMedias " + e.toString());
@@ -437,7 +438,8 @@ public class MainActivity
 	        }
 	        
 	        try {
-		        mediasManager.addMediaToQueue(0 != mediaList.size() ? mediaList.get(0) : null, null, null, null, null);
+	        	mediasManager.addMediaToQueue(0 != mediasCount ? mediasManager.getAvailableMediaAtIndex(0) : null, null, null, null, null);
+	        	
 		        Log.d("DBG", "addMediaToQueue OK");
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "addMediaToQueue " + e.toString());
@@ -501,10 +503,11 @@ public class MainActivity
             
             do
             {
-                List<ARDataTransferMedia> medias = mediasManager.getAvailableMediasSync(true);
+            	int count = mediasManager.getAvailableMediasSync(true);
         	
-				for (ARDataTransferMedia media : medias)
+            	for (int i=0; i<count; i++)
 				{
+					ARDataTransferMedia media = mediasManager.getAvailableMediaAtIndex(i);
 					Log.d("DBG", APP_TAG + "media name:" + media.getName() + ", date: " + media.getDate() + ", size: " + media.getSize() + ", thumbnail: " + media.getThumbnail().length);
 					//Log.d("DBG", APP_TAG + "thumbnail: " + new String(media.getThumbnail()));
 				

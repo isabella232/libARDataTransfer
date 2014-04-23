@@ -99,16 +99,6 @@ int ARDATATRANSFER_JNI_Manager_NewERROR_ENUM_JNI(JNIEnv *env);
 void ARDATATRANSFER_JNI_Manager_FreeERROR_ENUM_JNI(JNIEnv *env);
 
 /**
- * @brief Add a ARDataTransferMedia to the list
- * @param env The java env
- * @param jMediaList The media list
- * @param media The native media
- * @retval true if Success, else false
- * @see ARDATATRANSFER_JNI_MediasDownloader_NewMedia
- */
-jboolean ARDATATRANSFER_JNI_MediasDownloader_AddMedia(JNIEnv *env, jobject jMediaList, ARDATATRANSFER_Media_t *media);
-
-/**
  * @brief Create a new ARDataTransferMedia
  * @param env The java env
  * @param media The native media
@@ -141,22 +131,6 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env);
  * @see ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI
  */
 void ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(JNIEnv *env);
-
-/**
- * @brief Get the List JNI class
- * @param env The java env
- * @retval JNI_TRUE if Success, else JNI_FALSE
- * @see ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI
- */
-int ARDATATRANSFER_JNI_MediasDownloader_NewListJNI(JNIEnv *env);
-
-/**
- * @brief Free the List JNI class
- * @param env The java env
- * @retval void
- * @see ARDATATRANSFER_JNI_MediasDownloader_NewListJNI
- */
-void ARDATATRANSFER_JNI_MediasDownloader_FreeListJNI(JNIEnv *env);
 
 /**
  * @brief Get the ARDataTransferMediasDownloaderProgressListener and ARDataTransferMediasDownloaderCompletionListener JNI classes

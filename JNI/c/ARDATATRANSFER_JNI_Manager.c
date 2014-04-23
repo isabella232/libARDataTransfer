@@ -141,7 +141,6 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManage
             ARDATATRANSFER_JNI_Manager_FreeERROR_ENUM_JNI(env);
 
             ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(env);
-            ARDATATRANSFER_JNI_MediasDownloader_FreeListJNI(env);
             ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(env);
         }
     }

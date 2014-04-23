@@ -31,8 +31,6 @@
 
 #define ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG       "JNI"
 
-jmethodID methodId_List_add = NULL;
-
 jclass classMDMedia = NULL;
 jmethodID methodId_MDMedia_init = NULL;
 jmethodID methodId_MDMedia_getProductValue = NULL;
@@ -65,11 +63,6 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMe
 
     if (error == JNI_OK)
     {
-        error = ARDATATRANSFER_JNI_MediasDownloader_NewListJNI(env);
-    }
-
-    if (error == JNI_OK)
-    {
         error = ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(env);
     }
 
@@ -97,11 +90,6 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     if (error == JNI_OK)
     {
         error = ARDATATRANSFER_JNI_MediasDownloader_NewListenersJNI(env);
-    }
-
-    if (error == JNI_OK)
-    {
-        error = ARDATATRANSFER_JNI_MediasDownloader_NewListJNI(env);
     }
 
     if (error == JNI_OK)
@@ -140,34 +128,52 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediasSync(JNIEnv *env, jobject jThis, jlong jManager, jobject jMediaList, jboolean jWithThumbnail)
+JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediasSync(JNIEnv *env, jobject jThis, jlong jManager, jboolean jWithThumbnail)
 {
     ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
-    ARDATATRANSFER_MediaList_t mediaList;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
-    int i;
+    int count = 0;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
 
-    memset(&mediaList, 0, sizeof(ARDATATRANSFER_MediaList_t));
+    count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(nativeManager, (jWithThumbnail == JNI_TRUE) ? 1 : 0, &result);
 
-    result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(nativeManager, &mediaList, (jWithThumbnail == JNI_TRUE) ? 1 : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return %d, count %d", result, count);
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return %d, count %d", result, mediaList.count);
-
-    if ((ARDATATRANSFER_OK == result) && (mediaList.medias != NULL))
+    if (result != ARDATATRANSFER_OK)
     {
-        for (i=0; i<mediaList.count; i++)
-        {
-            ARDATATRANSFER_Media_t *media = mediaList.medias[i];
-
-            ARDATATRANSFER_JNI_MediasDownloader_AddMedia(env, jMediaList, media);
-        }
+        ARDATATRANSFER_JNI_Manager_ThrowARDataTransferException(env, result);
     }
 
-    ARDATATRANSFER_MediasDownloader_FreeMediaList(&mediaList);
+    return count;
+}
 
-    return result;
+JNIEXPORT jobject JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediaAtIndex(JNIEnv *env, jobject jThis, jlong jManager, jint jIndex)
+{
+    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    int nativeIndex = (int)jIndex;
+    ARDATATRANSFER_Media_t *nativeMedia = NULL;
+    jobject jMedia = NULL;
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+
+    nativeMedia = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(nativeManager, nativeIndex, &result);
+
+    if (result == ARDATATRANSFER_OK)
+    {
+        jMedia = ARDATATRANSFER_JNI_MediasDownloader_NewMedia(env, nativeMedia);
+    }
+
+    if (jMedia == NULL)
+    {
+        result = ARDATATRANSFER_ERROR_ALLOC;
+    }
+
+    if (result != ARDATATRANSFER_OK)
+    {
+        ARDATATRANSFER_JNI_Manager_ThrowARDataTransferException(env, result);
+    }
+
+    return jMedia;
 }
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediasAsync(JNIEnv *env, jobject jThis, jlong jManager, jobject jAvailableMediaListener, jobject jAvailableMediaArg)
@@ -843,107 +849,6 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);
 
     return jMedia;
-}
-
-jboolean ARDATATRANSFER_JNI_MediasDownloader_AddMedia(JNIEnv *env, jobject jMediaList, ARDATATRANSFER_Media_t *media)
-{
-    jobject jMedia = NULL;
-    jboolean jret = JNI_FALSE;
-    int error = JNI_OK;
-
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s", media ? media->name : "null");
-
-    if ((env == NULL) || (jMediaList == NULL) || (media == NULL))
-    {
-        error = JNI_FAILED;
-    }
-
-    if (error == JNI_OK)
-    {
-        if (/*(classList == NULL) ||*/ (methodId_List_add == NULL))
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if (error == JNI_OK)
-    {
-        error = ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(env);
-    }
-
-    if (error == JNI_OK)
-    {
-        jMedia = ARDATATRANSFER_JNI_MediasDownloader_NewMedia(env, media);
-
-        if (jMedia == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if (error == JNI_OK)
-    {
-        jret = (*env)->CallBooleanMethod(env, jMediaList, methodId_List_add, jMedia);
-    }
-
-    return jret;
-}
-
-int ARDATATRANSFER_JNI_MediasDownloader_NewListJNI(JNIEnv *env)
-{
-    jclass classList = NULL;
-    int error = JNI_OK;
-
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
-
-    if (env == NULL)
-    {
-        error = JNI_FAILED;
-    }
-
-    if (methodId_List_add == NULL)
-    {
-        if (error == JNI_OK)
-        {
-            classList = (*env)->FindClass(env, "java/util/List");
-
-            if (classList == NULL)
-            {
-                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "List class not found");
-                error = JNI_FAILED;
-            }
-        }
-
-        if (error == JNI_OK)
-        {
-            methodId_List_add = (*env)->GetMethodID(env, classList, "add", "(Ljava/lang/Object;)Z");
-
-            if (methodId_List_add == NULL)
-            {
-                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "List add method not found");
-                error = JNI_FAILED;
-            }
-        }
-    }
-
-    return error;
-}
-
-void ARDATATRANSFER_JNI_MediasDownloader_FreeListJNI(JNIEnv *env)
-{
-    int error = JNI_OK;
-
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
-
-    if (env == NULL)
-    {
-        error = JNI_FAILED;
-    }
-
-    if (error == JNI_OK)
-    {
-        methodId_List_add = NULL;
-    }
 }
 
 int ARDATATRANSFER_JNI_MediasDownloader_NewListenersJNI(JNIEnv *env)
