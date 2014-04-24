@@ -175,8 +175,7 @@ void test_manager_medias_downloader(const char *tmp)
     count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync", result);
 
-    //for (i=0; i<count; i++)
-    /*for (i=count-1; i>=0; i--)
+    /*for (i=0; i<count; i++)
     {
         ARDATATRANSFER_Media_t *media = ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtIndex(manager, i, &result);
 
@@ -187,8 +186,6 @@ void test_manager_medias_downloader(const char *tmp)
         
         result = ARDATATRANSFER_MediasDownloader_DeleteMedia(manager, media);
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_DeleteMedia", result);
-        
-        count--;
     }*/
 
     resultSys = ARSAL_Thread_Create(&threadMediasDownloader, ARDATATRANSFER_MediasDownloader_QueueThreadRun, manager);

@@ -163,9 +163,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete(ARDATATRANSFER_Mana
             }
             else
             {
-                ARSAL_Sem_Destroy(&manager->mediasDownloader->mediasLock);
-                ARDATATRANSFER_MediasDownloader_FreeMediaList(&manager->mediasDownloader->medias);
-                
                 ARSAL_Sem_Post(&manager->mediasDownloader->listSem);
                 ARDATATRANSFER_MediasDownloader_CancelQueueThread(manager);
                 
@@ -176,6 +173,9 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete(ARDATATRANSFER_Mana
                 ARSAL_Sem_Destroy(&manager->mediasDownloader->threadSem);
                 
                 ARDATATRANSFER_MediasQueue_Delete(&manager->mediasDownloader->queue);
+                
+                ARSAL_Mutex_Destroy(&manager->mediasDownloader->mediasLock);
+                ARDATATRANSFER_MediasDownloader_FreeMediaList(&manager->mediasDownloader->medias);
                 
                 free(manager->mediasDownloader);
                 manager->mediasDownloader = NULL;
@@ -402,6 +402,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
 {
     ARDATATRANSFER_Media_t *media;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
     int i;
     
     if ((manager == NULL) || (availableMediaCallback == NULL))
@@ -426,8 +427,15 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
     {
         ARSAL_Mutex_Lock(&manager->mediasDownloader->mediasLock);
 
-        for (i=0; i<manager->mediasDownloader->medias.count; i++)
+        for (i=0; (resultUtils == ARUTILS_OK) && (i<manager->mediasDownloader->medias.count); i++)
         {
+            resultUtils = ARUTILS_Ftp_IsCanceled(manager->mediasDownloader->listFtp);
+            
+            if (resultUtils != ARUTILS_OK)
+            {
+                result = ARDATATRANSFER_ERROR_CANCELED;
+            }
+            
             media = manager->mediasDownloader->medias.medias[i];
             
             ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, media);
@@ -1025,7 +1033,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_RemoveMediaFromMediaList(A
         {
             curMedia = manager->mediasDownloader->medias.medias[i];
             
-            if (strcmp(curMedia->filePath, media->filePath) == 0)
+            if ((curMedia != NULL) && (strcmp(curMedia->filePath, media->filePath) == 0))
             {
                 foundIndex = i;
             }
@@ -1033,14 +1041,9 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_RemoveMediaFromMediaList(A
         
         if (foundIndex != -1)
         {
+            curMedia = manager->mediasDownloader->medias.medias[foundIndex];
+            manager->mediasDownloader->medias.medias[foundIndex] = NULL;
             free(curMedia);
-            
-            if ((i + 1) < manager->mediasDownloader->medias.count)
-            {
-                memcpy(&manager->mediasDownloader->medias.medias[i], &manager->mediasDownloader->medias.medias[i + 1], (manager->mediasDownloader->medias.count - (i + 1)) * sizeof(ARDATATRANSFER_Media_t *));
-            }
-            manager->mediasDownloader->medias.medias[manager->mediasDownloader->medias.count - 1] = NULL;
-            manager->mediasDownloader->medias.count--;
         }
         
         ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
@@ -1063,12 +1066,15 @@ void ARDATATRANSFER_MediasDownloader_FreeMediaList(ARDATATRANSFER_MediaList_t *m
             {
                 ARDATATRANSFER_Media_t *media = mediaList->medias[i];
                 
-                if (media->thumbnail != NULL)
+                if (media != NULL)
                 {
-                    free(media->thumbnail);
+                    if (media->thumbnail != NULL)
+                    {
+                        free(media->thumbnail);
+                    }
+                    
+                    free(media);
                 }
-                
-                free(media);
             }
             mediaList->medias = NULL;
         }
