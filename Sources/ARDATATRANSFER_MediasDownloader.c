@@ -262,6 +262,9 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                     resultUtils = ARUTILS_Ftp_List(manager->mediasDownloader->listFtp, remoteProduct, &mediaFtpList, &mediaFtpListLen);
                     if (resultUtils == ARUTILS_OK)
                     {
+                        int fileType;
+                        const char *index;
+                        
                         nextMedia = NULL;
                         while ((result == ARDATATRANSFER_OK)
                                && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize)) != NULL)
@@ -273,7 +276,32 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                 result = ARDATATRANSFER_ERROR_CANCELED;
                             }
                             
-                            if (result == ARDATATRANSFER_OK)
+                            //Check file type
+                            fileType = 0;
+                            index = fileName + strlen(fileName);
+                            while (index > fileName && *index != '.')
+                            {
+                                index--;
+                            }
+                            if (*index == '.')
+                            {
+                                index++;
+                                if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG) == 0)
+                                {
+                                    fileType = 1;
+                                }
+                                else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
+                                {
+                                    fileType = 1;
+                                }
+                            }
+                            
+                            if (strncmp(fileName, productPathName, strlen(productPathName)) != 0)
+                            {
+                                fileType = 0;
+                            }
+                            
+                            if (result == ARDATATRANSFER_OK && (fileType == 1))
                             {
                                 char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
                                 ARDATATRANSFER_Media_t **oldMedias;
