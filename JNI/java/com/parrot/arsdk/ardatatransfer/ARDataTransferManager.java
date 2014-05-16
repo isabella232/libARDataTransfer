@@ -1,19 +1,22 @@
 
 package com.parrot.arsdk.ardatatransfer;
 
+import com.parrot.arsdk.arsal.ARSALPrint;
+
 /**
  * ARDataTransfer Manager
  * @author david.flattin.ext@parrot.com
  * @date 19/12/2013
  */
 public class ARDataTransferManager
-{	
+{
     /* Native Functions */
     private native static boolean nativeStaticInit();
     private native long nativeNew() throws ARDataTransferException;
     private native void nativeDelete(long manager);
  
     /*  Members  */
+    private static final String TAG = ARDataTransferManager.class.getSimpleName ();
     private long nativeManager = 0;
     private boolean isInit = false;
     ARDataTransferDataDownloader dataDownloader = null;
@@ -26,7 +29,7 @@ public class ARDataTransferManager
      * @return void
      * @throws ARDataTransferException if error
      */
-    public void createManager() throws ARDataTransferException
+    public ARDataTransferManager() throws ARDataTransferException
     {
         if (isInit == false)
         {
@@ -39,17 +42,46 @@ public class ARDataTransferManager
         }
     }
     
-	/**
-     * Closes ARDataTransfer Manager
-     * @return void
-     */    
-    public void closeManager()
+    /**
+     * Deletes the ARDataTransferManager.<br>
+     */  
+    public void dispose()
     {
-    	if (nativeManager != 0)
+        if (nativeManager != 0)
         {
+            if (dataDownloader != null)
+            {
+                dataDownloader.dispose();
+            }
+            
+            if(mediasDownloader != null)
+            {
+                mediasDownloader.dispose();
+            }
+            
             nativeDelete(nativeManager);
             nativeManager = 0;
             isInit = false;
+        }
+    }
+    
+    /**
+     * Destructor<br>
+     * This destructor tries to avoid leaks if the object was not disposed
+     */
+    protected void finalize () throws Throwable
+    {
+        try
+        {
+            if (isInit)
+            {
+                ARSALPrint.e (TAG, "Object " + this + " was not disposed !");
+                dispose ();
+            }
+        }
+        finally
+        {
+            super.finalize ();
         }
     }
     

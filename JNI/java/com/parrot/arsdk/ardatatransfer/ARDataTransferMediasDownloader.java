@@ -4,6 +4,7 @@ package com.parrot.arsdk.ardatatransfer;
 import java.lang.Runnable;
 import java.util.Vector;
 import java.util.List;
+import com.parrot.arsdk.arsal.ARSALPrint;
 
 /**
  * ARDataTransfer MediasDownloader module
@@ -26,6 +27,7 @@ public class ARDataTransferMediasDownloader
     private native int nativeCancelGetAvailableMedias(long manager);
     
     /*  Members  */
+    private static final String TAG = ARDataTransferMediasDownloader.class.getSimpleName ();
     private boolean isInit = false;
     private long nativeManager = 0;
     private Runnable downloaderRunnable = null;
@@ -61,7 +63,7 @@ public class ARDataTransferMediasDownloader
         int result = nativeNew(nativeManager, deviceIP, port, remoteDirectory, localDirectory);
         
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
-        
+
         if (error != ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
         {
             throw new ARDataTransferException(error);
@@ -73,16 +75,53 @@ public class ARDataTransferMediasDownloader
     }
     
     /**
-     * Creates the ARDataTransfer MediasDownloader
+     * Deletes the ARDataTransfer MediasDownloader
      * @return ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
      */
-    public ARDATATRANSFER_ERROR_ENUM closeMediasDownloader()
+    public ARDATATRANSFER_ERROR_ENUM dispose()
     {
-        int result = nativeDelete(nativeManager);
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK;
         
-        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+        if (isInit)
+        {
+            int result = nativeDelete(nativeManager);
+            
+            error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+            if (error == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+            {
+                isInit = false;
+            }
+        }
+        
         return error;
     }
+    
+    /**
+     * Destructor<br>
+     * This destructor tries to avoid leaks if the object was not disposed
+     */
+    protected void finalize () throws Throwable
+    {
+        try
+        {
+            if (isInit)
+            {
+                ARSALPrint.e (TAG, "Object " + this + " was not disposed !");
+                ARDATATRANSFER_ERROR_ENUM error = dispose ();
+                if(error != ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+                {
+                    ARSALPrint.e (TAG, "Unable to dispose object " + this + " ... leaking memory !");
+                }
+            }
+        }
+        finally
+        {
+            super.finalize ();
+        }
+    }
+    
+    
+    
     
     /**
      * Gets the {@link List} of available {@link ARDataTransferMedia} medias in the ARDataTransfer MediasDownloader

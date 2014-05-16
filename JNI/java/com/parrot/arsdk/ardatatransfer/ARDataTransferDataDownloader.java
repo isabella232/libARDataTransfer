@@ -2,6 +2,7 @@
 package com.parrot.arsdk.ardatatransfer;
 
 import java.lang.Runnable;
+import com.parrot.arsdk.arsal.ARSALPrint;
 
 /**
  * ARDataTransfer DataDownloader module
@@ -17,13 +18,14 @@ public class ARDataTransferDataDownloader
     private native int nativeCancelThread (long manager);
     
     /*  Members  */
+    private static final String TAG = ARDataTransferDataDownloader.class.getSimpleName ();
     private boolean isInit = false;
     private long nativeManager = 0;
     private Runnable downloaderRunnable = null;
     
     /*  Java Methods */
     
-	/**
+    /**
      * Private ARDataTransfer DataDownloader constructor
      * @return void
      */    
@@ -60,15 +62,49 @@ public class ARDataTransferDataDownloader
     }
     
     /**
-     * Closes an ARDataTransfer DataDownloader
+     * Deletes an ARDataTransfer DataDownloader
      * @return ARDATATRANSFER_OK if success, else an {@link ARDATATRANSFER_ERROR_ENUM} error code
      */
-    public ARDATATRANSFER_ERROR_ENUM closeDataDownloader()
+    public ARDATATRANSFER_ERROR_ENUM dispose()
     {
-        int result = nativeDelete(nativeManager);
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK;
         
-        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+        if (isInit)
+        {
+            int result = nativeDelete(nativeManager);
+            
+            error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+            if (error == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+            {
+                isInit = false;
+            }
+        }
+        
         return error;
+    }
+    
+    /**
+     * Destructor<br>
+     * This destructor tries to avoid leaks if the object was not disposed
+     */
+    protected void finalize () throws Throwable
+    {
+        try
+        {
+            if (isInit)
+            {
+                ARSALPrint.e (TAG, "Object " + this + " was not disposed !");
+                ARDATATRANSFER_ERROR_ENUM error = dispose ();
+                if(error != ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+                {
+                    ARSALPrint.e (TAG, "Unable to dispose object " + this + " ... leaking memory !");
+                }
+            }
+        }
+        finally
+        {
+            super.finalize ();
+        }
     }
         
     /**

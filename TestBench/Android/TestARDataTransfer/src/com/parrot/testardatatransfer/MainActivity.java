@@ -195,8 +195,6 @@ public class MainActivity
     	try
     	{
 	    	ARDataTransferManager manager = new ARDataTransferManager();
-
-	    	manager.createManager();
 	    	
 	    	ARDataTransferDataDownloader dataManager = manager.getARDataTransferDataDownloader();
 	    	
@@ -214,8 +212,8 @@ public class MainActivity
 	    	
         	try { dataThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
         	
-        	dataManager.closeDataDownloader();
-        	manager.closeManager();
+        	dataManager.dispose();
+        	manager.dispose();
     	 }
         catch (Exception e)
         {
@@ -232,7 +230,6 @@ public class MainActivity
         try
         {
         	ARDataTransferManager manager = new ARDataTransferManager();
-        	manager.createManager();
         	//String list = null;
         	
         	//list = manager.ftpEasyList("ftp://172.20.5.109/", "/");
@@ -277,8 +274,8 @@ public class MainActivity
         	
         	try { mediasThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
         	
-        	mediasManager.closeMediasDownloader();
-        	manager.closeManager();
+        	mediasManager.dispose();
+        	manager.dispose();
         	
         	//Log.d("DBG", APP_TAG + list);
         	//TextView text = (TextView)this.findViewById(R.id.text_filed);
@@ -312,8 +309,8 @@ public class MainActivity
 	        String tmp = sysHome.getAbsolutePath();
 	
 	        //no manager
-	    	manager.closeManager();
-	    	Log.d("DBG", "closeManager");
+	    	manager.dispose();
+	    	Log.d("DBG", "dispose");
 	    	
 	    	boolean isInit = manager.isInitialized();
 	    	Log.d("DBG", "isInitialized " + (isInit == false ? "OK" : "ERROR"));
@@ -329,7 +326,7 @@ public class MainActivity
 	    	
 	    	//not initialized
 	    	try { 
-	    		manager.createManager(); 
+	    		manager = new ARDataTransferManager();
 	    		Log.d("DBG", "createManager OK"); 
 	    	} catch (ARDataTransferException e) { 
 	    		Log.d("DBG", "createManager ERROR " + e.toString()); 
@@ -462,10 +459,10 @@ public class MainActivity
 	        try { dataThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
 	        try { mediasThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
 	        
-	        dataManager.closeDataDownloader();
-	        mediasManager.closeMediasDownloader();
-	        manager.closeManager();
-	        Log.d("DBG", "closeManager OK");
+	        dataManager.dispose();
+	        mediasManager.dispose();
+	        manager.dispose();
+	        Log.d("DBG", "dispose OK");
     	}
     	catch (TestException e)
     	{
@@ -523,9 +520,9 @@ public class MainActivity
 	        try { dataThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
 	        try { mediasThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
             
-	        dataManager.closeDataDownloader();
-	        mediasManager.closeMediasDownloader();
-            managerRunning.closeManager();
+	        dataManager.dispose();
+	        mediasManager.dispose();
+            managerRunning.dispose();
         }
         catch (Exception e)
         {
@@ -548,7 +545,6 @@ public class MainActivity
     	try
     	{
 	    	ARDataTransferManager manager = new ARDataTransferManager();
-	    	manager.createManager();
 	    	
 	    	ARDataTransferMediasDownloader mediasManager = manager.getARDataTransferMediasDownloader();        	
 	    	
