@@ -247,7 +247,7 @@ public class MainActivity
         	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
         	tmp = sysHome.getAbsolutePath();
         	
-        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp);
+        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, "", tmp);
         	
         	Runnable mediasDownloader = mediasManager.getDownloaderQueueRunnable();
         	Thread mediasThread = new Thread(mediasDownloader);
@@ -415,7 +415,7 @@ public class MainActivity
 	        }
 	        
 	        try {
-	        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp); 
+	        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, "", tmp); 
 	        	Log.d("DBG", "initialize OK"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize ERROR " + e.toString());
@@ -423,7 +423,7 @@ public class MainActivity
 	        }
 	        
 	        try {
-	        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp); 
+	        	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, "", tmp); 
 	        	Log.d("DBG", "initialize ERROR"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize " + (e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_ALREADY_INITIALIZED ? "OK" : "ERROR"));
@@ -496,7 +496,7 @@ public class MainActivity
             
             //Media
             ARDataTransferMediasDownloader mediasManager = managerRunning.getARDataTransferMediasDownloader();        	
-            mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp);
+            mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, "", tmp);
             
             Runnable mediasDownloader = mediasManager.getDownloaderQueueRunnable();
             Thread mediasThread = new Thread(mediasDownloader);
@@ -559,7 +559,7 @@ public class MainActivity
 	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
 	    	tmp = sysHome.getAbsolutePath();
 	    	
-	    	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, tmp);
+	    	mediasManager.createMediasDownloader(DRONE_IP, DRONE_PORT, "", tmp);
 	    	
 	    	mediasManager.getAvailableMediasAsync(this, this);
     	}

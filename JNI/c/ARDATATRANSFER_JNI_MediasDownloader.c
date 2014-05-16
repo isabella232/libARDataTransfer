@@ -114,7 +114,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     {
         (*env)->ReleaseStringUTFChars(env, jLocalDirectory, nativeRemoteDirectory);
     }
-    
+
     if (nativeLocalDirectory != NULL)
     {
         (*env)->ReleaseStringUTFChars(env, jLocalDirectory, nativeLocalDirectory);
@@ -649,7 +649,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
                 error = JNI_FAILED;
             }
         }
-        
+
         if (error == JNI_OK)
         {
             methodId_MDMedia_getUuid = (*env)->GetMethodID(env, classMDMedia, "getUUID", "()Ljava/lang/String;");
@@ -766,7 +766,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         nativeDate = (*env)->GetStringUTFChars(env, jDate, 0);
     }
-    
+
     if ((error == JNI_OK) && (jUuid != NULL))
     {
         nativeUuid = (*env)->GetStringUTFChars(env, jUuid, 0);
@@ -798,7 +798,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         (*env)->ReleaseStringUTFChars(env, jDate, nativeDate);
     }
-    
+
     if (nativeUuid != NULL)
     {
         (*env)->ReleaseStringUTFChars(env, jDate, nativeUuid);
@@ -861,7 +861,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
             error = JNI_FAILED;
         }
     }
-    
+
     if ((error == JNI_OK) && (media->uuid != NULL))
     {
         jUuid = (*env)->NewStringUTF(env, media->uuid);
@@ -889,7 +889,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 
     if (error == JNI_OK)
     {
-        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, JUuid, (jfloat)media->size, jThumbnail);
+        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, jUuid, (jfloat)media->size, jThumbnail);
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);
