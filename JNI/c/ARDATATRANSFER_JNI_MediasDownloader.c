@@ -37,6 +37,7 @@ jmethodID methodId_MDMedia_getProductValue = NULL;
 jmethodID methodId_MDMedia_getName = NULL;
 jmethodID methodId_MDMedia_getFilePath = NULL;
 jmethodID methodId_MDMedia_getDate = NULL;
+jmethodID methodId_MDMedia_getUuid = NULL;
 jmethodID methodId_MDMedia_getSize = NULL;
 jmethodID methodId_MDMedia_getThumbnail = NULL;
 
@@ -74,18 +75,19 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMe
     return jret;
 }
 
-JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jstring jDeviceIP, jint jPort, jstring jLocalDirectory)
+JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jstring jDeviceIP, jint jPort, jstring jRemoteDirectory, jstring jLocalDirectory)
 {
     ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
     const char *nativeDeviceIP = (*env)->GetStringUTFChars(env, jDeviceIP, 0);
+    const char *nativeRemoteDirectory = (*env)->GetStringUTFChars(env, jRemoteDirectory, 0);
     const char *nativeLocalDirectory = (*env)->GetStringUTFChars(env, jLocalDirectory, 0);
     int nativePort = jPort;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s %d %s", nativeDeviceIP ? nativeDeviceIP : "null", (int)jPort, nativeLocalDirectory ? nativeLocalDirectory : "null");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s, %d, %s, %s", nativeDeviceIP ? nativeDeviceIP : "null", (int)jPort, nativeRemoteDirectory ? nativeRemoteDirectory : "null", nativeLocalDirectory ? nativeLocalDirectory : "null");
 
-    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeDeviceIP, nativePort, nativeLocalDirectory);
+    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeDeviceIP, nativePort, nativeRemoteDirectory, nativeLocalDirectory);
 
     if (error == JNI_OK)
     {
@@ -108,6 +110,11 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
         (*env)->ReleaseStringUTFChars(env, jDeviceIP, nativeDeviceIP);
     }
 
+    if (nativeRemoteDirectory != NULL)
+    {
+        (*env)->ReleaseStringUTFChars(env, jLocalDirectory, nativeRemoteDirectory);
+    }
+    
     if (nativeLocalDirectory != NULL)
     {
         (*env)->ReleaseStringUTFChars(env, jLocalDirectory, nativeLocalDirectory);
@@ -590,7 +597,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
-            methodId_MDMedia_init = (*env)->GetMethodID(env, classMDMedia, "<init>", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;F[B)V");
+            methodId_MDMedia_init = (*env)->GetMethodID(env, classMDMedia, "<init>", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;F[B)V");
 
             if (methodId_MDMedia_init == NULL)
             {
@@ -642,6 +649,17 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
                 error = JNI_FAILED;
             }
         }
+        
+        if (error == JNI_OK)
+        {
+            methodId_MDMedia_getUuid = (*env)->GetMethodID(env, classMDMedia, "getUUID", "()Ljava/lang/String;");
+
+            if (methodId_MDMedia_getUuid == NULL)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "Media getUUID method not found");
+                error = JNI_FAILED;
+            }
+        }
 
         if (error == JNI_OK)
         {
@@ -686,6 +704,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(JNIEnv *env)
         methodId_MDMedia_getName = NULL;
         methodId_MDMedia_getFilePath = NULL;
         methodId_MDMedia_getDate = NULL;
+        methodId_MDMedia_getUuid = NULL;
         methodId_MDMedia_getSize = NULL;
         methodId_MDMedia_getThumbnail = NULL;
     }
@@ -697,10 +716,12 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     jstring jName = NULL;
     jstring jFilePath = NULL;
     jstring jDate = NULL;
+    jstring jUuid = NULL;
     jfloat jSize = 0.f;
     const char *nativeName = NULL;
     const char *nativeFilePath = NULL;
     const char *nativeDate = NULL;
+    const char *nativeUuid = NULL;
     int error = JNI_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
@@ -718,6 +739,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
             (methodId_MDMedia_getName == NULL) ||
             (methodId_MDMedia_getFilePath == NULL) ||
             (methodId_MDMedia_getDate == NULL) ||
+            (methodId_MDMedia_getUuid == NULL) ||
             (methodId_MDMedia_getSize == NULL))
         {
             ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "wrong JNI parameters");
@@ -731,6 +753,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         jName = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getName);
         jFilePath = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getFilePath);
         jDate = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getDate);
+        jUuid = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getUuid);
         jSize = (*env)->CallFloatMethod(env, jMedia, methodId_MDMedia_getSize);
     }
 
@@ -743,11 +766,18 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         nativeDate = (*env)->GetStringUTFChars(env, jDate, 0);
     }
+    
+    if ((error == JNI_OK) && (jUuid != NULL))
+    {
+        nativeUuid = (*env)->GetStringUTFChars(env, jUuid, 0);
+    }
+
 
     if (error == JNI_OK)
     {
         media->product = jProduct;
         strcpy(media->name, nativeName ? nativeName : "");
+        strcpy(media->uuid, nativeUuid ? nativeUuid : "");
         strcpy(media->filePath, nativeFilePath ? nativeFilePath : "");
         strcpy(media->date, nativeDate ? nativeDate : "");
         media->size = (double)jSize;
@@ -768,6 +798,11 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         (*env)->ReleaseStringUTFChars(env, jDate, nativeDate);
     }
+    
+    if (nativeUuid != NULL)
+    {
+        (*env)->ReleaseStringUTFChars(env, jDate, nativeUuid);
+    }
 
     return error;
 }
@@ -778,6 +813,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     jstring jName = NULL;
     jstring jFilePath = NULL;
     jstring jDate = NULL;
+    jstring jUuid = NULL;
     jbyteArray jThumbnail = NULL;
     int error = JNI_OK;
 
@@ -825,6 +861,16 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
             error = JNI_FAILED;
         }
     }
+    
+    if ((error == JNI_OK) && (media->uuid != NULL))
+    {
+        jUuid = (*env)->NewStringUTF(env, media->uuid);
+
+        if (jUuid == NULL)
+        {
+            error = JNI_FAILED;
+        }
+    }
 
     if (error == JNI_OK)
     {
@@ -843,7 +889,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 
     if (error == JNI_OK)
     {
-        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, (jfloat)media->size, jThumbnail);
+        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, JUuid, (jfloat)media->size, jThumbnail);
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);

@@ -43,6 +43,7 @@ typedef struct
     ARUTILS_Ftp_Connection_t *listFtp;
     ARUTILS_Ftp_Connection_t *deleteFtp;
     ARUTILS_Ftp_Connection_t *ftp;
+    char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t listSem;
     ARSAL_Sem_t queueSem;
@@ -59,11 +60,12 @@ typedef struct
  * @param manager The pointer of the ARDataTransfer Manager
  * @param deviceIP The IP address of the Device
  * @param devicePort The FTP port of the Device
+ * @param remoteDirectory The FTP sub directory where to download media
  * @param localDirectory The path of the local directory where to store medias
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer MediasDownloader connection data

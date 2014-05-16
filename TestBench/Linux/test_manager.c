@@ -169,7 +169,7 @@ void test_manager_medias_downloader(const char *tmp)
     manager = ARDATATRANSFER_Manager_New(&result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_New", result);
 
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
 
     count = ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(manager, 1, &result);
@@ -255,7 +255,7 @@ void test_manager_checking_parameters(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARSAL_Thread_Join - ARDATATRANSFER_DataDownloader_ThreadRun", resultSys);
     test_manager_assert(resultSys == 0);
 
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_BAD_PARAMETER);
     
@@ -323,11 +323,11 @@ void test_manager_checking_parameters(const char *tmp)
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_ALREADY_INITIALIZED);
 
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_ALREADY_INITIALIZED);
 
@@ -372,7 +372,7 @@ void test_manager_checking_run_cancel(const char *tmp)
     test_manager_assert(resultSys == 0);
 
     //Media Downloader
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
@@ -459,7 +459,7 @@ void test_manager_checking_running(const char *tmp)
     test_manager_assert(resultSys == 0);
 
     //Medias
-    result = ARDATATRANSFER_MediasDownloader_New(managerRunning, DEVICE_IP, DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(managerRunning, DEVICE_IP, DEVICE_PORT, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
@@ -590,7 +590,7 @@ void test_manager_checking_running_async(const char *tmp)
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARSAL_Sem_Init", resultSys);
         test_manager_assert(resultSys == 0);
         
-        result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
+        result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
         ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_MediasDownloader_New", result);
         test_manager_assert(result == ARDATATRANSFER_OK);
         
@@ -674,8 +674,8 @@ void test_manager_available_media(const char *tmp)
     
     manager = ARDATATRANSFER_Manager_New(&result);
     
-    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, tmp);
-    //result = ARDATATRANSFER_MediasDownloader_New(manager, "192.168.1.1", DEVICE_PORT, tmp);
+    result = ARDATATRANSFER_MediasDownloader_New(manager, DEVICE_IP, DEVICE_PORT, "", tmp);
+    //result = ARDATATRANSFER_MediasDownloader_New(manager, "192.168.1.1", DEVICE_PORT, "", tmp);
     
     result = ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(manager, test_manager_available_media_callback, "callback");
     

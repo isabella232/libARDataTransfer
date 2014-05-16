@@ -15,6 +15,7 @@ public class ARDataTransferMedia
     private String name = null;
     private String filePath = null;
     private String date = null;
+    private String uuid = null;
     private float size = 0.f;
     private byte[] thumbnail = null;
 
@@ -26,16 +27,18 @@ public class ARDataTransferMedia
      * @param name String Media Name
      * @param filePath String Media Path
      * @param date String Media Date
+     * @param uuid String Media UUID
      * @param size float Media Size
      * @param thumbnail byte[] Media Thumbnail
      * @return void
      */
-    protected ARDataTransferMedia(int productValue, String name, String filePath, String date, float size, byte[] thumbnail)
+    protected ARDataTransferMedia(int productValue, String name, String filePath, String date, String uuid, float size, byte[] thumbnail)
     {
         this.product = ARDISCOVERY_PRODUCT_ENUM.getFromValue(productValue);
         this.name = name;
         this.filePath = filePath;
         this.date = date;
+        this.uuid = uuid;
         this.size = size;
         this.thumbnail = thumbnail;
     }
@@ -88,6 +91,16 @@ public class ARDataTransferMedia
     public String getDate()
     {
         return this.date;
+    }
+    
+    /**
+     * Gets the Media UUID
+     * @note get the Media UUID
+     * @return String media UUID
+     */
+    public String getUUID()
+    {
+        return this.uuid;
     }
 
     /**

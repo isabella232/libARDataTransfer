@@ -14,7 +14,7 @@ public class ARDataTransferMediasDownloader
 {
     /* Native Functions */
     private native static boolean nativeStaticInit();
-    private native int nativeNew(long manager, String deviceIP, int port, String localDirectory);
+    private native int nativeNew(long manager, String deviceIP, int port, String remoteDirectory, String localDirectory);
     private native int nativeDelete(long manager);    
     private native int nativeGetAvailableMediasSync(long manager, boolean withThumbnail);
     private native ARDataTransferMedia nativeGetAvailableMediaAtIndex(long manager, int index);
@@ -49,12 +49,16 @@ public class ARDataTransferMediasDownloader
     
     /**
      * Creates the ARDataTransfer MediasDownloader
+     * @param deviceIP The FTP server ip address
+     * @param port The FTP server port
+     * @param remoteDirectory The FTP Server local directory
+     * @param localDirectory The local system directory
      * @return void
      * @throws ARDataTransferException if error
      */
-    public void createMediasDownloader(String deviceIP, int port, String localDirectory) throws ARDataTransferException
+    public void createMediasDownloader(String deviceIP, int port, String remoteDirectory, String localDirectory) throws ARDataTransferException
     {
-        int result = nativeNew(nativeManager, deviceIP, port, localDirectory);
+        int result = nativeNew(nativeManager, deviceIP, port, remoteDirectory, localDirectory);
         
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
         

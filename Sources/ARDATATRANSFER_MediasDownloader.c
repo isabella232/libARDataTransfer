@@ -30,7 +30,6 @@
 
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG                "MediasDownloader"
 
-#define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT           ""
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA          "media"
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB          "thumb"
 
@@ -43,7 +42,7 @@
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
@@ -128,7 +127,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager
         manager->mediasDownloader->isRunning = 0;
         manager->mediasDownloader->isCanceled = 0;
         
-        result = ARDATATRANSFER_MediasDownloader_Initialize(manager, deviceIP, port, localDirectory);
+        result = ARDATATRANSFER_MediasDownloader_Initialize(manager, deviceIP, port, remoteDirectory, localDirectory);
     }
     
     if (result != ARDATATRANSFER_OK && result != ARDATATRANSFER_ERROR_ALREADY_INITIALIZED)
@@ -188,6 +187,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete(ARDATATRANSFER_Mana
 
 int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manager_t *manager, int withThumbnail, eARDATATRANSFER_ERROR *error)
 {
+    char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
     char remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE];
     char productPathName[ARUTILS_FTP_MAX_PATH_SIZE];
     char *productFtpList = NULL;
@@ -228,7 +228,10 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
         
         if (result == ARDATATRANSFER_OK)
         {
-            resultUtils = ARUTILS_Ftp_List(manager->mediasDownloader->listFtp, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
+            strncpy(remotePath, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+            remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+            
+            resultUtils = ARUTILS_Ftp_List(manager->mediasDownloader->listFtp, remotePath, &productFtpList, &productFtpListLen);
             
             if (resultUtils != ARUTILS_OK)
             {
@@ -254,8 +257,9 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                 
                 if (fileName != NULL)
                 {
-                    strncpy(remoteProduct, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+                    strncpy(remoteProduct, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                     remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                    strncat(remoteProduct, "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     
@@ -307,9 +311,10 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                 ARDATATRANSFER_Media_t **oldMedias;
                                 ARDATATRANSFER_Media_t *media = NULL;
                                 double fileSize;
+                                const char *begin = NULL;;
+                                const char *tag = NULL;
+                                const char *end = NULL;
                                 const char *index;
-                                const char *begin;
-                                const char *end;
                                 
                                 strncpy(remotePath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
                                 remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -345,23 +350,34 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                         
                                         strncpy(media->date, "", ARDATATRANSFER_MEDIA_DATE_SIZE);
                                         media->date[ARDATATRANSFER_MEDIA_DATE_SIZE - 1] = '\0';
+                                        
+                                        strncpy(media->uuid, "", ARDATATRANSFER_MEDIA_UUID_SIZE);
+                                        media->uuid[ARDATATRANSFER_MEDIA_UUID_SIZE - 1] = '\0';
+                                        //Jumping_Sumo_1970-01-01T000317+0000_3902B87F947BE865A9D137CFA63492B8.mp4
+
                                         index = media->name;
                                         while ((index = strstr(index, "_")) != NULL)
                                         {
-                                            begin = ++index;
+                                            begin = tag;
+                                            tag = ++index;
                                         }
                                         
-                                        end = NULL;
-                                        if (begin != NULL)
+                                        if ((begin != NULL) && (tag != NULL))
                                         {
                                             end = strstr(begin, ".");
                                         }
-                                        if ((begin != NULL) && (end != NULL))
+                                        
+                                        if ((begin != NULL)  && (tag != NULL) && (end != NULL))
                                         {
-                                            int len = end - begin;
+                                            int len = tag - begin - 1;
                                             len = (len < ARDATATRANSFER_MEDIA_DATE_SIZE) ? len : (ARDATATRANSFER_MEDIA_DATE_SIZE - 1);
                                             strncpy(media->date, begin, len);
                                             media->date[len] = '\0';
+                                            
+                                            len = end - tag;
+                                            len = (len < ARDATATRANSFER_MEDIA_UUID_SIZE) ? len : (ARDATATRANSFER_MEDIA_UUID_SIZE - 1);
+                                            strncpy(media->uuid, tag, len);
+                                            media->uuid[len] = '\0';
                                         }
                                         
                                         media->size = fileSize;
@@ -554,15 +570,17 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
         
         ARDISCOVERY_getProductPathName(media->product, productPathName, sizeof(productPathName));
         
-        strncpy(remotePath, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        strncpy(remotePath, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncat(remotePath, "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         
-        strncpy(remoteThumbnail, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        strncpy(remoteThumbnail, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncpy(remoteThumbnail, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncat(remoteThumbnail, "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
+        strncat(remoteThumbnail, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
@@ -818,7 +836,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(A
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
@@ -833,6 +851,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_
     
     if (result == ARDATATRANSFER_OK)
     {
+        strncpy(manager->mediasDownloader->remoteDirectory, remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+        manager->mediasDownloader->remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
         strncpy(manager->mediasDownloader->localDirectory, localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         manager->mediasDownloader->localDirectory[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
         strncat(manager->mediasDownloader->localDirectory, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/" , ARUTILS_FTP_MAX_PATH_SIZE - strlen(manager->mediasDownloader->localDirectory) - 1);
@@ -942,8 +962,9 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
         }
         
         ARDISCOVERY_getProductPathName(media->product, productPathName, sizeof(productPathName));
-        strncpy(remoteThumbnail, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        strncpy(remoteThumbnail, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncat(remoteThumbnail, "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
@@ -997,8 +1018,9 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
     if (result == ARDATATRANSFER_OK)
     {
         ARDISCOVERY_getProductPathName(ftpMedia->media.product, productPathName, sizeof(productPathName));
-        strncpy(remotePath, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+        strncpy(remotePath, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        strncat(remotePath, "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
         strncat(remotePath, ftpMedia->media.name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);

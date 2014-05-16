@@ -29,11 +29,18 @@
 #define ARDATATRANSFER_MEDIA_DATE_SIZE  32
 
 /**
+ * @brief Defines the media UUID size in characters
+ * @see ARDATATRANSFER_Media_t
+ */
+#define ARDATATRANSFER_MEDIA_UUID_SIZE  33
+
+/**
  * @brief Media structure
  * @param product The the product that the media belong to
  * @param name The name of the media
  * @param fileName The file name of the media
  * @param date The date of the media
+ * @param uuid The uuid of the media
  * @param size The size of the media
  * @param thumbnail The media thumbnail data
  * @param thumbnailSize The size of the media thumbnail
@@ -45,6 +52,7 @@ typedef struct
     char name[ARDATATRANSFER_MEDIA_NAME_SIZE];
     char filePath[ARDATATRANSFER_MEDIA_PATH_SIZE];
     char date[ARDATATRANSFER_MEDIA_DATE_SIZE];
+    char uuid[ARDATATRANSFER_MEDIA_UUID_SIZE];
     double size;
     uint8_t *thumbnail;
     uint32_t thumbnailSize;
@@ -82,10 +90,14 @@ typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadCompletionCallback_t
  * @brief Create a new ARDataTransfer MediasDownloader
  * @warning This function allocates memory
  * @param manager The address of the pointer on the ARDataTransfer Manager
+ * @param deviceIP The IP address of the Device
+ * @param devicePort The FTP port of the Device
+ * @param remoteDirectory The FTP sub directory where to download media
+ * @param localDirectory The path of the local directory where to store medias
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_MediasDownloader_Delete ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New (ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New (ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer MediasDownloader
