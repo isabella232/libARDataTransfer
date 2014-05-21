@@ -295,7 +295,7 @@ public class MainActivity
     {
     	try
     	{
-	    	ARDataTransferManager manager = new ARDataTransferManager();
+	    	ARDataTransferManager manager = null;
 	    	ARDataTransferDataDownloader dataManager = null;
 	    	ARDataTransferMediasDownloader mediasManager = null;
 	    	Runnable dataDownloader = null;
@@ -307,6 +307,14 @@ public class MainActivity
 	    	
 	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
 	        String tmp = sysHome.getAbsolutePath();
+	        
+	        try
+	        {
+	        	manager = new ARDataTransferManager();
+	        } catch (ARDataTransferException e) {
+	        	Log.d("DBG", "createManager ERROR " + e.toString()); 
+	    		assertError(e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK); 
+	        }
 	
 	        //no manager
 	    	manager.dispose();
@@ -480,8 +488,6 @@ public class MainActivity
         	semRunning.acquire();
             File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
             String tmp = sysHome.getAbsolutePath();
-        	
-            managerRunning.createManager();
         
             //Data
             ARDataTransferDataDownloader dataManager = managerRunning.getARDataTransferDataDownloader();
@@ -523,6 +529,10 @@ public class MainActivity
 	        dataManager.dispose();
 	        mediasManager.dispose();
             managerRunning.dispose();
+        }
+        catch (ARDataTransferException e) 
+        {
+        	Log.d("DBG", APP_TAG + e.toString()); 
         }
         catch (Exception e)
         {
