@@ -5,6 +5,7 @@ ACLOCAL_AMFLAGS                                             =   -I m4
 
 # The list of header files that belong to the library (to be installed later)
 HEADER_FILES                                                =   ../Includes/libARDataTransfer/ARDATATRANSFER_Manager.h \
+                                                                ../Includes/libARDataTransfer/ARDATATRANSFER_Uploader.h \
                                                                 ../Includes/libARDataTransfer/ARDATATRANSFER_DataDownloader.h \
                                                                 ../Includes/libARDataTransfer/ARDATATRANSFER_MediasDownloader.h \           
                                                                 ../Includes/libARDataTransfer/ARDATATRANSFER_Error.h \
@@ -14,6 +15,8 @@ HEADER_FILES                                                =   ../Includes/libA
 SOURCE_FILES                                                =   $(HEADER_FILES)\
                                                                 ../Sources/ARDATATRANSFER_Manager.c \
                                                                 ../Sources/ARDATATRANSFER_Manager.h \
+                                                                ../Sources/ARDATATRANSFER_Uploader.c \
+                                                                ../Sources/ARDATATRANSFER_Uploader.h \
                                                                 ../Sources/ARDATATRANSFER_DataDownloader.c \
                                                                 ../Sources/ARDATATRANSFER_DataDownloader.h \
                                                                 ../Sources/ARDATATRANSFER_MediasDownloader.c \

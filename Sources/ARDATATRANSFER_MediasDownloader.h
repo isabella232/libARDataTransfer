@@ -40,9 +40,9 @@ typedef struct
 {
     int isRunning;
     int isCanceled;
-    ARUTILS_Ftp_Connection_t *listFtp;
-    ARUTILS_Ftp_Connection_t *deleteFtp;
-    ARUTILS_Ftp_Connection_t *ftp;
+    ARUTILS_WifiFtp_Connection_t *listFtp;
+    ARUTILS_WifiFtp_Connection_t *deleteFtp;
+    ARUTILS_WifiFtp_Connection_t *ftp;
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t listSem;

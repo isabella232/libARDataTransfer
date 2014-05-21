@@ -16,13 +16,16 @@
 #include <libARSAL/ARSAL_Mutex.h>
 #include <libARSAL/ARSAL_Print.h>
 #include <libARUtils/ARUTILS_Error.h>
+#include <libARUtils/ARUTILS_Manager.h>
 #include <libARUtils/ARUTILS_Ftp.h>
 #include <libARUtils/ARUTILS_FileSystem.h>
 
 #include "libARDataTransfer/ARDATATRANSFER_Error.h"
 #include "libARDataTransfer/ARDATATRANSFER_Manager.h"
+#include "libARDataTransfer/ARDATATRANSFER_Uploader.h"
 #include "libARDataTransfer/ARDATATRANSFER_DataDownloader.h"
 #include "libARDataTransfer/ARDATATRANSFER_MediasDownloader.h"
+#include "ARDATATRANSFER_Uploader.h"
 #include "ARDATATRANSFER_MediasQueue.h"
 #include "ARDATATRANSFER_DataDownloader.h"
 #include "ARDATATRANSFER_MediasDownloader.h"

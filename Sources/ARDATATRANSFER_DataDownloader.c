@@ -24,13 +24,16 @@
 #include <libARSAL/ARSAL_Print.h>
 #include <libARSAL/ARSAL_Ftw.h>
 #include <libARUtils/ARUTILS_Error.h>
+#include <libARUtils/ARUTILS_Manager.h>
 #include <libARUtils/ARUTILS_Ftp.h>
 #include <libARUtils/ARUTILS_FileSystem.h>
 
 #include "libARDataTransfer/ARDATATRANSFER_Error.h"
 #include "libARDataTransfer/ARDATATRANSFER_Manager.h"
+#include "libARDataTransfer/ARDATATRANSFER_Uploader.h"
 #include "libARDataTransfer/ARDATATRANSFER_DataDownloader.h"
 #include "libARDataTransfer/ARDATATRANSFER_MediasDownloader.h"
+#include "ARDATATRANSFER_Uploader.h"
 #include "ARDATATRANSFER_MediasQueue.h"
 #include "ARDATATRANSFER_DataDownloader.h"
 #include "ARDATATRANSFER_MediasDownloader.h"
@@ -201,7 +204,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
         do
         {
-            error = ARUTILS_Ftp_List(manager->dataDownloader->ftp, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
+            error = ARUTILS_WifiFtp_List(manager->dataDownloader->ftp, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
 
             product = 0;
             while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
@@ -217,7 +220,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                     strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
 
-                    error = ARUTILS_Ftp_List(manager->dataDownloader->ftp, remoteProduct, &dataFtpList, &dataFtpListLen);
+                    error = ARUTILS_WifiFtp_List(manager->dataDownloader->ftp, remoteProduct, &dataFtpList, &dataFtpListLen);
 
                     // Resume downloading_ files loop
                     nextData = NULL;
@@ -234,11 +237,11 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                         strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) -1);
 
-                        errorFtp = ARUTILS_Ftp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
+                        errorFtp = ARUTILS_WifiFtp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
 
                         if (errorFtp == ARUTILS_OK)
                         {
-                            errorFtp = ARUTILS_Ftp_Delete(manager->dataDownloader->ftp, remotePath);
+                            errorFtp = ARUTILS_WifiFtp_Delete(manager->dataDownloader->ftp, remotePath);
 
                             strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                             restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -272,16 +275,16 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                             strncat(localPath, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
                             strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
 
-                            errorFtp = ARUTILS_Ftp_Rename(manager->dataDownloader->ftp, initialPath, remotePath);
+                            errorFtp = ARUTILS_WifiFtp_Rename(manager->dataDownloader->ftp, initialPath, remotePath);
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                errorFtp = ARUTILS_Ftp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
+                                errorFtp = ARUTILS_WifiFtp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
                             }
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                errorFtp = ARUTILS_Ftp_Delete(manager->dataDownloader->ftp, remotePath);
+                                errorFtp = ARUTILS_WifiFtp_Delete(manager->dataDownloader->ftp, remotePath);
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -396,7 +399,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Ma
 
     if (result == ARDATATRANSFER_OK)
     {
-        manager->dataDownloader->ftp = ARUTILS_Ftp_Connection_New(&manager->dataDownloader->threadSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
+        manager->dataDownloader->ftp = ARUTILS_WifiFtp_Connection_New(&manager->dataDownloader->threadSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
 
         if (error != ARUTILS_OK)
         {
@@ -417,7 +420,7 @@ void ARDATATRANSFER_DataDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
     {
         if (manager->dataDownloader->ftp != NULL)
         {
-            ARUTILS_Ftp_Connection_Delete(&manager->dataDownloader->ftp);
+            ARUTILS_WifiFtp_Connection_Delete(&manager->dataDownloader->ftp);
         }
     }
 }

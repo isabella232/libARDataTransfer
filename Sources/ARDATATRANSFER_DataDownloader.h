@@ -22,7 +22,7 @@ typedef struct
 {
     int isCanceled;
     int isRunning;
-    ARUTILS_Ftp_Connection_t *ftp;
+    ARUTILS_WifiFtp_Connection_t *ftp;
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t threadSem;
 
