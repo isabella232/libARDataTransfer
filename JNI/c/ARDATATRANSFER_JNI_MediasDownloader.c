@@ -762,6 +762,11 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         nativeName = (*env)->GetStringUTFChars(env, jName, 0);
     }
 
+    if ((error == JNI_OK) && (jFilePath != NULL))
+    {
+        nativeFilePath = (*env)->GetStringUTFChars(env, jFilePath, 0);
+    }
+
     if ((error == JNI_OK) && (jDate != NULL))
     {
         nativeDate = (*env)->GetStringUTFChars(env, jDate, 0);
@@ -777,9 +782,9 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     {
         media->product = jProduct;
         strcpy(media->name, nativeName ? nativeName : "");
-        strcpy(media->uuid, nativeUuid ? nativeUuid : "");
         strcpy(media->filePath, nativeFilePath ? nativeFilePath : "");
         strcpy(media->date, nativeDate ? nativeDate : "");
+        strcpy(media->uuid, nativeUuid ? nativeUuid : "");
         media->size = (double)jSize;
     }
 
@@ -832,7 +837,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->name))
+    if ((error == JNI_OK) && (media->name != NULL))
     {
         jName = (*env)->NewStringUTF(env, media->name);
 
@@ -842,7 +847,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->filePath))
+    if ((error == JNI_OK) && (media->filePath != NULL))
     {
         jFilePath = (*env)->NewStringUTF(env, media->filePath);
 
