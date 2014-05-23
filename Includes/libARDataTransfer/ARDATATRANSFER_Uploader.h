@@ -11,6 +11,17 @@
 #include <libARUtils/ARUTILS_Manager.h>
 
 /**
+ * @brief Ftp Resume enum
+ * @see ARDATATRANSFER_Uploader_New
+ */
+typedef enum
+{
+    ARDATATRANSFER_UPLOADER_RESUME_FALSE = 0,
+    ARDATATRANSFER_UPLOADER_RESUME_TRUE,
+    
+} eARDATATRANSFER_UPLOADER_RESUME;
+
+/**
  * @brief Progress callback of the Uploader
  * @param arg The pointer of the user custom argument
  * @param percent The percent size of the media file already downloaded
@@ -36,7 +47,7 @@ typedef void (*ARDATATRANSFER_Uploader_CompletionCallback_t) (void* arg, eARDATA
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_Uploader_Delete ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remotePath, const char *localPath, ARDATATRANSFER_Uploader_ProgressCallback_t progressCallback, void *progressArg, ARDATATRANSFER_Uploader_CompletionCallback_t completionCallback, void *completionArg);
+eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remotePath, const char *localPath, ARDATATRANSFER_Uploader_ProgressCallback_t progressCallback, void *progressArg, ARDATATRANSFER_Uploader_CompletionCallback_t completionCallback, void *completionArg, eARDATATRANSFER_UPLOADER_RESUME resume);
 
 /**
  * @brief Delete an ARDataTransfer Uploader

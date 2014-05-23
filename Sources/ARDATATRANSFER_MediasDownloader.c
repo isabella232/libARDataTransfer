@@ -23,8 +23,10 @@
 
 #include "libARDataTransfer/ARDATATRANSFER_Error.h"
 #include "libARDataTransfer/ARDATATRANSFER_Manager.h"
+#include "libARDataTransfer/ARDATATRANSFER_Downloader.h"
 #include "libARDataTransfer/ARDATATRANSFER_Uploader.h"
 #include "libARDataTransfer/ARDATATRANSFER_MediasDownloader.h"
+#include "ARDATATRANSFER_Downloader.h"
 #include "ARDATATRANSFER_Uploader.h"
 #include "ARDATATRANSFER_MediasQueue.h"
 #include "ARDATATRANSFER_DataDownloader.h"

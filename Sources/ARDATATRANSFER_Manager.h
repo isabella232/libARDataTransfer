@@ -19,6 +19,7 @@
  */
 struct ARDATATRANSFER_Manager_t
 {
+    ARDATATRANSFER_Downloader_t *downloader;
     ARDATATRANSFER_Uploader_t *uploader;
     ARDATATRANSFER_DataDownloader_t *dataDownloader;
     ARDATATRANSFER_MediasDownloader_t *mediasDownloader;

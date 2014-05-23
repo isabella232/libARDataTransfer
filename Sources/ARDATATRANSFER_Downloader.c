@@ -1,6 +1,6 @@
 /**
- * @file ARDATATRANSFER_Uploader.c
- * @brief libARDataTransfer Uploader c file.
+ * @file ARDATATRANSFER_Downloader.c
+ * @brief libARDataTransfer Downloader c file.
  * @date 21/05/2014
  * @author david.flattin.ext@parrot.com
  **/
@@ -33,9 +33,9 @@
 #include "ARDATATRANSFER_Manager.h"
 
 
-#define ARDATATRANSFER_DATA_UPLOADER_TAG          "Uploader"
+#define ARDATATRANSFER_DATA_UPLOADER_TAG          "Downloader"
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remotePath, const char *localPath, ARDATATRANSFER_Uploader_ProgressCallback_t progressCallback, void *progressArg, ARDATATRANSFER_Uploader_CompletionCallback_t completionCallback, void *completionArg, eARDATATRANSFER_UPLOADER_RESUME resume)
+eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remotePath, const char *localPath, ARDATATRANSFER_Downloader_ProgressCallback_t progressCallback, void *progressArg, ARDATATRANSFER_Downloader_CompletionCallback_t completionCallback, void *completionArg, eARDATATRANSFER_DOWNLOADER_RESUME resume)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     //eARUTILS_ERROR resultUtil = ARUTILS_OK;
@@ -50,15 +50,15 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *man
     
     if (result == ARDATATRANSFER_OK)
     {
-        if (manager->uploader != NULL)
+        if (manager->downloader != NULL)
         {
             result = ARDATATRANSFER_ERROR_ALREADY_INITIALIZED;
         }
         else
         {
-            manager->uploader = (ARDATATRANSFER_Uploader_t *)calloc(1, sizeof(ARDATATRANSFER_Uploader_t));
+            manager->downloader = (ARDATATRANSFER_Downloader_t *)calloc(1, sizeof(ARDATATRANSFER_Downloader_t));
             
-            if (manager->uploader == NULL)
+            if (manager->downloader == NULL)
             {
                 result = ARDATATRANSFER_ERROR_ALLOC;
             }
@@ -74,25 +74,25 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *man
     
     if (result == ARDATATRANSFER_OK)
     {
-        manager->uploader->resume = resume;
-        manager->uploader->ftpManager = ftpManager;
-
-        strncpy(manager->uploader->remotePath, remotePath, ARUTILS_FTP_MAX_PATH_SIZE);
-        manager->uploader->remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-
-        strncpy(manager->uploader->localPath, localPath, ARUTILS_FTP_MAX_PATH_SIZE);
-        manager->uploader->localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        manager->downloader->resume = resume;
+        manager->downloader->ftpManager = ftpManager;
         
-        manager->uploader->progressCallback = progressCallback;
-        manager->uploader->progressArg = progressArg;
-        manager->uploader->completionCallback = completionCallback;
-        manager->uploader->completionArg = completionArg;
+        strncpy(manager->downloader->remotePath, remotePath, ARUTILS_FTP_MAX_PATH_SIZE);
+        manager->downloader->remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        
+        strncpy(manager->downloader->localPath, localPath, ARUTILS_FTP_MAX_PATH_SIZE);
+        manager->downloader->localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+        
+        manager->downloader->progressCallback = progressCallback;
+        manager->downloader->progressArg = progressArg;
+        manager->downloader->completionCallback = completionCallback;
+        manager->downloader->completionArg = completionArg;
     }
-        
+    
     return result;
 }
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_Delete (ARDATATRANSFER_Manager_t *manager)
+eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_Delete (ARDATATRANSFER_Manager_t *manager)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     
@@ -105,21 +105,21 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_Delete (ARDATATRANSFER_Manager_t *
     
     if (result == ARDATATRANSFER_OK)
     {
-        if (manager->uploader == NULL)
+        if (manager->downloader == NULL)
         {
             result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
         }
         else
         {
-            free(manager->uploader);
-            manager->uploader = NULL;
+            free(manager->downloader);
+            manager->downloader = NULL;
         }
     }
     
     return result;
 }
 
-void* ARDATATRANSFER_Uploader_ThreadRun (void *managerArg)
+void* ARDATATRANSFER_Downloader_ThreadRun (void *managerArg)
 {
     ARDATATRANSFER_Manager_t *manager = (ARDATATRANSFER_Manager_t *)managerArg;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
@@ -127,17 +127,17 @@ void* ARDATATRANSFER_Uploader_ThreadRun (void *managerArg)
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "%x", (int)manager);
     
-    if ((manager != NULL) && (manager->uploader !=  NULL))
+    if ((manager != NULL) && (manager->downloader !=  NULL))
     {
-        resultUtil = ARUTILS_Manager_Ftp_Get(manager->uploader->ftpManager, manager->uploader->remotePath, manager->uploader->localPath, ARDATATRANSFER_Uploader_Ftp_ProgressCallback, manager, (manager->uploader->resume == ARDATATRANSFER_UPLOADER_RESUME_TRUE) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
+        resultUtil = ARUTILS_Manager_Ftp_Get(manager->downloader->ftpManager, manager->downloader->remotePath, manager->downloader->localPath, ARDATATRANSFER_Downloader_Ftp_ProgressCallback, manager, (manager->downloader->resume == ARDATATRANSFER_DOWNLOADER_RESUME_TRUE) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
         
         if (resultUtil != ARUTILS_OK)
         {
             result = ARDATATRANSFER_ERROR_FTP;
         }
-        if (manager->uploader->completionCallback != NULL)
+        if (manager->downloader->completionCallback != NULL)
         {
-            manager->uploader->completionCallback(manager->uploader->completionArg, result);
+            manager->downloader->completionCallback(manager->downloader->completionArg, result);
         }
     }
     
@@ -146,7 +146,7 @@ void* ARDATATRANSFER_Uploader_ThreadRun (void *managerArg)
     return NULL;
 }
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_CancelThread (ARDATATRANSFER_Manager_t *manager)
+eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_CancelThread (ARDATATRANSFER_Manager_t *manager)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtil = ARUTILS_OK;
@@ -160,13 +160,13 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_CancelThread (ARDATATRANSFER_Manag
     
     if (result == ARDATATRANSFER_OK)
     {
-        if (manager->uploader == NULL)
+        if (manager->downloader == NULL)
         {
             result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
         }
         else
         {
-            resultUtil = ARUTILS_Manager_Ftp_Connection_Cancel(manager->uploader->ftpManager);
+            resultUtil = ARUTILS_Manager_Ftp_Connection_Cancel(manager->downloader->ftpManager);
             if (resultUtil != ARUTILS_OK)
             {
                 result = ARDATATRANSFER_ERROR_FTP;
@@ -183,14 +183,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_CancelThread (ARDATATRANSFER_Manag
  *
  *****************************************/
 
-void ARDATATRANSFER_Uploader_Ftp_ProgressCallback(void* arg, uint8_t percent)
+void ARDATATRANSFER_Downloader_Ftp_ProgressCallback(void* arg, uint8_t percent)
 {
     ARDATATRANSFER_Manager_t *manager = (ARDATATRANSFER_Manager_t *)arg;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "");
     
-    if (manager->uploader->progressCallback != NULL)
+    if (manager->downloader->progressCallback != NULL)
     {
-        manager->uploader->progressCallback(manager->uploader->progressArg, percent);
+        manager->downloader->progressCallback(manager->downloader->progressArg, percent);
     }
 }

@@ -23,6 +23,7 @@ typedef struct
 {
     int isCanceled;
     int isRunning;
+    eARDATATRANSFER_UPLOADER_RESUME resume;
     ARUTILS_Manager_t *ftpManager;
     char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
     char localPath[ARUTILS_FTP_MAX_PATH_SIZE];
