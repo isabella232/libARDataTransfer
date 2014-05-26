@@ -75,19 +75,16 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMe
     return jret;
 }
 
-JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jstring jDeviceIP, jint jPort, jstring jRemoteDirectory, jstring jLocalDirectory)
+JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jftpManager, jstring jRemoteDirectory, jstring jLocalDirectory)
 {
     ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
-    const char *nativeDeviceIP = (*env)->GetStringUTFChars(env, jDeviceIP, 0);
+    ARUTILS_Manager_t *nativeFtpManager = (ARUTILS_Manager_t *)(intptr_t)jftpManager;
     const char *nativeRemoteDirectory = (*env)->GetStringUTFChars(env, jRemoteDirectory, 0);
     const char *nativeLocalDirectory = (*env)->GetStringUTFChars(env, jLocalDirectory, 0);
-    int nativePort = jPort;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s, %d, %s, %s", nativeDeviceIP ? nativeDeviceIP : "null", (int)jPort, nativeRemoteDirectory ? nativeRemoteDirectory : "null", nativeLocalDirectory ? nativeLocalDirectory : "null");
-
-    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeDeviceIP, nativePort, nativeRemoteDirectory, nativeLocalDirectory);
+    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeFtpManager, nativeRemoteDirectory, nativeLocalDirectory);
 
     if (error == JNI_OK)
     {
@@ -105,14 +102,9 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     }
 
     //cleanup
-    if (nativeDeviceIP != NULL)
-    {
-        (*env)->ReleaseStringUTFChars(env, jDeviceIP, nativeDeviceIP);
-    }
-
     if (nativeRemoteDirectory != NULL)
     {
-        (*env)->ReleaseStringUTFChars(env, jLocalDirectory, nativeRemoteDirectory);
+        (*env)->ReleaseStringUTFChars(env, jRemoteDirectory, nativeRemoteDirectory);
     }
 
     if (nativeLocalDirectory != NULL)
