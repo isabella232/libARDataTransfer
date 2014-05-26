@@ -6,6 +6,7 @@
  **/
 
 #include <libARDiscovery/ARDISCOVERY_Discovery.h>
+#include <libARUtils/ARUtils.h>
 
 #ifndef _ARDATATRANSFER_MEDIAS_DOWNLOADER_H_
 #define _ARDATATRANSFER_MEDIAS_DOWNLOADER_H_
@@ -97,7 +98,7 @@ typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadCompletionCallback_t
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_MediasDownloader_Delete ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New (ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer MediasDownloader

@@ -40,9 +40,7 @@ typedef struct
 {
     int isRunning;
     int isCanceled;
-    ARUTILS_WifiFtp_Connection_t *listFtp;
-    ARUTILS_WifiFtp_Connection_t *deleteFtp;
-    ARUTILS_WifiFtp_Connection_t *ftp;
+    ARUTILS_Manager_t *ftpManager;
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t listSem;
@@ -65,7 +63,7 @@ typedef struct
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer MediasDownloader connection data

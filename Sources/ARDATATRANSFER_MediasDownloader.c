@@ -47,14 +47,14 @@
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager_t *manager,  ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
     
-    if (manager == NULL)
+    if (manager == NULL && ftpManager == NULL)
     {
         result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
     }
@@ -120,6 +120,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager
     {
         manager->mediasDownloader->medias.medias = NULL;
         manager->mediasDownloader->medias.count = 0;
+        manager->mediasDownloader->ftpManager = ftpManager;
     }
     
     if (result == ARDATATRANSFER_OK)
@@ -132,7 +133,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager
         manager->mediasDownloader->isRunning = 0;
         manager->mediasDownloader->isCanceled = 0;
         
-        result = ARDATATRANSFER_MediasDownloader_Initialize(manager, deviceIP, port, remoteDirectory, localDirectory);
+        result = ARDATATRANSFER_MediasDownloader_Initialize(manager, ftpManager, remoteDirectory, localDirectory);
     }
     
     if (result != ARDATATRANSFER_OK && result != ARDATATRANSFER_ERROR_ALREADY_INITIALIZED)
@@ -236,7 +237,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
             strncpy(remotePath, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
             remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
             
-            resultUtils = ARUTILS_WifiFtp_List(manager->mediasDownloader->listFtp, remotePath, &productFtpList, &productFtpListLen);
+            resultUtils = ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpManager, remotePath, &productFtpList, &productFtpListLen);
             
             if (resultUtils != ARUTILS_OK)
             {
@@ -247,7 +248,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
         product = 0;
         while ((result == ARDATATRANSFER_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
         {
-            resultUtils = ARUTILS_WifiFtp_IsCanceled(manager->mediasDownloader->listFtp);
+            resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpManager);
             
             if (resultUtils != ARUTILS_OK)
             {
@@ -268,7 +269,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                     strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_MEDIA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     
-                    resultUtils = ARUTILS_WifiFtp_List(manager->mediasDownloader->listFtp, remoteProduct, &mediaFtpList, &mediaFtpListLen);
+                    resultUtils = ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpManager, remoteProduct, &mediaFtpList, &mediaFtpListLen);
                     if (resultUtils == ARUTILS_OK)
                     {
                         int fileType;
@@ -278,7 +279,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                         while ((result == ARDATATRANSFER_OK)
                                && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize)) != NULL)
                         {
-                            resultUtils = ARUTILS_WifiFtp_IsCanceled(manager->mediasDownloader->listFtp);
+                            resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpManager);
                             
                             if (resultUtils != ARUTILS_OK)
                             {
@@ -478,7 +479,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
 
         for (i=0; (resultUtils == ARUTILS_OK) && (i<manager->mediasDownloader->medias.count); i++)
         {
-            resultUtils = ARUTILS_WifiFtp_IsCanceled(manager->mediasDownloader->listFtp);
+            resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpManager);
             
             if (resultUtils != ARUTILS_OK)
             {
@@ -593,14 +594,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
             strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         }
         
-        resultUtils = ARUTILS_WifiFtp_Delete(manager->mediasDownloader->deleteFtp, remotePath);
+        resultUtils = ARUTILS_Manager_Ftp_Delete(manager->mediasDownloader->ftpManager, remotePath);
         
         if (resultUtils != ARUTILS_OK)
         {
             result = ARDATATRANSFER_ERROR_FTP;
         }
         
-        ARUTILS_WifiFtp_Delete(manager->mediasDownloader->deleteFtp, remoteThumbnail);
+        ARUTILS_Manager_Ftp_Delete(manager->mediasDownloader->ftpManager, remoteThumbnail);
         
         if (result == ARDATATRANSFER_OK)
         {
@@ -841,15 +842,15 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(A
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *remoteDirectory, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
     int resultSys = 0;
     
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "%s, %s, %d", deviceIP ? deviceIP : "null", localDirectory ? localDirectory : "null", port);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "%s, %s", localDirectory ? localDirectory : "null", remoteDirectory ? remoteDirectory : "null");
     
-    if ((manager == NULL) || (deviceIP == NULL) || (localDirectory == NULL))
+    if ((manager == NULL) || (ftpManager == NULL) || (localDirectory == NULL))
     {
         result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
     }
@@ -870,36 +871,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_
         }
     }
     
-    if (result == ARDATATRANSFER_OK)
-    {
-        manager->mediasDownloader->listFtp = ARUTILS_WifiFtp_Connection_New(&manager->mediasDownloader->listSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
-        
-        if (error != ARUTILS_OK)
-        {
-            result = ARDATATRANSFER_ERROR_FTP;
-        }
-    }
-    
-    if (result == ARDATATRANSFER_OK)
-    {
-        manager->mediasDownloader->deleteFtp = ARUTILS_WifiFtp_Connection_New(NULL, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
-        
-        if (error != ARUTILS_OK)
-        {
-            result = ARDATATRANSFER_ERROR_FTP;
-        }
-    }
-    
-    if (result == ARDATATRANSFER_OK)
-    {
-        manager->mediasDownloader->ftp = ARUTILS_WifiFtp_Connection_New(&manager->mediasDownloader->threadSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
-        
-        if (error != ARUTILS_OK)
-        {
-            result = ARDATATRANSFER_ERROR_FTP;
-        }
-    }
-    
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "return %d", result);
     
     return result;
@@ -911,21 +882,6 @@ void ARDATATRANSFER_MediasDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
     
     if (manager != NULL)
     {
-        if (manager->mediasDownloader->listFtp != NULL)
-        {
-            ARUTILS_WifiFtp_Connection_Delete(&manager->mediasDownloader->listFtp);
-        }
-        
-        if (manager->mediasDownloader->deleteFtp != NULL)
-        {
-            ARUTILS_WifiFtp_Connection_Delete(&manager->mediasDownloader->deleteFtp);
-        }
-        
-        if (manager->mediasDownloader->ftp != NULL)
-        {
-            ARUTILS_WifiFtp_Connection_Delete(&manager->mediasDownloader->ftp);
-        }
-        
         manager->mediasDownloader->isCanceled = 0;
     }
 }
@@ -978,7 +934,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
             strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         }
         
-        error = ARUTILS_WifiFtp_Get_WithBuffer(manager->mediasDownloader->listFtp, remoteThumbnail, &media->thumbnail, &media->thumbnailSize, NULL, NULL);
+        error = ARUTILS_Manager_Ftp_Get_WithBuffer(manager->mediasDownloader->ftpManager, remoteThumbnail, &media->thumbnail, &media->thumbnailSize, NULL, NULL);
         
         if (error != ARUTILS_OK)
         {
@@ -1043,7 +999,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
 
     if (result == ARDATATRANSFER_OK)
     {
-        error = ARUTILS_WifiFtp_Get(manager->mediasDownloader->ftp, remotePath, localPath, ARDATATRANSFER_MediasDownloader_FtpProgressCallback, ftpMedia, (errorResume == ARUTILS_OK) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
+        error = ARUTILS_Manager_Ftp_Get(manager->mediasDownloader->ftpManager, remotePath, localPath, ARDATATRANSFER_MediasDownloader_FtpProgressCallback, ftpMedia, (errorResume == ARUTILS_OK) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
         
         if (error == ARUTILS_ERROR_FTP_CANCELED)
         {
