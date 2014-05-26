@@ -5,6 +5,7 @@ import java.lang.Runnable;
 import java.util.Vector;
 import java.util.List;
 import com.parrot.arsdk.arsal.ARSALPrint;
+import com.parrot.arsdk.arutils.ARUtilsManager;
 
 /**
  * ARDataTransfer MediasDownloader module
@@ -15,7 +16,7 @@ public class ARDataTransferMediasDownloader
 {
     /* Native Functions */
     private native static boolean nativeStaticInit();
-    private native int nativeNew(long manager, String deviceIP, int port, String remoteDirectory, String localDirectory);
+    private native int nativeNew(long manager, long utilsManager, String remoteDirectory, String localDirectory);
     private native int nativeDelete(long manager);    
     private native int nativeGetAvailableMediasSync(long manager, boolean withThumbnail);
     private native ARDataTransferMedia nativeGetAvailableMediaAtIndex(long manager, int index);
@@ -58,9 +59,9 @@ public class ARDataTransferMediasDownloader
      * @return void
      * @throws ARDataTransferException if error
      */
-    public void createMediasDownloader(String deviceIP, int port, String remoteDirectory, String localDirectory) throws ARDataTransferException
+    public void createMediasDownloader(ARUtilsManager utilsManager, String remoteDirectory, String localDirectory) throws ARDataTransferException
     {
-        int result = nativeNew(nativeManager, deviceIP, port, remoteDirectory, localDirectory);
+        int result = nativeNew(nativeManager, utilsManager.getManager(), remoteDirectory, localDirectory);
         
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
 
