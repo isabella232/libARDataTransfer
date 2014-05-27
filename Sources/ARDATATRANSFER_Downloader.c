@@ -39,7 +39,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_New (ARDATATRANSFER_Manager_t *m
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     //eARUTILS_ERROR resultUtil = ARUTILS_OK;
-    int resultSys = 0;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "");
     
@@ -63,13 +62,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_New (ARDATATRANSFER_Manager_t *m
                 result = ARDATATRANSFER_ERROR_ALLOC;
             }
         }
-    }
-    
-    resultSys = ARSAL_Sem_Post(&manager->dataDownloader->threadSem);
-    
-    if (resultSys != 0)
-    {
-        result = ARDATATRANSFER_ERROR_SYSTEM;
     }
     
     if (result == ARDATATRANSFER_OK)
