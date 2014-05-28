@@ -117,7 +117,7 @@ void* ARDATATRANSFER_Uploader_ThreadRun (void *managerArg)
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtil = ARUTILS_OK;
     
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "%x", (int)manager);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "%p", manager);
     
     if ((manager != NULL) && (manager->uploader !=  NULL))
     {
