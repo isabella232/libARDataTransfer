@@ -39,7 +39,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *man
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     //eARUTILS_ERROR resultUtil = ARUTILS_OK;
-    int resultSys = 0;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "");
     
@@ -63,13 +62,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *man
                 result = ARDATATRANSFER_ERROR_ALLOC;
             }
         }
-    }
-    
-    resultSys = ARSAL_Sem_Post(&manager->dataDownloader->threadSem);
-    
-    if (resultSys != 0)
-    {
-        result = ARDATATRANSFER_ERROR_SYSTEM;
     }
     
     if (result == ARDATATRANSFER_OK)
@@ -129,7 +121,7 @@ void* ARDATATRANSFER_Uploader_ThreadRun (void *managerArg)
     
     if ((manager != NULL) && (manager->uploader !=  NULL))
     {
-        resultUtil = ARUTILS_Manager_Ftp_Get(manager->uploader->ftpManager, manager->uploader->remotePath, manager->uploader->localPath, ARDATATRANSFER_Uploader_Ftp_ProgressCallback, manager, (manager->uploader->resume == ARDATATRANSFER_UPLOADER_RESUME_TRUE) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
+        resultUtil = ARUTILS_Manager_Ftp_Put(manager->uploader->ftpManager, manager->uploader->remotePath, manager->uploader->localPath, ARDATATRANSFER_Uploader_Ftp_ProgressCallback, manager, (manager->uploader->resume == ARDATATRANSFER_UPLOADER_RESUME_TRUE) ? FTP_RESUME_TRUE : FTP_RESUME_FALSE);
         
         if (resultUtil != ARUTILS_OK)
         {
