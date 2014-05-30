@@ -22,6 +22,7 @@ import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderAvailableMe
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderCompletionListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderProgressListener;
 import com.parrot.arsdk.arutils.ARUtilsException;
+import com.parrot.arsdk.arutils.ARUtilsFtpConnection;
 import com.parrot.arsdk.arutils.ARUtilsManager;
 
 public class MainActivity 
@@ -61,7 +62,6 @@ public class MainActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		int port = 7;
         Log.d("DBG", APP_TAG + "onCreate");
         
         //LoadModules(true);
@@ -236,7 +236,7 @@ public class MainActivity
         	
         	ARDataTransferManager manager = new ARDataTransferManager();
         	ARUtilsManager utilsManager = new ARUtilsManager();
-        	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, "", "");
+        	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
         	//String list = null;
         	
         	//list = manager.ftpEasyList("ftp://172.20.5.109/", "/");
@@ -268,7 +268,7 @@ public class MainActivity
         	{
         		ARDataTransferMedia media = mediasManager.getAvailableMediaAtIndex(i);
         		Log.d("DBG", APP_TAG + "media name:" + media.getName() + ", date: " + media.getDate() + ", size: " + media.getSize() + ", thumbnail: " + media.getThumbnail().length);
-        		Log.d("DBG", APP_TAG + "thumbnail: " + new String(media.getThumbnail()));
+        		//Log.d("DBG", APP_TAG + "thumbnail: " + new String(media.getThumbnail()));
         		
         		mediasManager.addMediaToQueue(media, this, this, this, this);
         	}
@@ -419,7 +419,7 @@ public class MainActivity
 				Log.d("DBG", "new ARUtilsManager failed");
 				assertError(utilsManager == null);
 			}
-	        utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, "", "");
+	        utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
 	        try { 
 	        	mediasCount = mediasManager.getAvailableMediasSync(true);
 	        	Log.d("DBG", "getAvailableMedias ERROR"); 
@@ -503,7 +503,7 @@ public class MainActivity
         {
             managerRunning = new ARDataTransferManager();
             utilsManagerRunning = new ARUtilsManager();
-            utilsManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, "", "");
+            utilsManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
             semRunning = new Semaphore(1);
         	
         	semRunning.acquire();
@@ -579,7 +579,7 @@ public class MainActivity
     	{
 	    	ARDataTransferManager manager = new ARDataTransferManager();
 	    	ARUtilsManager utilsManager = new ARUtilsManager();
-	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, "", "");
+	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
 	    	
 	    	ARDataTransferMediasDownloader mediasManager = manager.getARDataTransferMediasDownloader();        	
 	    	
