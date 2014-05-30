@@ -43,7 +43,6 @@ typedef struct
     ARUTILS_Manager_t *ftpManager;
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
-    ARSAL_Sem_t listSem;
     ARSAL_Sem_t queueSem;
     ARSAL_Sem_t threadSem;
     ARSAL_Mutex_t mediasLock;

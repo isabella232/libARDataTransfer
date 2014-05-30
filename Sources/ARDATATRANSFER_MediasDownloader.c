@@ -88,16 +88,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_New(ARDATATRANSFER_Manager
     
     if (result == ARDATATRANSFER_OK)
     {
-        resultSys = ARSAL_Sem_Init(&manager->mediasDownloader->listSem, 0, 0);
-        
-        if (resultSys != 0)
-        {
-            result = ARDATATRANSFER_ERROR_SYSTEM;
-        }
-    }
-    
-    if (result == ARDATATRANSFER_OK)
-    {
         resultSys = ARSAL_Sem_Init(&manager->mediasDownloader->threadSem, 0, 0);
         
         if (resultSys != 0)
@@ -168,13 +158,12 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete(ARDATATRANSFER_Mana
             }
             else
             {
-                ARSAL_Sem_Post(&manager->mediasDownloader->listSem);
+                ARUTILS_Manager_Ftp_Connection_Cancel(manager->mediasDownloader->ftpManager);
                 ARDATATRANSFER_MediasDownloader_CancelQueueThread(manager);
                 
                 ARDATATRANSFER_MediasDownloader_Clear(manager);
                 
                 ARSAL_Sem_Destroy(&manager->mediasDownloader->queueSem);
-                ARSAL_Sem_Destroy(&manager->mediasDownloader->listSem);
                 ARSAL_Sem_Destroy(&manager->mediasDownloader->threadSem);
                 
                 ARDATATRANSFER_MediasQueue_Delete(&manager->mediasDownloader->queue);
@@ -759,6 +748,7 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelQueueThread(ARDATATRANSFER_Manager_t *manager)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
     int resultSys = 0;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
@@ -803,13 +793,23 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelQueueThread(ARDATATR
         }
     }
     
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->mediasDownloader->ftpManager);
+        
+        if (resultUtils != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
+        }
+    }
+    
     return result;
 }
 
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(ARDATATRANSFER_Manager_t *manager)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
-    int resultSys = 0;
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
     
@@ -825,11 +825,10 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(A
     
     if (result == ARDATATRANSFER_OK)
     {
-        resultSys = ARSAL_Sem_Post(&manager->mediasDownloader->listSem);
-        
-        if (resultSys != 0)
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->mediasDownloader->ftpManager);
+        if (resultUtils != ARUTILS_OK)
         {
-            result = ARDATATRANSFER_ERROR_SYSTEM;
+            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
 
@@ -845,7 +844,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(A
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
-    eARUTILS_ERROR error = ARUTILS_OK;
+    //eARUTILS_ERROR error = ARUTILS_OK;
     int resultSys = 0;
     
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "%s, %s", localDirectory ? localDirectory : "null", remoteDirectory ? remoteDirectory : "null");
