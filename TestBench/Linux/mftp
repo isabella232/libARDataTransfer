@@ -56,6 +56,7 @@ JS_MEDIA_PATH="$JS_PATH/media"
 sudo mkdir -p "$JS_MEDIA_PATH"
 
 sudo cp photo_20131001_235901.jpg "$JS_MEDIA_PATH/"$JS_NAME"_2014-01-21T160101+0100_UUID0101.jpg"
+sudo cp Jumping_Sumo_1.mp4 "$JS_MEDIA_PATH/"$JS_NAME"_2014-03-21T160101+0100_UUID0102.mp4"
 
 JS_THUMB_PATH="$JS_PATH/thumb"
 sudo mkdir -p "$JS_THUMB_PATH"
