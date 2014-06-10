@@ -27,7 +27,7 @@ typedef enum
  * @param percent The percent size of the media file already downloaded
  * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
  */
-typedef void (*ARDATATRANSFER_Uploader_ProgressCallback_t) (void* arg, uint8_t percent);
+typedef void (*ARDATATRANSFER_Uploader_ProgressCallback_t) (void* arg, float percent);
 
 /**
  * @brief Completion callback of the Uploader

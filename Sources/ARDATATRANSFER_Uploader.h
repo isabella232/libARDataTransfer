@@ -37,7 +37,7 @@ typedef struct
 } ARDATATRANSFER_Uploader_t;
 
 
-void ARDATATRANSFER_Uploader_Ftp_ProgressCallback(void* arg, uint8_t percent);
+void ARDATATRANSFER_Uploader_Ftp_ProgressCallback(void* arg, float percent);
 
 
 #endif /* _ARDATATRANSFER_UPLOADER_PRIVATE_H_ */

@@ -89,7 +89,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
  * @param percent The percent size of the media file already downloaded
  * @see ARDATATRANSFER_MediasDownloader_DownloadMedia ()
  */
-void ARDATATRANSFER_MediasDownloader_FtpProgressCallback(void* arg, uint8_t percent);
+void ARDATATRANSFER_MediasDownloader_FtpProgressCallback(void* arg, float percent);
 
 /**
  * @brief Download an FTP Media

@@ -175,7 +175,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_CancelThread (ARDATATRANSFER_Man
  *
  *****************************************/
 
-void ARDATATRANSFER_Downloader_Ftp_ProgressCallback(void* arg, uint8_t percent)
+void ARDATATRANSFER_Downloader_Ftp_ProgressCallback(void* arg, float percent)
 {
     ARDATATRANSFER_Manager_t *manager = (ARDATATRANSFER_Manager_t *)arg;
     

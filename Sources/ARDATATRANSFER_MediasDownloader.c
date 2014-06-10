@@ -944,7 +944,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
     return result;
 }
 
-void ARDATATRANSFER_MediasDownloader_FtpProgressCallback(void* arg, uint8_t percent)
+void ARDATATRANSFER_MediasDownloader_FtpProgressCallback(void* arg, float percent)
 {
     ARDATATRANSFER_FtpMedia_t *ftpMedia = (ARDATATRANSFER_FtpMedia_t *)arg;
 

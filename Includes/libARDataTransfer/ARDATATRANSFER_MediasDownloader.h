@@ -76,7 +76,7 @@ typedef void (*ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t) (void* 
  * @param percent The percent size of the media file already downloaded
  * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
  */
-typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadProgressCallback_t) (void* arg, ARDATATRANSFER_Media_t *media, uint8_t percent);
+typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadProgressCallback_t) (void* arg, ARDATATRANSFER_Media_t *media, float percent);
 
 /**
  * @brief Completion callback of the Media download
