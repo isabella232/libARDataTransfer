@@ -383,7 +383,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     return result;
 }
 
-void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANSFER_Media_t *media, uint8_t percent)
+void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANSFER_Media_t *media, float percent)
 {
     ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t*)arg;
 
@@ -392,7 +392,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANS
         if ((ARDATATRANSFER_JNI_Manager_VM != NULL) && (callbacks->jProgressListener != NULL) && (methodId_MDListener_didMediaProgress != NULL))
         {
             JNIEnv *env = NULL;
-            jint jPercent = 0;
+            jfloat jPercent = 0;
             jint jResultEnv = 0;
             int error = JNI_OK;
 
@@ -923,7 +923,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewListenersJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
-            methodId_MDListener_didMediaProgress = (*env)->GetMethodID(env, classMDProgressListener, "didMediaProgress", "(Ljava/lang/Object;Lcom/parrot/arsdk/ardatatransfer/ARDataTransferMedia;I)V");
+            methodId_MDListener_didMediaProgress = (*env)->GetMethodID(env, classMDProgressListener, "didMediaProgress", "(Ljava/lang/Object;Lcom/parrot/arsdk/ardatatransfer/ARDataTransferMedia;F)V");
 
             if (methodId_MDListener_didMediaProgress == NULL)
             {

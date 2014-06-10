@@ -629,7 +629,7 @@ public class MainActivity
         }
     }
     
-    public void didMediaProgress(Object arg, ARDataTransferMedia media, int percent)
+    public void didMediaProgress(Object arg, ARDataTransferMedia media, float percent)
     {
     	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaProgress: " + media.getName() + ", " + percent + "%");
     }

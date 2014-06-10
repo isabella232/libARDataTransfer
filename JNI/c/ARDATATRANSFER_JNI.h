@@ -156,7 +156,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(JNIEnv *env);
  * @retval void
  * @see ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI
  */
-void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANSFER_Media_t *media, uint8_t percent);
+void ARDATATRANSFER_JNI_MediasDownloader_ProgressCallback(void* arg, ARDATATRANSFER_Media_t *media, float percent);
 
 /**
  * @brief Callback that give the media download completion status
