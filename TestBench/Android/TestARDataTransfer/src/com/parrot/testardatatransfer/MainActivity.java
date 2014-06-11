@@ -12,8 +12,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_DOWNLOADER_RESUME_ENUM;
 import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_ERROR_ENUM;
+import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_UPLOADER_RESUME_ENUM;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferDataDownloader;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloader;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloaderCompletionListener;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloaderProgressListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferException;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferManager;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMedia;
@@ -21,6 +26,9 @@ import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloader;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderAvailableMediaListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderCompletionListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferMediasDownloaderProgressListener;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferUploader;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferUploaderCompletionListener;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferUploaderProgressListener;
 import com.parrot.arsdk.arutils.ARUtilsException;
 import com.parrot.arsdk.arutils.ARUtilsFtpConnection;
 import com.parrot.arsdk.arutils.ARUtilsManager;
@@ -29,12 +37,17 @@ public class MainActivity
 	extends Activity 
 	implements ARDataTransferMediasDownloaderProgressListener, 
 		ARDataTransferMediasDownloaderCompletionListener,
-		ARDataTransferMediasDownloaderAvailableMediaListener
+		ARDataTransferMediasDownloaderAvailableMediaListener,
+		ARDataTransferDownloaderProgressListener,
+		ARDataTransferDownloaderCompletionListener,
+		ARDataTransferUploaderProgressListener,
+		ARDataTransferUploaderCompletionListener
+		
 {
 	public static String APP_TAG = "TestARDataTransfer "; 
         
-	//public static String DRONE_IP = "172.20.5.146";
-	public static String DRONE_IP = "172.20.5.36";
+	public static String DRONE_IP = "172.20.5.146";
+	//public static String DRONE_IP = "172.20.5.36";
 	public static int DRONE_PORT = 21;
 	
 	ARDataTransferManager managerRunning = null;
@@ -117,7 +130,25 @@ public class MainActivity
 			public void onClick(View v) {
 				TestARDataTransferRunningSignal();
 			}
+		});
+		
+		Button testDownloader = (Button)this.findViewById(R.id.testDownloader);
+        
+		testDownloader.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TestARDataTransferDownloader();
+			}
 		});		
+
+		Button testUploader = (Button)this.findViewById(R.id.testUploader);
+        
+		testUploader.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TestARDataTransferUploader();
+			}
+		});
 	}
 	
 	@Override
@@ -232,8 +263,6 @@ public class MainActivity
     {
         try
         {
-        	
-        	
         	ARDataTransferManager manager = new ARDataTransferManager();
         	ARUtilsManager utilsManager = new ARUtilsManager();
         	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
@@ -629,6 +658,92 @@ public class MainActivity
         }
     }
     
+    void TestARDataTransferDownloader()
+    {
+    	try
+    	{
+    		ARDataTransferManager manager = new ARDataTransferManager();
+	    	ARUtilsManager utilsManager = new ARUtilsManager();
+	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	
+	    	ARDataTransferDownloader downloadManager = manager.getARDataTransferDownloader();        	
+	    	
+	    	String tmp = "/var";
+	    	File sysTmp = this.getCacheDir();// /data/data/com.example.tstdata/cache
+	    	tmp = sysTmp.getAbsolutePath();
+	    	
+	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
+	    	tmp = sysHome.getAbsolutePath();
+	    	String name = "Bebop_Drone_2014-01-21T160101+0100_3902B87F947BE865A9D137CFA63492B8.jpg";
+	    	String remoteName =  "Bebop_Drone/media/" + name;
+	    	
+	    	downloadManager.createDownloader(utilsManager, remoteName, tmp + "/" + name, this, this, this, this, ARDATATRANSFER_DOWNLOADER_RESUME_ENUM.ARDATATRANSFER_DOWNLOADER_RESUME_FALSE);
+	    	
+	    	Runnable downloader = downloadManager.getDownloaderRunnable();
+	    	
+	    	Thread downloaderThread = new Thread(downloader);
+	    	downloaderThread.start();
+	    	
+	    	try { downloaderThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
+            
+	        downloadManager.dispose();
+            manager.dispose();
+            utilsManager.closeWifiFtp();
+	        utilsManager.dispose();
+    	}
+        catch (Exception e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+        catch (Throwable e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+    }
+    
+    void TestARDataTransferUploader()
+    {
+    	try
+    	{
+    		ARDataTransferManager manager = new ARDataTransferManager();
+	    	ARUtilsManager utilsManager = new ARUtilsManager();
+	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	
+	    	ARDataTransferUploader uploadManager = manager.getARDataTransferUploader();        	
+	    	
+	    	String tmp = "/var";
+	    	File sysTmp = this.getCacheDir();// /data/data/com.example.tstdata/cache
+	    	tmp = sysTmp.getAbsolutePath();
+	    	
+	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
+	    	tmp = sysHome.getAbsolutePath();
+	    	String name = "Bebop_Drone_2014-01-21T160101+0100_3902B87F947BE865A9D137CFA63492B8.jpg";
+	    	String remoteName =  "Bebop_Drone/media/" + name + ".new";
+    		
+	    	uploadManager.createUploader(utilsManager, remoteName, tmp + "/" + name , this, this, this, this, ARDATATRANSFER_UPLOADER_RESUME_ENUM.ARDATATRANSFER_UPLOADER_RESUME_FALSE);
+	    	
+	    	Runnable uploader = uploadManager.getUploaderRunnable();
+	    	
+	    	Thread uploaderThread = new Thread(uploader);
+	    	uploaderThread.start();
+	    	
+	    	try { uploaderThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
+            
+	        uploadManager.dispose();
+            manager.dispose();
+            utilsManager.closeWifiFtp();
+	        utilsManager.dispose();
+    	}
+        catch (Exception e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+        catch (Throwable e)
+        {
+        	Log.d("DBG", APP_TAG + e.toString());
+        }
+    }
+    
     public void didMediaProgress(Object arg, ARDataTransferMedia media, float percent)
     {
     	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaProgress: " + media.getName() + ", " + percent + "%");
@@ -642,5 +757,35 @@ public class MainActivity
     	else
     		err = "[" + error.toString() + "]";
     	Log.d("DBG", APP_TAG + "ARDataTransferMediasDownloader, didMediaComplete: " + media.getName() + ", " + err);
+    }
+    
+    public void didDownloadProgress(Object arg, float percent)
+    {
+    	Log.d("DBG", APP_TAG + "ARDataTransferDownloader, didDownloadProgress: " + percent + "%");
+    }
+    
+    public void didDownloadComplete(Object arg, ARDATATRANSFER_ERROR_ENUM error)
+    {
+    	String err;
+    	if (error == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+    		err = "ARDATATRANSFER_OK";
+    	else
+    		err = "[" + error.toString() + "]";
+    	Log.d("DBG", APP_TAG + "ARDataTransferDownloader, didDownloadComplete: " + err);    	
+    }
+    
+    public void didUploadProgress(Object arg, float percent)
+    {
+    	Log.d("DBG", APP_TAG + "ARDataTransferDownloader, didUploadProgress: " + percent + "%");
+    }
+    
+    public void didUploadComplete(Object arg, ARDATATRANSFER_ERROR_ENUM error)
+    {
+    	String err;
+    	if (error == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK)
+    		err = "ARDATATRANSFER_OK";
+    	else
+    		err = "[" + error.toString() + "]";
+    	Log.d("DBG", APP_TAG + "ARDataTransferDownloader, didUploadComplete: " + err);
     }
 }

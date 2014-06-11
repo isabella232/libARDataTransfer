@@ -46,4 +46,20 @@
         android:layout_below="@+id/testRunning"
         android:text="Test Media Available" />
 
+    <Button
+        android:id="@+id/testDownloader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/testRunningSignal"
+        android:layout_below="@+id/testRunningSignal"
+        android:text="Test Downloader" />
+
+    <Button
+        android:id="@+id/testUploader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/testDownloader"
+        android:layout_below="@+id/testDownloader"
+        android:text="Test Uploader" />
+
 </RelativeLayout>

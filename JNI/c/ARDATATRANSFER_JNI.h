@@ -40,6 +40,40 @@ typedef struct _ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t_
 } ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t;
 
 /**
+ * @brief MediasDownloader Callbacks structure
+ * @param jProgressListener The progress Listener
+ * @param jProgressArg The progress Arg object
+ * @param jCompletionListener The completion Listener
+ * @param jCompletionArg The completion Arg object
+ * @see ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks
+ */
+typedef struct _ARDATATRANSFER_JNI_DownloaderCallbacks_t_
+{
+    jobject jProgressListener;
+    jobject jProgressArg;
+    jobject jCompletionListener;
+    jobject jCompletionArg;
+
+} ARDATATRANSFER_JNI_DownloaderCallbacks_t;
+
+/**
+ * @brief MediasUploader Callbacks structure
+ * @param jProgressListener The progress Listener
+ * @param jProgressArg The progress Arg object
+ * @param jCompletionListener The completion Listener
+ * @param jCompletionArg The completion Arg object
+ * @see ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks
+ */
+typedef struct _ARDATATRANSFER_JNI_UploaderCallbacks_t_
+{
+    jobject jProgressListener;
+    jobject jProgressArg;
+    jobject jCompletionListener;
+    jobject jCompletionArg;
+
+} ARDATATRANSFER_JNI_UploaderCallbacks_t;
+
+/**
  * @brief Throw a new ARDataTransferException
  * @param env The java env
  * @param nativeError The error
@@ -149,6 +183,38 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewListenersJNI(JNIEnv *env);
 void ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(JNIEnv *env);
 
 /**
+ * @brief Get the ARDataTransferDownloaderProgressListener and ARDataTransferDownloaderCompletionListener JNI classes
+ * @param env The java env
+ * @retval JNI_TRUE if Success, else JNI_FALSE
+ * @see ARDATATRANSFER_JNI_Downloader_FreeListenersJNI
+ */
+int ARDATATRANSFER_JNI_Downloader_NewListenersJNI(JNIEnv *env);
+
+/**
+ * @brief Free the ARDataTransferUploaderProgressListener and ARDataTransferUploaderCompletionListener JNI classes
+ * @param env The java env
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Uploader_NewListenersJNI
+ */
+void ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(JNIEnv *env);
+
+/**
+ * @brief Get the ARDataTransferUploaderProgressListener and ARDataTransferUploaderCompletionListener JNI classes
+ * @param env The java env
+ * @retval JNI_TRUE if Success, else JNI_FALSE
+ * @see ARDATATRANSFER_JNI_Uploader_FreeListenersJNI
+ */
+int ARDATATRANSFER_JNI_Uploader_NewListenersJNI(JNIEnv *env);
+
+/**
+ * @brief Free the ARDataTransferUploaderProgressListener and ARDataTransferUploaderCompletionListener JNI classes
+ * @param env The java env
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Uploader_NewListenersJNI
+ */
+void ARDATATRANSFER_JNI_Uploader_FreeListenersJNI(JNIEnv *env);
+
+/**
  * @brief Callback that give the media download progress persent
  * @param arg The arg
  * @param media The media
@@ -187,6 +253,62 @@ void ARDATATRANSFER_JNI_MediasDownloader_AvailableMediaCallback(void* arg, ARDAT
  * @see ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t
  */
 void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t **callbacks);
+
+/**
+ * @brief Callback that give the download progress persent
+ * @param arg The arg
+ * @param percent The progress percent
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Downloader_FreeListenersJNI
+ */
+void ARDATATRANSFER_JNI_Downloader_ProgressCallback(void* arg, float percent);
+
+/**
+ * @brief Callback that give the download completion status
+ * @param arg The arg
+ * @param nativeError The error status of the media download
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Downloader_FreeListenersJNI
+ */
+void ARDATATRANSFER_JNI_Downloader_CompletionCallback(void* arg, eARDATATRANSFER_ERROR nativeError);
+
+/**
+ * @brief Free Callbacks structure
+ * @warning This function frees memory
+ * @param env The java env
+ * @param callbacks The callbacks structure
+ * @retval void
+ * @see ARDATATRANSFER_JNI_DownloaderCallbacks_t
+ */
+void ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DownloaderCallbacks_t **callbacks);
+
+/**
+ * @brief Callback that give the download progress persent
+ * @param arg The arg
+ * @param percent The progress percent
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Uploader_FreeListenersJNI
+ */
+void ARDATATRANSFER_JNI_Uploader_ProgressCallback(void* arg, float percent);
+
+/**
+ * @brief Callback that give the download completion status
+ * @param arg The arg
+ * @param nativeError The error status of the media download
+ * @retval void
+ * @see ARDATATRANSFER_JNI_Uploader_FreeListenersJNI
+ */
+void ARDATATRANSFER_JNI_Uploader_CompletionCallback(void* arg, eARDATATRANSFER_ERROR nativeError);
+
+/**
+ * @brief Free Callbacks structure
+ * @warning This function frees memory
+ * @param env The java env
+ * @param callbacks The callbacks structure
+ * @retval void
+ * @see ARDATATRANSFER_JNI_UploaderCallbacks_t
+ */
+void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacks);
 
 #endif /* _ARDATATRANSFER_JNI_H_ */
 
