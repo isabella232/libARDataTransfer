@@ -169,6 +169,38 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_CancelThread (ARDATATRANSFER_Manag
     return result;
 }
 
+eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_Rename (ARDATATRANSFER_Manager_t *manager, const char *oldNamePath, const char *newNamePath)
+{
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    eARUTILS_ERROR resultUtil = ARUTILS_OK;
+    
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "");
+    
+    if (manager == NULL)
+    {
+        result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        if (manager->uploader == NULL)
+        {
+            result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
+        }
+        else
+        {
+            resultUtil = ARUTILS_Manager_Ftp_Rename(manager->uploader->ftpManager, oldNamePath, newNamePath);
+        }
+        
+        if (resultUtil != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
+        }
+    }
+    
+    return result;
+}
+
 /*****************************************
  *
  *             Private implementation:

@@ -97,9 +97,9 @@ void test_manager_assert(int check)
     }
 }
 
-void test_manager_medias_downloader_progress_callback(void* arg, ARDATATRANSFER_Media_t *media, uint8_t percent)
+void test_manager_medias_downloader_progress_callback(void* arg, ARDATATRANSFER_Media_t *media, float percent)
 {
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d%%", media->name, percent);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %02f%%", media->name, percent);
 }
 
 void test_manager_medias_downloader_completion_callback(void* arg, ARDATATRANSFER_Media_t *media, eARDATATRANSFER_ERROR error)

@@ -59,6 +59,16 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_New (ARDATATRANSFER_Manager_t *man
 eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_Delete (ARDATATRANSFER_Manager_t *manager);
 
 /**
+ * @brief Rename a Remote File
+ * @param manager The address of the pointer on the ARDataTransfer Manager
+ * @param oldNamePath The old remote name path
+ * @param newNamePath The new remote name path
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_Uploader_New ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_Rename (ARDATATRANSFER_Manager_t *manager, const char *oldNamePath, const char *newNamePath);
+
+/**
  * @brief Process of the device upload
  * @param manager The pointer of the ARDataTransfer Manager
  * @retval returns NULL
