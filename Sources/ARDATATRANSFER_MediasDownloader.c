@@ -440,6 +440,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_MediasDownloader_AvailableMediaCallback_t availableMediaCallback, void *availableMediaArg)
 {
     ARDATATRANSFER_Media_t *media;
+    ARDATATRANSFER_Media_t tmpMedia;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     int i;
@@ -464,25 +465,57 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
     
     if (result == ARDATATRANSFER_OK)
     {
-        ARSAL_Mutex_Lock(&manager->mediasDownloader->mediasLock);
-
         for (i=0; (resultUtils == ARUTILS_OK) && (i<manager->mediasDownloader->medias.count); i++)
         {
+            eARDATATRANSFER_ERROR resultThumbnail;
             resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpManager);
             
             if (resultUtils != ARUTILS_OK)
             {
                 result = ARDATATRANSFER_ERROR_CANCELED;
             }
-            
-            media = manager->mediasDownloader->medias.medias[i];
-            
-            ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, media);
-            
-            availableMediaCallback(availableMediaArg, media, i);
+            else
+            {
+                ARSAL_Mutex_Lock(&manager->mediasDownloader->mediasLock);
+                
+                media = manager->mediasDownloader->medias.medias[i];
+                if (media != NULL)
+                {
+                    memcpy(&tmpMedia, media, sizeof(ARDATATRANSFER_Media_t));
+                }
+                else
+                {
+                    memset(&tmpMedia, 0, sizeof(ARDATATRANSFER_Media_t));
+                }
+                
+                ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
+                
+                if ((media != NULL) && (tmpMedia.thumbnail == NULL))
+                {
+                    resultThumbnail = ARDATATRANSFER_MediasDownloader_GetThumbnail(manager, &tmpMedia);
+                    if ((resultThumbnail == ARDATATRANSFER_OK) && (tmpMedia.thumbnail != NULL))
+                    {
+                        ARSAL_Mutex_Lock(&manager->mediasDownloader->mediasLock);
+                        
+                        media = manager->mediasDownloader->medias.medias[i];
+                        if (media != NULL)
+                        {
+                            media->thumbnail = tmpMedia.thumbnail;
+                            media->thumbnailSize = tmpMedia.thumbnailSize;
+                        }
+                        else
+                        {
+                            free(tmpMedia.thumbnail);
+                            tmpMedia.thumbnail = NULL;
+                        }
+                        
+                        ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
+                    }
+                }
+                
+                availableMediaCallback(availableMediaArg, media, i);
+            }
         }
-        
-        ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
     }
     
     return result;
