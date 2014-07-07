@@ -75,16 +75,17 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMe
     return jret;
 }
 
-JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jftpManager, jstring jRemoteDirectory, jstring jLocalDirectory)
+JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jftpListManager, jlong jftpQueueManager, jstring jRemoteDirectory, jstring jLocalDirectory)
 {
     ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
-    ARUTILS_Manager_t *nativeFtpManager = (ARUTILS_Manager_t *)(intptr_t)jftpManager;
+    ARUTILS_Manager_t *nativeFtpListManager = (ARUTILS_Manager_t *)(intptr_t)jftpListManager;
+    ARUTILS_Manager_t *nativeFtpQueueManager = (ARUTILS_Manager_t *)(intptr_t)jftpQueueManager;
     const char *nativeRemoteDirectory = (*env)->GetStringUTFChars(env, jRemoteDirectory, 0);
     const char *nativeLocalDirectory = (*env)->GetStringUTFChars(env, jLocalDirectory, 0);
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
 
-    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeFtpManager, nativeRemoteDirectory, nativeLocalDirectory);
+    result = ARDATATRANSFER_MediasDownloader_New(nativeManager, nativeFtpListManager, nativeFtpQueueManager, nativeRemoteDirectory, nativeLocalDirectory);
 
     if (error == JNI_OK)
     {

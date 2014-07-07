@@ -16,7 +16,7 @@ public class ARDataTransferMediasDownloader
 {
     /* Native Functions */
     private native static boolean nativeStaticInit();
-    private native int nativeNew(long manager, long utilsManager, String remoteDirectory, String localDirectory);
+    private native int nativeNew(long manager, long utilsListManager, long utilsQueueManager, String remoteDirectory, String localDirectory);
     private native int nativeDelete(long manager);    
     private native int nativeGetAvailableMediasSync(long manager, boolean withThumbnail);
     private native ARDataTransferMedia nativeGetAvailableMediaAtIndex(long manager, int index);
@@ -59,9 +59,9 @@ public class ARDataTransferMediasDownloader
      * @return void
      * @throws ARDataTransferException if error
      */
-    public void createMediasDownloader(ARUtilsManager utilsManager, String remoteDirectory, String localDirectory) throws ARDataTransferException
+    public void createMediasDownloader(ARUtilsManager utilsListManager, ARUtilsManager utilsQueueManager, String remoteDirectory, String localDirectory) throws ARDataTransferException
     {
-        int result = nativeNew(nativeManager, utilsManager.getManager(), remoteDirectory, localDirectory);
+        int result = nativeNew(nativeManager, utilsListManager.getManager(), utilsQueueManager.getManager(), remoteDirectory, localDirectory);
         
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
 
