@@ -723,7 +723,7 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
     {
         result = ARDATATRANSFER_ERROR_THREAD_ALREADY_RUNNING;
     }
-
+    
     if (result == ARDATATRANSFER_OK)
     {
         manager->mediasDownloader->isRunning = 1;
@@ -773,11 +773,55 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
     if (manager != NULL && manager->mediasDownloader != NULL)
     {
         manager->mediasDownloader->isRunning = 0;
+        
+        ARDATATRANSFER_MediasDownloader_ResetQueueThread(manager);
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "exit");
 
     return NULL;
+}
+
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_ResetQueueThread(ARDATATRANSFER_Manager_t *manager)
+{
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
+    
+    if (manager == NULL)
+    {
+        result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
+    }
+    
+    if (result == ARDATATRANSFER_OK && (manager->mediasDownloader == NULL))
+    {
+        result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        manager->mediasDownloader->isCanceled = 0;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        while (ARSAL_Sem_Trywait(&manager->mediasDownloader->threadSem) == 0)
+        {
+            /* Do nothing*/
+        }
+    
+        while (ARSAL_Sem_Trywait(&manager->mediasDownloader->queueSem) == 0)
+        {
+            /* Do nothing*/
+        }
+        
+        while (ARSAL_Sem_Trywait(&manager->mediasDownloader->ftpQueueManager->cancelSem) == 0)
+        {
+            /* Do nothing*/
+        }
+    }
+    
+    return result;
 }
 
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelQueueThread(ARDATATRANSFER_Manager_t *manager)

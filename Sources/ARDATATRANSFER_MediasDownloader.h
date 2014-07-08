@@ -111,6 +111,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_RemoveMediaFromMediaList(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media);
 
 /**
+ * @brief Reset a canceled downloader process queue
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_QueueThreadRun ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_ResetQueueThread(ARDATATRANSFER_Manager_t *manager);
+
+/**
  * @brief Free a medias list
  * @param mediaList The list of medias
  * @see ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync ()
