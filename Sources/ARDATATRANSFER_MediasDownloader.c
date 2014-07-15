@@ -815,10 +815,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_ResetQueueThread(ARDATATRA
             /* Do nothing*/
         }
         
-        while (ARSAL_Sem_Trywait(&manager->mediasDownloader->ftpQueueManager->cancelSem) == 0)
-        {
-            /* Do nothing*/
-        }
+        ARUTILS_Manager_Ftp_Connection_Reset(manager->mediasDownloader->ftpQueueManager);
     }
     
     return result;
