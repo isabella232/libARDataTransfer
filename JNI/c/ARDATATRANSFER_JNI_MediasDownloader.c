@@ -892,6 +892,32 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);
 
+    // clean local refs
+
+    if (jName != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jName);
+    }
+
+    if (jFilePath != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jFilePath);
+    }
+
+    if (jDate != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jDate);
+    }
+
+    if (jUuid != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jUuid);
+    }
+    if (jThumbnail != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jThumbnail);   
+    }
+
     return jMedia;
 }
 
