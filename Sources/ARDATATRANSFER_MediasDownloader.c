@@ -467,7 +467,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
     
     if (result == ARDATATRANSFER_OK)
     {
-        for (i=0; (resultUtils == ARUTILS_OK) && (i<manager->mediasDownloader->medias.count); i++)
+        for (i=manager->mediasDownloader->medias.count-1; (resultUtils == ARUTILS_OK) && (i>=0); i--)
         {
             eARDATATRANSFER_ERROR resultThumbnail;
             resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpListManager);
