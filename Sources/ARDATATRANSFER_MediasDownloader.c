@@ -1095,6 +1095,10 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
             result = ARDATATRANSFER_ERROR_FILE;
         }
     }
+    else
+    {
+        remove(localPath);
+    }
 
     return result;
 }
