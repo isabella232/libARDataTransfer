@@ -955,7 +955,7 @@ void ARDATATRANSFER_MediasDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
 {
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
     
-    if (manager != NULL)
+    if ((manager != NULL) && (manager->mediasDownloader != NULL))
     {
         manager->mediasDownloader->isCanceled = 0;
     }

@@ -57,7 +57,7 @@ static ARDATATRANSFER_DataDownloader_Fwt_t dataFwt;
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
@@ -101,7 +101,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t
         manager->dataDownloader->isCanceled = 0;
         manager->dataDownloader->isRunning = 0;
 
-        result = ARDATATRANSFER_DataDownloader_Initialize(manager, deviceIP, port, localDirectory);
+        result = ARDATATRANSFER_DataDownloader_Initialize(manager, ftpManager, localDirectory);
     }
 
     if (result != ARDATATRANSFER_OK && result != ARDATATRANSFER_ERROR_ALREADY_INITIALIZED)
@@ -206,7 +206,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
         do
         {
-            error = ARUTILS_WifiFtp_List(manager->dataDownloader->ftp, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
+            error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
 
             product = 0;
             while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
@@ -222,7 +222,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                     strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
 
-                    error = ARUTILS_WifiFtp_List(manager->dataDownloader->ftp, remoteProduct, &dataFtpList, &dataFtpListLen);
+                    error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, remoteProduct, &dataFtpList, &dataFtpListLen);
 
                     // Resume downloading_ files loop
                     nextData = NULL;
@@ -239,11 +239,11 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                         strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) -1);
 
-                        errorFtp = ARUTILS_WifiFtp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
+                        errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
 
                         if (errorFtp == ARUTILS_OK)
                         {
-                            errorFtp = ARUTILS_WifiFtp_Delete(manager->dataDownloader->ftp, remotePath);
+                            errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                             strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                             restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -277,16 +277,16 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                             strncat(localPath, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
                             strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) - 1);
 
-                            errorFtp = ARUTILS_WifiFtp_Rename(manager->dataDownloader->ftp, initialPath, remotePath);
+                            errorFtp = ARUTILS_Manager_Ftp_Rename(manager->dataDownloader->ftpManager, initialPath, remotePath);
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                errorFtp = ARUTILS_WifiFtp_Get(manager->dataDownloader->ftp, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
+                                errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
                             }
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                errorFtp = ARUTILS_WifiFtp_Delete(manager->dataDownloader->ftp, remotePath);
+                                errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -372,15 +372,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, const char *deviceIP, int port, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
-    eARUTILS_ERROR error = ARUTILS_OK;
     int resultSys = 0;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "%s, %s, %d", deviceIP ? deviceIP : "null", localDirectory ? localDirectory : "null", port);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "%p, %s", ftpManager, localDirectory ? localDirectory : "null");
 
-    if ((manager == NULL) || (deviceIP == NULL) || (localDirectory == NULL))
+    if ((manager == NULL) || (ftpManager == NULL) || (localDirectory == NULL))
     {
         result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
     }
@@ -401,12 +400,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Ma
 
     if (result == ARDATATRANSFER_OK)
     {
-        manager->dataDownloader->ftp = ARUTILS_WifiFtp_Connection_New(&manager->dataDownloader->threadSem, deviceIP, port, ARUTILS_FTP_ANONYMOUS, "", &error);
-
-        if (error != ARUTILS_OK)
-        {
-            result = ARDATATRANSFER_ERROR_FTP;
-        }
+        manager->dataDownloader->ftpManager = ftpManager;
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "return %d", result);
@@ -420,9 +414,9 @@ void ARDATATRANSFER_DataDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
 
     if (manager != NULL)
     {
-        if (manager->dataDownloader->ftp != NULL)
+        if (manager->dataDownloader->ftpManager != NULL)
         {
-            ARUTILS_WifiFtp_Connection_Delete(&manager->dataDownloader->ftp);
+            manager->dataDownloader->ftpManager = NULL;
         }
     }
 }

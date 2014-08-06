@@ -1,0 +1,498 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		63008330188FD83900EAC1F6 /* ARUTILS_Error.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832A188FD83900EAC1F6 /* ARUTILS_Error.c */; };
+		63008331188FD83900EAC1F6 /* ARUTILS_FileSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832B188FD83900EAC1F6 /* ARUTILS_FileSystem.c */; };
+		63008333188FD83900EAC1F6 /* ARUTILS_Http.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832E188FD83900EAC1F6 /* ARUTILS_Http.c */; };
+		634FEBF218634BEF002CA7FB /* test_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 634FEBF118634BEF002CA7FB /* test_manager.c */; };
+		635F29EA1897F6DE00F4B367 /* test_ftp_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29E91897F6DE00F4B367 /* test_ftp_connection.c */; };
+		635F29EC1897F71200F4B367 /* test_http_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29EB1897F71200F4B367 /* test_http_connection.c */; };
+		635F29EE1897F81A00F4B367 /* test_filesystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29ED1897F81A00F4B367 /* test_filesystem.c */; };
+		636868A91892624100FAE353 /* libARDiscovery.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 636868A81892624100FAE353 /* libARDiscovery.framework */; };
+		6369E0DE18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 6369E0DC18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c */; };
+		6386CF8918A239C300049996 /* libARSAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63008339188FD86F00EAC1F6 /* libARSAL.framework */; };
+		63A17C72192B98F2007238AE /* ARUTILS_BLEFtp.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C71192B98F2007238AE /* ARUTILS_BLEFtp.m */; };
+		63A17C78192C8B9C007238AE /* ARUTILS_Manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C77192C8B9C007238AE /* ARUTILS_Manager.c */; };
+		63A17C7B192CA9D6007238AE /* ARDATATRANSFER_Uploader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C7A192CA9D6007238AE /* ARDATATRANSFER_Uploader.c */; };
+		63A17C7F192CCE39007238AE /* ARUTILS_WifiFtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C7D192CCE39007238AE /* ARUTILS_WifiFtp.c */; };
+		63A17C9D192F3903007238AE /* ARDATATRANSFER_Downloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C9B192F3903007238AE /* ARDATATRANSFER_Downloader.c */; };
+		63F74F33183FA6F10031D036 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F32183FA6F10031D036 /* Foundation.framework */; };
+		63F74F35183FA6F10031D036 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F34183FA6F10031D036 /* CoreGraphics.framework */; };
+		63F74F37183FA6F10031D036 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F36183FA6F10031D036 /* UIKit.framework */; };
+		63F74F3D183FA6F10031D036 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F74F3B183FA6F10031D036 /* InfoPlist.strings */; };
+		63F74F3F183FA6F10031D036 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F3E183FA6F10031D036 /* main.m */; };
+		63F74F43183FA6F10031D036 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F42183FA6F10031D036 /* AppDelegate.m */; };
+		63F74F46183FA6F10031D036 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63F74F44183FA6F10031D036 /* Main_iPhone.storyboard */; };
+		63F74F49183FA6F10031D036 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63F74F47183FA6F10031D036 /* Main_iPad.storyboard */; };
+		63F74F4C183FA6F10031D036 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F4B183FA6F10031D036 /* ViewController.m */; };
+		63F74F4E183FA6F10031D036 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63F74F4D183FA6F10031D036 /* Images.xcassets */; };
+		63F74F77183FA7760031D036 /* ARDATATRANSFER_Error.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F6A183FA7760031D036 /* ARDATATRANSFER_Error.c */; };
+		63F74F7B183FA7760031D036 /* ARDATATRANSFER_Manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F71183FA7760031D036 /* ARDATATRANSFER_Manager.c */; };
+		63F74F7C183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F73183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c */; };
+		63F74F7D183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F75183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c */; };
+		63F74F89183FAACA0031D036 /* libcurl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F88183FAACA0031D036 /* libcurl.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6300832A188FD83900EAC1F6 /* ARUTILS_Error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARUTILS_Error.c; path = ../../../../libARUtils/Sources/ARUTILS_Error.c; sourceTree = "<group>"; };
+		6300832B188FD83900EAC1F6 /* ARUTILS_FileSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARUTILS_FileSystem.c; path = ../../../../libARUtils/Sources/ARUTILS_FileSystem.c; sourceTree = "<group>"; };
+		6300832E188FD83900EAC1F6 /* ARUTILS_Http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARUTILS_Http.c; path = ../../../../libARUtils/Sources/ARUTILS_Http.c; sourceTree = "<group>"; };
+		6300832F188FD83900EAC1F6 /* ARUTILS_Http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Http.h; path = ../../../../libARUtils/Sources/ARUTILS_Http.h; sourceTree = "<group>"; };
+		63008334188FD84700EAC1F6 /* ARUTILS_Error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Error.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Error.h; sourceTree = "<group>"; };
+		63008335188FD84700EAC1F6 /* ARUTILS_FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_FileSystem.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_FileSystem.h; sourceTree = "<group>"; };
+		63008336188FD84700EAC1F6 /* ARUTILS_Ftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Ftp.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Ftp.h; sourceTree = "<group>"; };
+		63008337188FD84700EAC1F6 /* ARUTILS_Http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Http.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Http.h; sourceTree = "<group>"; };
+		63008338188FD84700EAC1F6 /* ARUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUtils.h; path = ../../../../libARUtils/Includes/libARUtils/ARUtils.h; sourceTree = "<group>"; };
+		63008339188FD86F00EAC1F6 /* libARSAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARSAL.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARSAL.framework; sourceTree = "<group>"; };
+		634FEBDB18620BF4002CA7FB /* ARDataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDataTransfer.h; path = ../../../Includes/libARDataTransfer/ARDataTransfer.h; sourceTree = "<group>"; };
+		634FEBF118634BEF002CA7FB /* test_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_manager.c; path = ../../Linux/test_manager.c; sourceTree = "<group>"; };
+		635F29E91897F6DE00F4B367 /* test_ftp_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_ftp_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_ftp_connection.c; sourceTree = "<group>"; };
+		635F29EB1897F71200F4B367 /* test_http_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_http_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_http_connection.c; sourceTree = "<group>"; };
+		635F29ED1897F81A00F4B367 /* test_filesystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_filesystem.c; path = ../../../../libARUtils/TestBench/Linux/test_filesystem.c; sourceTree = "<group>"; };
+		636868A81892624100FAE353 /* libARDiscovery.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARDiscovery.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARDiscovery.framework; sourceTree = "<group>"; };
+		6369E0DC18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_DataDownloader.c; path = ../../../Sources/ARDATATRANSFER_DataDownloader.c; sourceTree = "<group>"; };
+		6369E0DD18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_DataDownloader.h; path = ../../../Sources/ARDATATRANSFER_DataDownloader.h; sourceTree = "<group>"; };
+		6369E0DF18448DA000C3F64D /* ARDATATRANSFER_DataDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_DataDownloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_DataDownloader.h; sourceTree = "<group>"; };
+		63A17C71192B98F2007238AE /* ARUTILS_BLEFtp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ARUTILS_BLEFtp.m; path = ../../../../libARUtils/Sources/ARUTILS_BLEFtp.m; sourceTree = "<group>"; };
+		63A17C73192B9954007238AE /* ARUTILS_BLEFtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_BLEFtp.h; path = ../../../../libARUtils/Sources/ARUTILS_BLEFtp.h; sourceTree = "<group>"; };
+		63A17C76192C8747007238AE /* ARUTILS_Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Manager.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Manager.h; sourceTree = "<group>"; };
+		63A17C77192C8B9C007238AE /* ARUTILS_Manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARUTILS_Manager.c; path = ../../../../libARUtils/Sources/ARUTILS_Manager.c; sourceTree = "<group>"; };
+		63A17C79192CA9CC007238AE /* ARDATATRANSFER_Uploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Uploader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Uploader.h; sourceTree = "<group>"; };
+		63A17C7A192CA9D6007238AE /* ARDATATRANSFER_Uploader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_Uploader.c; path = ../../../Sources/ARDATATRANSFER_Uploader.c; sourceTree = "<group>"; };
+		63A17C7C192CAC78007238AE /* ARDATATRANSFER_Uploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Uploader.h; path = ../../../Sources/ARDATATRANSFER_Uploader.h; sourceTree = "<group>"; };
+		63A17C7D192CCE39007238AE /* ARUTILS_WifiFtp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARUTILS_WifiFtp.c; path = ../../../../libARUtils/Sources/ARUTILS_WifiFtp.c; sourceTree = "<group>"; };
+		63A17C7E192CCE39007238AE /* ARUTILS_WifiFtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_WifiFtp.h; path = ../../../../libARUtils/Sources/ARUTILS_WifiFtp.h; sourceTree = "<group>"; };
+		63A17C80192CD6B6007238AE /* ARUTILS_Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Manager.h; path = ../../../../libARUtils/Sources/ARUTILS_Manager.h; sourceTree = "<group>"; };
+		63A17C9B192F3903007238AE /* ARDATATRANSFER_Downloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_Downloader.c; path = ../../../Sources/ARDATATRANSFER_Downloader.c; sourceTree = "<group>"; };
+		63A17C9C192F3903007238AE /* ARDATATRANSFER_Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Downloader.h; path = ../../../Sources/ARDATATRANSFER_Downloader.h; sourceTree = "<group>"; };
+		63A17C9E192F39F7007238AE /* ARDATATRANSFER_Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Downloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Downloader.h; sourceTree = "<group>"; };
+		63F74F2F183FA6F10031D036 /* ARTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		63F74F32183FA6F10031D036 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		63F74F34183FA6F10031D036 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		63F74F36183FA6F10031D036 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		63F74F3A183FA6F10031D036 /* ARTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARTest-Info.plist"; sourceTree = "<group>"; };
+		63F74F3C183FA6F10031D036 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		63F74F3E183FA6F10031D036 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		63F74F40183FA6F10031D036 /* ARTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARTest-Prefix.pch"; sourceTree = "<group>"; };
+		63F74F41183FA6F10031D036 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		63F74F42183FA6F10031D036 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		63F74F45183FA6F10031D036 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		63F74F48183FA6F10031D036 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		63F74F4A183FA6F10031D036 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		63F74F4B183FA6F10031D036 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		63F74F4D183FA6F10031D036 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		63F74F6A183FA7760031D036 /* ARDATATRANSFER_Error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_Error.c; path = ../../../Sources/ARDATATRANSFER_Error.c; sourceTree = "<group>"; };
+		63F74F71183FA7760031D036 /* ARDATATRANSFER_Manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_Manager.c; path = ../../../Sources/ARDATATRANSFER_Manager.c; sourceTree = "<group>"; };
+		63F74F72183FA7760031D036 /* ARDATATRANSFER_Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Manager.h; path = ../../../Sources/ARDATATRANSFER_Manager.h; sourceTree = "<group>"; };
+		63F74F73183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_MediasDownloader.c; path = ../../../Sources/ARDATATRANSFER_MediasDownloader.c; sourceTree = "<group>"; };
+		63F74F74183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_MediasDownloader.h; path = ../../../Sources/ARDATATRANSFER_MediasDownloader.h; sourceTree = "<group>"; };
+		63F74F75183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_MediasQueue.c; path = ../../../Sources/ARDATATRANSFER_MediasQueue.c; sourceTree = "<group>"; };
+		63F74F76183FA7760031D036 /* ARDATATRANSFER_MediasQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_MediasQueue.h; path = ../../../Sources/ARDATATRANSFER_MediasQueue.h; sourceTree = "<group>"; };
+		63F74F7F183FA7A20031D036 /* ARDATATRANSFER_Error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Error.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Error.h; sourceTree = "<group>"; };
+		63F74F82183FA7A20031D036 /* ARDATATRANSFER_Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Manager.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Manager.h; sourceTree = "<group>"; };
+		63F74F83183FA7A20031D036 /* ARDATATRANSFER_MediasDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_MediasDownloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_MediasDownloader.h; sourceTree = "<group>"; };
+		63F74F87183FA83A0031D036 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../../ARBuildUtils/Targets/iOS/Build/libARDataTransfer_armv7/config.h; sourceTree = "<group>"; };
+		63F74F88183FAACA0031D036 /* libcurl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libcurl.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libcurl.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		63F74F2C183FA6F10031D036 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6386CF8918A239C300049996 /* libARSAL.framework in Frameworks */,
+				636868A91892624100FAE353 /* libARDiscovery.framework in Frameworks */,
+				63F74F89183FAACA0031D036 /* libcurl.framework in Frameworks */,
+				63F74F35183FA6F10031D036 /* CoreGraphics.framework in Frameworks */,
+				63F74F37183FA6F10031D036 /* UIKit.framework in Frameworks */,
+				63F74F33183FA6F10031D036 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		63008329188FD82100EAC1F6 /* ARUtils */ = {
+			isa = PBXGroup;
+			children = (
+				63A17C77192C8B9C007238AE /* ARUTILS_Manager.c */,
+				63A17C80192CD6B6007238AE /* ARUTILS_Manager.h */,
+				63A17C76192C8747007238AE /* ARUTILS_Manager.h */,
+				63008338188FD84700EAC1F6 /* ARUtils.h */,
+				6300832A188FD83900EAC1F6 /* ARUTILS_Error.c */,
+				63008334188FD84700EAC1F6 /* ARUTILS_Error.h */,
+				6300832B188FD83900EAC1F6 /* ARUTILS_FileSystem.c */,
+				63008335188FD84700EAC1F6 /* ARUTILS_FileSystem.h */,
+				63A17C7D192CCE39007238AE /* ARUTILS_WifiFtp.c */,
+				63A17C7E192CCE39007238AE /* ARUTILS_WifiFtp.h */,
+				63008336188FD84700EAC1F6 /* ARUTILS_Ftp.h */,
+				63A17C71192B98F2007238AE /* ARUTILS_BLEFtp.m */,
+				63A17C73192B9954007238AE /* ARUTILS_BLEFtp.h */,
+				6300832E188FD83900EAC1F6 /* ARUTILS_Http.c */,
+				6300832F188FD83900EAC1F6 /* ARUTILS_Http.h */,
+				63008337188FD84700EAC1F6 /* ARUTILS_Http.h */,
+			);
+			name = ARUtils;
+			sourceTree = "<group>";
+		};
+		634FEBC418620763002CA7FB /* JNI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = JNI;
+			path = ../../../JNI;
+			sourceTree = "<group>";
+		};
+		63F74F26183FA6F10031D036 = {
+			isa = PBXGroup;
+			children = (
+				63F74F8A183FAB980031D036 /* Test */,
+				63008329188FD82100EAC1F6 /* ARUtils */,
+				63F74F7E183FA77A0031D036 /* ARDataTransfer */,
+				63F74F38183FA6F10031D036 /* ARTest */,
+				63F74F31183FA6F10031D036 /* Frameworks */,
+				63F74F30183FA6F10031D036 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		63F74F30183FA6F10031D036 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				63F74F2F183FA6F10031D036 /* ARTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		63F74F31183FA6F10031D036 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				636868A81892624100FAE353 /* libARDiscovery.framework */,
+				63008339188FD86F00EAC1F6 /* libARSAL.framework */,
+				63F74F88183FAACA0031D036 /* libcurl.framework */,
+				63F74F32183FA6F10031D036 /* Foundation.framework */,
+				63F74F34183FA6F10031D036 /* CoreGraphics.framework */,
+				63F74F36183FA6F10031D036 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63F74F38183FA6F10031D036 /* ARTest */ = {
+			isa = PBXGroup;
+			children = (
+				63F74F41183FA6F10031D036 /* AppDelegate.h */,
+				63F74F42183FA6F10031D036 /* AppDelegate.m */,
+				63F74F44183FA6F10031D036 /* Main_iPhone.storyboard */,
+				63F74F47183FA6F10031D036 /* Main_iPad.storyboard */,
+				63F74F4A183FA6F10031D036 /* ViewController.h */,
+				63F74F4B183FA6F10031D036 /* ViewController.m */,
+				63F74F4D183FA6F10031D036 /* Images.xcassets */,
+				63F74F39183FA6F10031D036 /* Supporting Files */,
+			);
+			path = ARTest;
+			sourceTree = "<group>";
+		};
+		63F74F39183FA6F10031D036 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				63F74F3A183FA6F10031D036 /* ARTest-Info.plist */,
+				63F74F3B183FA6F10031D036 /* InfoPlist.strings */,
+				63F74F3E183FA6F10031D036 /* main.m */,
+				63F74F40183FA6F10031D036 /* ARTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		63F74F7E183FA77A0031D036 /* ARDataTransfer */ = {
+			isa = PBXGroup;
+			children = (
+				63A17C9B192F3903007238AE /* ARDATATRANSFER_Downloader.c */,
+				63A17C9C192F3903007238AE /* ARDATATRANSFER_Downloader.h */,
+				63A17C9E192F39F7007238AE /* ARDATATRANSFER_Downloader.h */,
+				63A17C7A192CA9D6007238AE /* ARDATATRANSFER_Uploader.c */,
+				63A17C7C192CAC78007238AE /* ARDATATRANSFER_Uploader.h */,
+				63A17C79192CA9CC007238AE /* ARDATATRANSFER_Uploader.h */,
+				634FEBDB18620BF4002CA7FB /* ARDataTransfer.h */,
+				63F74F87183FA83A0031D036 /* config.h */,
+				63F74F71183FA7760031D036 /* ARDATATRANSFER_Manager.c */,
+				63F74F72183FA7760031D036 /* ARDATATRANSFER_Manager.h */,
+				63F74F82183FA7A20031D036 /* ARDATATRANSFER_Manager.h */,
+				6369E0DC18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c */,
+				6369E0DD18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.h */,
+				6369E0DF18448DA000C3F64D /* ARDATATRANSFER_DataDownloader.h */,
+				63F74F73183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c */,
+				63F74F74183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.h */,
+				63F74F83183FA7A20031D036 /* ARDATATRANSFER_MediasDownloader.h */,
+				63F74F75183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c */,
+				63F74F76183FA7760031D036 /* ARDATATRANSFER_MediasQueue.h */,
+				63F74F6A183FA7760031D036 /* ARDATATRANSFER_Error.c */,
+				63F74F7F183FA7A20031D036 /* ARDATATRANSFER_Error.h */,
+				634FEBC418620763002CA7FB /* JNI */,
+			);
+			name = ARDataTransfer;
+			sourceTree = "<group>";
+		};
+		63F74F8A183FAB980031D036 /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				635F29ED1897F81A00F4B367 /* test_filesystem.c */,
+				635F29EB1897F71200F4B367 /* test_http_connection.c */,
+				635F29E91897F6DE00F4B367 /* test_ftp_connection.c */,
+				634FEBF118634BEF002CA7FB /* test_manager.c */,
+			);
+			name = Test;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		63F74F2E183FA6F10031D036 /* ARTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63F74F64183FA6F10031D036 /* Build configuration list for PBXNativeTarget "ARTest" */;
+			buildPhases = (
+				63F74F2B183FA6F10031D036 /* Sources */,
+				63F74F2C183FA6F10031D036 /* Frameworks */,
+				63F74F2D183FA6F10031D036 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ARTest;
+			productName = ARTest;
+			productReference = 63F74F2F183FA6F10031D036 /* ARTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		63F74F27183FA6F10031D036 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Parrot SA";
+			};
+			buildConfigurationList = 63F74F2A183FA6F10031D036 /* Build configuration list for PBXProject "ARTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 63F74F26183FA6F10031D036;
+			productRefGroup = 63F74F30183FA6F10031D036 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				63F74F2E183FA6F10031D036 /* ARTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		63F74F2D183FA6F10031D036 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63F74F49183FA6F10031D036 /* Main_iPad.storyboard in Resources */,
+				63F74F4E183FA6F10031D036 /* Images.xcassets in Resources */,
+				63F74F46183FA6F10031D036 /* Main_iPhone.storyboard in Resources */,
+				63F74F3D183FA6F10031D036 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		63F74F2B183FA6F10031D036 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63008333188FD83900EAC1F6 /* ARUTILS_Http.c in Sources */,
+				63F74F4C183FA6F10031D036 /* ViewController.m in Sources */,
+				635F29EC1897F71200F4B367 /* test_http_connection.c in Sources */,
+				63A17C78192C8B9C007238AE /* ARUTILS_Manager.c in Sources */,
+				63A17C9D192F3903007238AE /* ARDATATRANSFER_Downloader.c in Sources */,
+				63A17C72192B98F2007238AE /* ARUTILS_BLEFtp.m in Sources */,
+				63F74F7D183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c in Sources */,
+				63A17C7F192CCE39007238AE /* ARUTILS_WifiFtp.c in Sources */,
+				63F74F43183FA6F10031D036 /* AppDelegate.m in Sources */,
+				635F29EA1897F6DE00F4B367 /* test_ftp_connection.c in Sources */,
+				635F29EE1897F81A00F4B367 /* test_filesystem.c in Sources */,
+				6369E0DE18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c in Sources */,
+				634FEBF218634BEF002CA7FB /* test_manager.c in Sources */,
+				63008331188FD83900EAC1F6 /* ARUTILS_FileSystem.c in Sources */,
+				63F74F7C183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c in Sources */,
+				63A17C7B192CA9D6007238AE /* ARDATATRANSFER_Uploader.c in Sources */,
+				63F74F7B183FA7760031D036 /* ARDATATRANSFER_Manager.c in Sources */,
+				63F74F77183FA7760031D036 /* ARDATATRANSFER_Error.c in Sources */,
+				63F74F3F183FA6F10031D036 /* main.m in Sources */,
+				63008330188FD83900EAC1F6 /* ARUTILS_Error.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		63F74F3B183FA6F10031D036 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63F74F3C183FA6F10031D036 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		63F74F44183FA6F10031D036 /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63F74F45183FA6F10031D036 /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		63F74F47183FA6F10031D036 /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63F74F48183FA6F10031D036 /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		63F74F62183FA6F10031D036 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s";
+			};
+			name = Debug;
+		};
+		63F74F63183FA6F10031D036 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 armv7s";
+			};
+			name = Release;
+		};
+		63F74F65183FA6F10031D036 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARTest/ARTest-Prefix.pch";
+				INFOPLIST_FILE = "ARTest/ARTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		63F74F66183FA6F10031D036 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARTest/ARTest-Prefix.pch";
+				INFOPLIST_FILE = "ARTest/ARTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		63F74F2A183FA6F10031D036 /* Build configuration list for PBXProject "ARTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63F74F62183FA6F10031D036 /* Debug */,
+				63F74F63183FA6F10031D036 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		63F74F64183FA6F10031D036 /* Build configuration list for PBXNativeTarget "ARTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63F74F65183FA6F10031D036 /* Debug */,
+				63F74F66183FA6F10031D036 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 63F74F27183FA6F10031D036 /* Project object */;
+}
