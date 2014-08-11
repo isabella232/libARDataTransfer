@@ -51,7 +51,8 @@ public class MainActivity
 	public static int DRONE_PORT = 21;
 	
 	ARDataTransferManager managerRunning = null;
-	ARUtilsManager utilsManagerRunning = null;
+	ARUtilsManager utilsListManagerRunning = null;
+	ARUtilsManager utilsQueueManagerRunning = null;
 	Semaphore semRunning = null;
         
     @SuppressWarnings("serial")
@@ -264,8 +265,10 @@ public class MainActivity
         try
         {
         	ARDataTransferManager manager = new ARDataTransferManager();
-        	ARUtilsManager utilsManager = new ARUtilsManager();
-        	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+        	ARUtilsManager utilsListManager = new ARUtilsManager();
+        	ARUtilsManager utilsQueueManager = new ARUtilsManager();
+        	utilsListManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+        	utilsQueueManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
         	//String list = null;
         	
         	//list = manager.ftpEasyList("ftp://172.20.5.109/", "/");
@@ -281,7 +284,7 @@ public class MainActivity
         	tmp = sysHome.getAbsolutePath();
         	
         	
-        	mediasManager.createMediasDownloader(utilsManager, "", tmp);
+        	mediasManager.createMediasDownloader(utilsListManager, utilsQueueManager, "", tmp);
         	
         	Runnable mediasDownloader = mediasManager.getDownloaderQueueRunnable();
         	Thread mediasThread = new Thread(mediasDownloader);
@@ -313,8 +316,10 @@ public class MainActivity
         	
         	mediasManager.dispose();
         	manager.dispose();
-        	utilsManager.closeWifiFtp();
-        	utilsManager.dispose();
+        	utilsListManager.closeWifiFtp();
+        	utilsQueueManager.closeWifiFtp();
+        	utilsListManager.dispose();
+        	utilsQueueManager.dispose();
         	
         	//Log.d("DBG", APP_TAG + list);
         	//TextView text = (TextView)this.findViewById(R.id.text_filed);
@@ -441,14 +446,22 @@ public class MainActivity
 	        result = mediasManager.cancelQueueThread();
 	        Log.d("DBG", "cancelQueueThread " + (result == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED ? "OK" : "ERROR"));
 	        assertError(result == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED);
-	        ARUtilsManager utilsManager = null;
+	        ARUtilsManager utilsListManager = null;
+	        ARUtilsManager utilsQueueManager = null;
 	        try {
-				utilsManager = new ARUtilsManager();
+				utilsListManager = new ARUtilsManager();
 			} catch (ARUtilsException e) {
 				Log.d("DBG", "new ARUtilsManager failed");
-				assertError(utilsManager == null);
+				assertError(utilsListManager == null);
 			}
-	        utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	        utilsListManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	        try {
+                utilsQueueManager = new ARUtilsManager();
+            } catch (ARUtilsException e) {
+                Log.d("DBG", "new ARUtilsManager failed");
+                assertError(utilsQueueManager == null);
+            }
+            utilsQueueManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
 	        try { 
 	        	mediasCount = mediasManager.getAvailableMediasSync(true);
 	        	Log.d("DBG", "getAvailableMedias ERROR"); 
@@ -466,7 +479,7 @@ public class MainActivity
 	        }
 	        
 	        try {
-	        	mediasManager.createMediasDownloader(utilsManager, "", tmp); 
+	        	mediasManager.createMediasDownloader(utilsListManager, utilsQueueManager, "", tmp); 
 	        	Log.d("DBG", "initialize OK"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize ERROR " + e.toString());
@@ -474,7 +487,7 @@ public class MainActivity
 	        }
 	        
 	        try {
-	        	mediasManager.createMediasDownloader(utilsManager, "", tmp); 
+	        	mediasManager.createMediasDownloader(utilsListManager, utilsQueueManager, "", tmp); 
 	        	Log.d("DBG", "initialize ERROR"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize " + (e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_ALREADY_INITIALIZED ? "OK" : "ERROR"));
@@ -516,8 +529,10 @@ public class MainActivity
 	        dataManager.dispose();
 	        mediasManager.dispose();
 	        manager.dispose();
-	        utilsManager.closeWifiFtp();
-	        utilsManager.dispose();
+	        utilsListManager.closeWifiFtp();
+	        utilsQueueManager.closeWifiFtp();
+	        utilsListManager.dispose();
+	        utilsQueueManager.dispose();
 	        Log.d("DBG", "dispose OK");
     	}
     	catch (TestException e)
@@ -531,8 +546,11 @@ public class MainActivity
         try
         {
             managerRunning = new ARDataTransferManager();
-            utilsManagerRunning = new ARUtilsManager();
-            utilsManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+            utilsListManagerRunning = new ARUtilsManager();
+            utilsListManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+            utilsQueueManagerRunning = new ARUtilsManager();
+            utilsQueueManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+
             semRunning = new Semaphore(1);
         	
         	semRunning.acquire();
@@ -549,7 +567,7 @@ public class MainActivity
             
             //Media
             ARDataTransferMediasDownloader mediasManager = managerRunning.getARDataTransferMediasDownloader();        	
-            mediasManager.createMediasDownloader(utilsManagerRunning, "", tmp);
+            mediasManager.createMediasDownloader(utilsListManagerRunning, utilsQueueManagerRunning, "", tmp);
             
             Runnable mediasDownloader = mediasManager.getDownloaderQueueRunnable();
             Thread mediasThread = new Thread(mediasDownloader);
@@ -579,8 +597,10 @@ public class MainActivity
 	        dataManager.dispose();
 	        mediasManager.dispose();
             managerRunning.dispose();
-            utilsManagerRunning.closeWifiFtp();
-	        utilsManagerRunning.dispose();
+            utilsListManagerRunning.closeWifiFtp();
+	        utilsQueueManagerRunning.closeWifiFtp();
+	        utilsListManagerRunning.dispose();
+            utilsQueueManagerRunning.dispose();
         }
         catch (ARDataTransferException e) 
         {
@@ -607,8 +627,10 @@ public class MainActivity
     	try
     	{
 	    	ARDataTransferManager manager = new ARDataTransferManager();
-	    	ARUtilsManager utilsManager = new ARUtilsManager();
-	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	ARUtilsManager utilsListManager = new ARUtilsManager();
+	    	utilsListManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	ARUtilsManager utilsQueueManager = new ARUtilsManager();
+            utilsQueueManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
 	    	
 	    	ARDataTransferMediasDownloader mediasManager = manager.getARDataTransferMediasDownloader();        	
 	    	
@@ -619,7 +641,7 @@ public class MainActivity
 	    	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
 	    	tmp = sysHome.getAbsolutePath();
 	    	
-	    	mediasManager.createMediasDownloader(utilsManager, "", tmp);
+	    	mediasManager.createMediasDownloader(utilsListManager, utilsQueueManager, "", tmp);
 	    	
 	    	mediasManager.getAvailableMediasAsync(this, this);
     	}
