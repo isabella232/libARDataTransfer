@@ -17,7 +17,7 @@
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_DataDownloader_Delete ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer DataDownloader

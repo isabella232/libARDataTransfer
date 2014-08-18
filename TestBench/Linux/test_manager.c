@@ -140,7 +140,7 @@ void test_manager_data_downloader(const char *tmp)
     manager = ARDATATRANSFER_Manager_New(&result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_New", result);
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
 
     resultSys = ARSAL_Thread_Create(&threadDataDownloader, ARDATATRANSFER_DataDownloader_ThreadRun, manager);
@@ -279,7 +279,7 @@ void test_manager_checking_parameters(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_Manager_Delete");
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, NULL, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, NULL, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_BAD_PARAMETER);
     
@@ -367,11 +367,11 @@ void test_manager_checking_parameters(const char *tmp)
     resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
     
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_ALREADY_INITIALIZED);
 
@@ -419,7 +419,7 @@ void test_manager_checking_run_cancel(const char *tmp)
     test_manager_assert(result == ARDATATRANSFER_OK);
 
     //Data Downloader
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
@@ -530,7 +530,7 @@ void test_manager_checking_running(const char *tmp)
     test_manager_assert(result == ARDATATRANSFER_OK);
 
     //Data
-    result = ARDATATRANSFER_DataDownloader_New(managerRunning, ftpManager, tmp);
+    result = ARDATATRANSFER_DataDownloader_New(managerRunning, ftpManager, "", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 

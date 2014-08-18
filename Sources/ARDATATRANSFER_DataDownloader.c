@@ -42,11 +42,11 @@
 #include "ARDATATRANSFER_Manager.h"
 
 
-#define ARDATATRANSFER_DATA_DOWNLOADER_TAG                  "DataDownloader"
+#define ARDATATRANSFER_DATA_DOWNLOADER_TAG                    "DataDownloader"
 
 #define ARDATATRANSFER_DATA_DOWNLOADER_WAIT_TIME_IN_SECONDS   10
 #define ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT               ""
-#define ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA               "academy"
+#define ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATADOWNLOAD       "academy"
 #define ARDATATRANSFER_DATA_DOWNLOADER_SPACE_PERCENT          20.f
 
 static ARDATATRANSFER_DataDownloader_Fwt_t dataFwt;
@@ -57,7 +57,7 @@ static ARDATATRANSFER_DataDownloader_Fwt_t dataFwt;
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
@@ -101,7 +101,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New(ARDATATRANSFER_Manager_t
         manager->dataDownloader->isCanceled = 0;
         manager->dataDownloader->isRunning = 0;
 
-        result = ARDATATRANSFER_DataDownloader_Initialize(manager, ftpManager, localDirectory);
+        result = ARDATATRANSFER_DataDownloader_Initialize(manager, ftpManager, remoteDirectory, localDirectory);
     }
 
     if (result != ARDATATRANSFER_OK && result != ARDATATRANSFER_ERROR_ALREADY_INITIALIZED)
@@ -206,7 +206,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
         do
         {
-            error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT, &productFtpList, &productFtpListLen);
+            error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, manager->dataDownloader->remoteDirectory, &productFtpList, &productFtpListLen);
 
             product = 0;
             while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
@@ -217,10 +217,11 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                 if (fileName != NULL)
                 {
-                    strncpy(remoteProduct, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE);
+                    strncpy(remoteProduct, manager->dataDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                     remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                    strncat(remoteProduct, ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
                     strncat(remoteProduct, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
-                    strncat(remoteProduct, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
+                    strncat(remoteProduct, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATADOWNLOAD "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteProduct) - 1);
 
                     error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, remoteProduct, &dataFtpList, &dataFtpListLen);
 
@@ -243,7 +244,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                         if (errorFtp == ARUTILS_OK)
                         {
-                            errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+                            char __tofix;
+                            //errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                             strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                             restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -286,7 +288,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+                                char __tofix;
+                                //errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -372,7 +375,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_
  *
  *****************************************/
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory)
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
@@ -386,9 +389,11 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Ma
 
     if (result == ARDATATRANSFER_OK)
     {
+        strncpy(manager->dataDownloader->remoteDirectory, remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+        manager->dataDownloader->remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
         strncpy(manager->dataDownloader->localDirectory, localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
         manager->dataDownloader->localDirectory[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-        strncat(manager->dataDownloader->localDirectory, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATA "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(manager->dataDownloader->localDirectory) - 1);
+        strncat(manager->dataDownloader->localDirectory, "/" ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATADOWNLOAD "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(manager->dataDownloader->localDirectory) - 1);
 
         resultSys = mkdir(manager->dataDownloader->localDirectory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 

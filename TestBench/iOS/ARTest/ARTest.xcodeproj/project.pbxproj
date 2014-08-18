@@ -22,6 +22,7 @@
 		63A17C7B192CA9D6007238AE /* ARDATATRANSFER_Uploader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C7A192CA9D6007238AE /* ARDATATRANSFER_Uploader.c */; };
 		63A17C7F192CCE39007238AE /* ARUTILS_WifiFtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C7D192CCE39007238AE /* ARUTILS_WifiFtp.c */; };
 		63A17C9D192F3903007238AE /* ARDATATRANSFER_Downloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C9B192F3903007238AE /* ARDATATRANSFER_Downloader.c */; };
+		63F6539319A1DE6400E6EAC7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F6539219A1DE6400E6EAC7 /* libz.dylib */; };
 		63F74F33183FA6F10031D036 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F32183FA6F10031D036 /* Foundation.framework */; };
 		63F74F35183FA6F10031D036 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F34183FA6F10031D036 /* CoreGraphics.framework */; };
 		63F74F37183FA6F10031D036 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F36183FA6F10031D036 /* UIKit.framework */; };
@@ -72,6 +73,7 @@
 		63A17C9B192F3903007238AE /* ARDATATRANSFER_Downloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_Downloader.c; path = ../../../Sources/ARDATATRANSFER_Downloader.c; sourceTree = "<group>"; };
 		63A17C9C192F3903007238AE /* ARDATATRANSFER_Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Downloader.h; path = ../../../Sources/ARDATATRANSFER_Downloader.h; sourceTree = "<group>"; };
 		63A17C9E192F39F7007238AE /* ARDATATRANSFER_Downloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Downloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Downloader.h; sourceTree = "<group>"; };
+		63F6539219A1DE6400E6EAC7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		63F74F2F183FA6F10031D036 /* ARTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63F74F32183FA6F10031D036 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		63F74F34183FA6F10031D036 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -106,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63F6539319A1DE6400E6EAC7 /* libz.dylib in Frameworks */,
 				6386CF8918A239C300049996 /* libARSAL.framework in Frameworks */,
 				636868A91892624100FAE353 /* libARDiscovery.framework in Frameworks */,
 				63F74F89183FAACA0031D036 /* libcurl.framework in Frameworks */,
@@ -172,6 +175,7 @@
 		63F74F31183FA6F10031D036 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63F6539219A1DE6400E6EAC7 /* libz.dylib */,
 				636868A81892624100FAE353 /* libARDiscovery.framework */,
 				63008339188FD86F00EAC1F6 /* libARSAL.framework */,
 				63F74F88183FAACA0031D036 /* libcurl.framework */,

@@ -23,6 +23,7 @@ typedef struct
     int isCanceled;
     int isRunning;
     ARUTILS_Manager_t *ftpManager;
+    char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t threadSem;
 
@@ -53,7 +54,7 @@ typedef struct
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_DataDownloader_ThreadRun ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer DataDownloader connection data
