@@ -242,6 +242,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                         errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
 
+                        ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+
                         if (errorFtp == ARUTILS_OK)
                         {
                             char __tofix;
@@ -285,6 +287,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                             {
                                 errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
                             }
+
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
 
                             if (errorFtp == ARUTILS_OK)
                             {
