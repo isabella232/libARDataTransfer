@@ -20,7 +20,7 @@
 #define TAG             "test_manager"
 #define RUN_TIMEOUT     10
 #define CANCEL_TIMEOUT  3
-#define DEVICE_IP       "172.20.5.146"  /* PC */
+#define DEVICE_IP       "172.20.5.24"  /* PC */
 //#define DEVICE_IP       "192.168.1.1" /* ARDrone2 */
 //#define DEVICE_IP       "192.168.42.1" /* ARDrone3 */
 #define DEVICE_PORT     21
@@ -140,7 +140,7 @@ void test_manager_data_downloader(const char *tmp)
     manager = ARDATATRANSFER_Manager_New(&result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_New", result);
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "Internal_000", tmp);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
 
     resultSys = ARSAL_Thread_Create(&threadDataDownloader, ARDATATRANSFER_DataDownloader_ThreadRun, manager);

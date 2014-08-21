@@ -72,4 +72,13 @@ void ARDATATRANSFER_DataDownloader_Clear(ARDATATRANSFER_Manager_t *manager);
  */
 eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CheckUsedMemory(const char *localPath, float spacePercent);
 
+/**
+ * @brief Compare file extension
+ * @param fileName The file name or path to compare with
+ * @param ext The extension to compare with
+ * @retval 0, -1 or lower -1 or 1 or upper 1
+ * @see strcmp C lib
+ */
+int ARDATATRANSFER_DataDownloader_CompareFileExtension(const char* fileName, const char* ext);
+
 #endif /* _ARDATATRANSFER_DATA_DOWNLOADER_PRIVATE_H_ */
