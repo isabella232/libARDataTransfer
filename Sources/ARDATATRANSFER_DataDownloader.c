@@ -248,8 +248,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                         if (errorFtp == ARUTILS_OK)
                         {
-                            //char __tofix;
-                            //errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+                            errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                             strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                             restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
@@ -295,8 +294,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                             if (errorFtp == ARUTILS_OK)
                             {
-                                //char __tofix;
-                                //errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+                                errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
