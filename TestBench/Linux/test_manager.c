@@ -20,7 +20,7 @@
 #define TAG             "test_manager"
 #define RUN_TIMEOUT     10
 #define CANCEL_TIMEOUT  3
-#define DEVICE_IP       "172.20.5.24"  /* PC */
+#define DEVICE_IP       "172.20.5.16"  /* PC */
 //#define DEVICE_IP       "192.168.1.1" /* ARDrone2 */
 //#define DEVICE_IP       "192.168.42.1" /* ARDrone3 */
 #define DEVICE_PORT     21
@@ -136,6 +136,12 @@ void test_manager_data_downloader(const char *tmp)
     
     resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_Ftp_Connection_Disconnect(ftpManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_Disconnect", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_Ftp_Connection_Reconnect(ftpManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_Ftp_Connection_Reconnect", resultUtils);
     
     manager = ARDATATRANSFER_Manager_New(&result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_New", result);
@@ -793,7 +799,7 @@ void test_manager_available_media(const char *tmp)
 
 void test_manager(const char *tmp, int opt)
 {
-    //test_manager_data_downloader(tmp);
+    test_manager_data_downloader(tmp);
     //test_manager_medias_downloader(tmp);
     //test_manager_available_media(tmp);
 //return;

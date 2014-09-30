@@ -204,10 +204,20 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
         struct timespec timeout;
         timeout.tv_sec = ARDATATRANSFER_DATA_DOWNLOADER_WAIT_TIME_IN_SECONDS;
         timeout.tv_nsec = 0;
+        
+        error = ARUTILS_Manager_Ftp_Connection_Disconnect(manager->dataDownloader->ftpManager);
 
         do
         {
-            error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, manager->dataDownloader->remoteDirectory, &productFtpList, &productFtpListLen);
+            if (error == ARUTILS_OK)
+            {
+                error = ARUTILS_Manager_Ftp_Connection_Reconnect(manager->dataDownloader->ftpManager);
+            }
+            
+            if (error == ARUTILS_OK)
+            {
+                error = ARUTILS_Manager_Ftp_List(manager->dataDownloader->ftpManager, manager->dataDownloader->remoteDirectory, &productFtpList, &productFtpListLen);
+            }
 
             product = 0;
             while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
@@ -325,6 +335,11 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
             if (error != ARUTILS_ERROR_FTP_CANCELED)
             {
                 ARDATATRANSFER_DataDownloader_CheckUsedMemory(manager->dataDownloader->localDirectory, ARDATATRANSFER_DATA_DOWNLOADER_SPACE_PERCENT);
+            }
+            
+            if (error != ARUTILS_ERROR_FTP_CANCELED)
+            {
+                ARUTILS_Manager_Ftp_Connection_Disconnect(manager->dataDownloader->ftpManager);
             }
 
             resultSys = ARSAL_Sem_Timedwait(&manager->dataDownloader->threadSem, &timeout);
