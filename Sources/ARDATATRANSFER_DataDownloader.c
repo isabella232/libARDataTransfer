@@ -359,6 +359,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
 eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_Manager_t *manager)
 {
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int resultSys = 0;
 
@@ -383,6 +384,16 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_
         if (resultSys != 0)
         {
             result = ARDATATRANSFER_ERROR_SYSTEM;
+        }
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->dataDownloader->ftpManager);
+     
+        if (resultUtils != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
 
