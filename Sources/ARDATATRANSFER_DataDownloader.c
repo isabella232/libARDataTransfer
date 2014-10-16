@@ -239,42 +239,44 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                     // Resume downloading_ files loop
                     nextData = NULL;
                     while ((error == ARUTILS_OK)
-                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, 0, NULL, NULL)) != NULL)
-                           && (ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0))
+                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, 0, NULL, NULL)) != NULL))
                     {
-                        char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
-
-                        strncpy(remotePath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
-                        remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                        strncat(remotePath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
-
-                        strncpy(localPath, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
-                        localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                        strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) -1);
-
-                        errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
-
-                        ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
-
-                        if (errorFtp == ARUTILS_OK)
+                        if (ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0)
                         {
-                            errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+                            char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
 
-                            strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
-                            restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                            strncat(restoreName, fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING), ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
+                            strncpy(remotePath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
+                            remotePath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                            strncat(remotePath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
 
-                            errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
+                            strncpy(localPath, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+                            localPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                            strncat(localPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(localPath) -1);
+
+                            errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpManager, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
+
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+
+                            if (errorFtp == ARUTILS_OK)
+                            {
+                                errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpManager, remotePath);
+
+                                strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
+                                restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
+                                strncat(restoreName, fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING), ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
+
+                                errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
+                            }
                         }
                     }
 
                     // Newer files loop
                     nextData = NULL;
                     while ((error == ARUTILS_OK)
-                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, NULL, 0, NULL, NULL)) != NULL)
-                           && (ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0))
+                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, NULL, 0, NULL, NULL)) != NULL))
                     {
-                        if (strncmp(fileName, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING)) != 0)
+                        if ((ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0)
+                            && (strncmp(fileName, ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING, strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_PREFIX_DOWNLOADING)) != 0))
                         {
                             char initialPath[ARUTILS_FTP_MAX_PATH_SIZE];
                             char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
