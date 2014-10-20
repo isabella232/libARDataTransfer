@@ -880,7 +880,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if (error == JNI_OK)
+    if ((error == JNI_OK) && (media->thumbnail != NULL))
     {
         (*env)->SetByteArrayRegion(env, jThumbnail, 0, media->thumbnailSize, (jbyte*)media->thumbnail);
     }
