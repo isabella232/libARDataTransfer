@@ -512,10 +512,9 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync(AR
                         }
                         
                         ARSAL_Mutex_Unlock(&manager->mediasDownloader->mediasLock);
+                        availableMediaCallback(availableMediaArg, &tmpMedia, i);
                     }
                 }
-                
-                availableMediaCallback(availableMediaArg, media, i);
             }
         }
     }
