@@ -37,7 +37,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s, %s", nativeRemoteDirectory ? nativeRemoteDirectory : "null", nativeLocalDirectory ? nativeLocalDirectory : "null");
 
-    result = ARDATATRANSFER_DataDownloader_New(nativeManager, nativeUtilsManager, nativeRemoteDirectory, nativeLocalDirectory);
+    result = ARDATATRANSFER_DataDownloader_New(nativeManager, NULL, nativeUtilsManager, nativeRemoteDirectory, nativeLocalDirectory, NULL, NULL);
 
     //cleanup
     if (nativeRemoteDirectory != NULL)

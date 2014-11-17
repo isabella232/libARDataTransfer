@@ -20,9 +20,9 @@
 #define TAG             "test_manager"
 #define RUN_TIMEOUT     10
 #define CANCEL_TIMEOUT  3
-#define DEVICE_IP       "172.20.5.16"  /* PC */
+//#define DEVICE_IP       "172.20.5.16"  /* PC */
 //#define DEVICE_IP       "192.168.1.1" /* ARDrone2 */
-//#define DEVICE_IP       "192.168.42.1" /* ARDrone3 */
+#define DEVICE_IP       "192.168.42.1" /* ARDrone3 */
 #define DEVICE_PORT     21
 
 typedef void (*test_manager_timer_tick_callback)(void *arg);
@@ -119,35 +119,51 @@ void test_manager_medias_downloader_completion_callback(void* arg, ARDATATRANSFE
     }
 }
 
+void test_manager_data_downloader_completion_callback(void* arg, const char *fileName, eARDATATRANSFER_ERROR error)
+{
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s, error %d", fileName, error);
+}
+
 void test_manager_data_downloader(const char *tmp)
 {
     ARDATATRANSFER_Manager_t *manager;
-    ARUTILS_Manager_t *ftpManager;
+    ARUTILS_Manager_t *ftpListManager;
+    ARUTILS_Manager_t *ftpDataManager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     ARSAL_Thread_t threadDataDownloader;
     int resultSys;
     void *resultThread = NULL;
+    long filesNumber = 0;
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "**************************************************************");
     
-    ftpManager = ARUTILS_Manager_New(&resultUtils);
+    ftpListManager = ARUTILS_Manager_New(&resultUtils);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
     
-    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpListManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
+
+    ftpDataManager = ARUTILS_Manager_New(&resultUtils);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpDataManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
     
-    resultUtils = ARUTILS_Manager_Ftp_Connection_Disconnect(ftpManager);
+    resultUtils = ARUTILS_Manager_Ftp_Connection_Disconnect(ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_Disconnect", resultUtils);
     
-    resultUtils = ARUTILS_Manager_Ftp_Connection_Reconnect(ftpManager);
+    resultUtils = ARUTILS_Manager_Ftp_Connection_Reconnect(ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_Ftp_Connection_Reconnect", resultUtils);
     
     manager = ARDATATRANSFER_Manager_New(&result);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_New", result);
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "Internal_000", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpListManager, ftpDataManager, "internal_000", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
+    
+    result = ARDATATRANSFER_DataDownloader_GetAvailableFiles(manager, &filesNumber);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d, %d", "ARDATATRANSFER_DataDownloader_GetAvailableFiles", result, filesNumber);
 
     resultSys = ARSAL_Thread_Create(&threadDataDownloader, ARDATATRANSFER_DataDownloader_ThreadRun, manager);
 
@@ -162,10 +178,16 @@ void test_manager_data_downloader(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_Manager_Delete", result);
     
-    ARUTILS_Manager_CloseWifiFtp(ftpManager);
+    ARUTILS_Manager_CloseWifiFtp(ftpListManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
     
-    ARUTILS_Manager_Delete(&ftpManager);
+    ARUTILS_Manager_Delete(&ftpListManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
+
+    ARUTILS_Manager_CloseWifiFtp(ftpDataManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
+    
+    ARUTILS_Manager_Delete(&ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
 }
 
@@ -267,7 +289,8 @@ void test_manager_medias_downloader(const char *tmp)
 void test_manager_checking_parameters(const char *tmp)
 {
     ARDATATRANSFER_Manager_t *manager;
-    ARUTILS_Manager_t *ftpManager;
+    ARUTILS_Manager_t *ftpListManager;
+    ARUTILS_Manager_t *ftpDataManager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     ARDATATRANSFER_Media_t media;
@@ -285,7 +308,7 @@ void test_manager_checking_parameters(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_Manager_Delete");
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, NULL, "", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, NULL, NULL, "", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_BAD_PARAMETER);
     
@@ -367,17 +390,23 @@ void test_manager_checking_parameters(const char *tmp)
     resultSys = ARSAL_Thread_Join(threadMediasDownloader, &resultThread);
 
     //Already Initialized
-    ftpManager = ARUTILS_Manager_New(&resultUtils);
+    ftpListManager = ARUTILS_Manager_New(&resultUtils);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
     
-    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpListManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
     
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
+    ftpDataManager = ARUTILS_Manager_New(&resultUtils);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpDataManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
+    
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpListManager, ftpDataManager, "", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpListManager, ftpDataManager, "", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_ERROR_ALREADY_INITIALIZED);
 
@@ -392,17 +421,24 @@ void test_manager_checking_parameters(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_Manager_Delete");
     
-    ARUTILS_Manager_CloseWifiFtp(ftpManager);
+    ARUTILS_Manager_CloseWifiFtp(ftpListManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
     
-    ARUTILS_Manager_Delete(&ftpManager);
+    ARUTILS_Manager_Delete(&ftpListManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
+    
+    ARUTILS_Manager_CloseWifiFtp(ftpDataManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
+    
+    ARUTILS_Manager_Delete(&ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
 }
 
 void test_manager_checking_run_cancel(const char *tmp)
 {
     ARDATATRANSFER_Manager_t *manager;
-    ARUTILS_Manager_t *ftpManager;
+    ARUTILS_Manager_t *ftpListManager;
+    ARUTILS_Manager_t *ftpDataManager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     ARSAL_Thread_t threadDataDownloader;
@@ -414,10 +450,16 @@ void test_manager_checking_run_cancel(const char *tmp)
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "**************************************************************");
     
-    ftpManager = ARUTILS_Manager_New(&resultUtils);
+    ftpListManager = ARUTILS_Manager_New(&resultUtils);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
     
-    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpListManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
+    
+    ftpDataManager = ARUTILS_Manager_New(&resultUtils);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpDataManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
 
     manager = ARDATATRANSFER_Manager_New(&result);
@@ -425,7 +467,7 @@ void test_manager_checking_run_cancel(const char *tmp)
     test_manager_assert(result == ARDATATRANSFER_OK);
 
     //Data Downloader
-    result = ARDATATRANSFER_DataDownloader_New(manager, ftpManager, "", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(manager, ftpListManager, ftpDataManager, "", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
@@ -503,10 +545,16 @@ void test_manager_checking_run_cancel(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&manager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_Manager_Delete");
     
-    ARUTILS_Manager_CloseWifiFtp(ftpManager);
+    ARUTILS_Manager_CloseWifiFtp(ftpListManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
     
-    ARUTILS_Manager_Delete(&ftpManager);
+    ARUTILS_Manager_Delete(&ftpListManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
+    
+    ARUTILS_Manager_CloseWifiFtp(ftpDataManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
+    
+    ARUTILS_Manager_Delete(&ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
 }
 
@@ -514,7 +562,8 @@ void test_manager_checking_running(const char *tmp)
 {
     ARSAL_Thread_t threadMediasDownloader;
     ARSAL_Thread_t threadDataDownloader;
-    ARUTILS_Manager_t *ftpManager;
+    ARUTILS_Manager_t *ftpListManager;
+    ARUTILS_Manager_t *ftpDataManager;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     int resultSys;
@@ -525,10 +574,16 @@ void test_manager_checking_running(const char *tmp)
 
     ARSAL_Sem_Init(&semRunning, 0, 0);
     
-    ftpManager = ARUTILS_Manager_New(&resultUtils);
+    ftpListManager = ARUTILS_Manager_New(&resultUtils);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
     
-    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpListManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
+    
+    ftpDataManager = ARUTILS_Manager_New(&resultUtils);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_New", resultUtils);
+    
+    resultUtils = ARUTILS_Manager_InitWifiFtp(ftpDataManager, DEVICE_IP, DEVICE_PORT, ARUTILS_FTP_ANONYMOUS, "");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARUTILS_Manager_InitWifiFtp", resultUtils);
 
     managerRunning = ARDATATRANSFER_Manager_New(&result);
@@ -536,7 +591,7 @@ void test_manager_checking_running(const char *tmp)
     test_manager_assert(result == ARDATATRANSFER_OK);
 
     //Data
-    result = ARDATATRANSFER_DataDownloader_New(managerRunning, ftpManager, "", tmp);
+    result = ARDATATRANSFER_DataDownloader_New(managerRunning, ftpListManager, ftpDataManager, "", tmp, test_manager_data_downloader_completion_callback, "arg");
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "ARDATATRANSFER_DataDownloader_New", result);
     test_manager_assert(result == ARDATATRANSFER_OK);
 
@@ -600,10 +655,16 @@ void test_manager_checking_running(const char *tmp)
     ARDATATRANSFER_Manager_Delete(&managerRunning);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARDATATRANSFER_Manager_Delete");
     
-    ARUTILS_Manager_CloseWifiFtp(ftpManager);
+    ARUTILS_Manager_CloseWifiFtp(ftpListManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
     
-    ARUTILS_Manager_Delete(&ftpManager);
+    ARUTILS_Manager_Delete(&ftpListManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
+    
+    ARUTILS_Manager_CloseWifiFtp(ftpDataManager);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_CloseWifiFtp");
+    
+    ARUTILS_Manager_Delete(&ftpDataManager);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s", "ARUTILS_Manager_Delete");
 
     ARSAL_Sem_Destroy(&semRunning);
@@ -802,7 +863,7 @@ void test_manager(const char *tmp, int opt)
     test_manager_data_downloader(tmp);
     //test_manager_medias_downloader(tmp);
     //test_manager_available_media(tmp);
-//return;
+return;
     //opt = 2;
 
     if (opt == 0)

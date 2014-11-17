@@ -22,10 +22,13 @@ typedef struct
 {
     int isCanceled;
     int isRunning;
-    ARUTILS_Manager_t *ftpManager;
+    ARUTILS_Manager_t *ftpListManager;
+    ARUTILS_Manager_t *ftpDataManager;
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t threadSem;
+    ARDATATRANSFER_DataDownloader_DataCompletionCallback_t dataCompletionCallback;
+    void *dataCompletionArg;
 
 } ARDATATRANSFER_DataDownloader_t;
 
@@ -48,13 +51,13 @@ typedef struct
  * @brief Initialize the device DataDownloader (flights data or ride data)
  * @warning This function allocates memory
  * @param manager The pointer of the ADataTransfer Manager
- * @param deviceIP The IP address of the Device
- * @param port The FTP port of the Device
+ * @param ftpListManager The ftp list manager
+ * @param ftpDataManager The ftp data manager
  * @param localDirectory The path of the local directory where to store data
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_DataDownloader_ThreadRun ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remoteDirectory, const char *localDirectory);
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Initialize(ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpListManager, ARUTILS_Manager_t *ftpDataManager, const char *remoteDirectory, const char *localDirectory);
 
 /**
  * @brief Delete an ARDataTransfer DataDownloader connection data
