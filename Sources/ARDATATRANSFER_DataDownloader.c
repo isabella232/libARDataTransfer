@@ -374,7 +374,13 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         {
                             char initialPath[ARUTILS_FTP_MAX_PATH_SIZE];
                             char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
-
+                            // BLE case
+                            // copy fileName is necessary because static array in ARUTILS_Ftp_List_GetNextItem is changed.
+                            // ARUTILS_Ftp_List_GetNextItem is called a second time time in ARUTILS_Manager_Ftp_Get for to check fileSize
+                            // and so file name is renamed in downloading_...
+                            char fileNameCopy[ARUTILS_FTP_MAX_PATH_SIZE];
+                            strncpy(fileNameCopy, fileName, ARUTILS_FTP_MAX_PATH_SIZE);
+                            
                             strncpy(initialPath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
                             initialPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                             strncat(initialPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(initialPath) - 1);
@@ -408,8 +414,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                                 strncpy(restoreName, manager->dataDownloader->localDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
-                                strncat(restoreName, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
-
+                                strncat(restoreName, fileNameCopy, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
                             }
                         }
