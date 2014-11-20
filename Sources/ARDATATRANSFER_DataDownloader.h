@@ -27,8 +27,8 @@ typedef struct
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t threadSem;
-    ARDATATRANSFER_DataDownloader_DataCompletionCallback_t dataCompletionCallback;
-    void *dataCompletionArg;
+    ARDATATRANSFER_DataDownloader_FileCompletionCallback_t fileCompletionCallback;
+    void *fileCompletionArg;
 
 } ARDATATRANSFER_DataDownloader_t;
 

@@ -16,6 +16,7 @@ import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_DOWNLOADER_RESUME_ENUM;
 import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_ERROR_ENUM;
 import com.parrot.arsdk.ardatatransfer.ARDATATRANSFER_UPLOADER_RESUME_ENUM;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferDataDownloader;
+import com.parrot.arsdk.ardatatransfer.ARDataTransferDataDownloaderFileCompletionListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloader;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloaderCompletionListener;
 import com.parrot.arsdk.ardatatransfer.ARDataTransferDownloaderProgressListener;
@@ -35,7 +36,9 @@ import com.parrot.arsdk.arutils.ARUtilsManager;
 
 public class MainActivity 
 	extends Activity 
-	implements ARDataTransferMediasDownloaderProgressListener, 
+	implements
+	    ARDataTransferDataDownloaderFileCompletionListener,
+	    ARDataTransferMediasDownloaderProgressListener,
 		ARDataTransferMediasDownloaderCompletionListener,
 		ARDataTransferMediasDownloaderAvailableMediaListener,
 		ARDataTransferDownloaderProgressListener,
@@ -47,10 +50,11 @@ public class MainActivity
 	public static String APP_TAG = "TestARDataTransfer "; 
         
 	//public static String DRONE_IP = "172.20.5.146";
-	public static String DRONE_IP = "172.20.5.24";
+	public static String DRONE_IP = "172.20.5.28";
 	public static int DRONE_PORT = 21;
 	
 	ARDataTransferManager managerRunning = null;
+	ARUtilsManager utilsListDataManagerRunning = null;
 	ARUtilsManager utilsDataManagerRunning = null;
 	ARUtilsManager utilsListManagerRunning = null;
 	ARUtilsManager utilsQueueManagerRunning = null;
@@ -151,6 +155,8 @@ public class MainActivity
 				TestARDataTransferUploader();
 			}
 		});
+		
+		TestDataDownloader();
 	}
 	
 	@Override
@@ -226,27 +232,32 @@ public class MainActivity
         //TestMediasDownloader();
     }
     
-    private void TestDataDownloader()
+    public void TestDataDownloader()
     {
     	try
     	{
 	    	ARDataTransferManager manager = new ARDataTransferManager();
-	    	ARUtilsManager utilsManager = new ARUtilsManager();
+	    	ARUtilsManager utilsListManager = new ARUtilsManager();
+	    	ARUtilsManager utilsDataManager = new ARUtilsManager();
 	    	
-	    	utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	utilsListManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+	    	utilsDataManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
 	    	ARDataTransferDataDownloader dataManager = manager.getARDataTransferDataDownloader();
 	    	
         	File sysHome = this.getFilesDir();// /data/data/com.example.tstdata/files
         	String tmp = sysHome.getAbsolutePath();
         	
-        	dataManager.createDataDownloader(utilsManager, "", tmp);
+        	dataManager.createDataDownloader(utilsListManager, utilsDataManager, "", tmp, this, this);
+        	
+        	long count = dataManager.getAvailableFiles();
+        	Log.d("DBG", "getAvailableFiles " + count);
         	
         	Runnable dataDownloader = dataManager.getDownloaderRunnable();
         	
         	Thread dataThread = new Thread(dataDownloader);
         	dataThread.start();
         	
-        	dataManager.cancelThread();
+        	//dataManager.cancelThread();
 	    	
         	try { dataThread.join(); } catch (InterruptedException e) { Log.d("DBG", "join " + e.toString());  }
         	
@@ -387,14 +398,22 @@ public class MainActivity
 	    		Log.d("DBG", "createManager ERROR " + e.toString()); 
 	    		assertError(e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_OK); 
 	    	}
-	    	ARUtilsManager utilsManager = null;
+	    	ARUtilsManager utilsListDataManager = null;
             try {
-                utilsManager = new ARUtilsManager();
+                utilsListDataManager = new ARUtilsManager();
             } catch (ARUtilsException e) {
                 Log.d("DBG", "new ARUtilsManager failed");
-                assertError(utilsManager == null);
+                assertError(utilsListDataManager == null);
             }
-            utilsManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+            utilsListDataManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
+            ARUtilsManager utilsDataManager = null;
+            try {
+                utilsDataManager = new ARUtilsManager();
+            } catch (ARUtilsException e) {
+                Log.d("DBG", "new ARUtilsManager failed");
+                assertError(utilsDataManager == null);
+            }
+            utilsDataManager.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");            
 	    	
 	    	dataManager = manager.getARDataTransferDataDownloader();
 	    	Log.d("DBG", "getARDataTransferDataDownloader " + (dataManager != null ? "OK" : "ERROR"));
@@ -422,7 +441,7 @@ public class MainActivity
 	        assertError(result == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_NOT_INITIALIZED);	    	
 	        
 	        try { 
-	        	dataManager.createDataDownloader(utilsManager, "", tmp); 
+	        	dataManager.createDataDownloader(utilsListDataManager, utilsDataManager, "", tmp, this, this); 
 	        	Log.d("DBG", "initialize OK"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize ERROR " + e.toString());
@@ -430,7 +449,7 @@ public class MainActivity
 	        }
 	        
 	        try { 
-	        	dataManager.createDataDownloader(utilsManager, "", tmp); 
+	        	dataManager.createDataDownloader(utilsListDataManager, utilsDataManager, "", tmp, this, this); 
 	        	Log.d("DBG", "initialize ERROR"); 
 	        } catch (ARDataTransferException e) { 
 	        	Log.d("DBG", "initialize " + (e.getError() == ARDATATRANSFER_ERROR_ENUM.ARDATATRANSFER_ERROR_ALREADY_INITIALIZED ? "OK" : "ERROR"));
@@ -540,10 +559,12 @@ public class MainActivity
 	        dataManager.dispose();
 	        mediasManager.dispose();
 	        manager.dispose();
-	        utilsManager.closeWifiFtp();
+	        utilsListDataManager.closeWifiFtp();
+	        utilsDataManager.closeWifiFtp();
 	        utilsListManager.closeWifiFtp();
 	        utilsQueueManager.closeWifiFtp();
-	        utilsManager.dispose();
+	        utilsListDataManager.dispose();
+	        utilsDataManager.dispose();
 	        utilsListManager.dispose();
 	        utilsQueueManager.dispose();
 	        Log.d("DBG", "dispose OK");
@@ -559,6 +580,8 @@ public class MainActivity
         try
         {
             managerRunning = new ARDataTransferManager();
+            utilsListDataManagerRunning = new ARUtilsManager();
+            utilsListDataManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");            
             utilsDataManagerRunning = new ARUtilsManager();
             utilsDataManagerRunning.initWifiFtp(DRONE_IP, DRONE_PORT, ARUtilsFtpConnection.FTP_ANONYMOUS, "");
             utilsListManagerRunning = new ARUtilsManager();
@@ -574,7 +597,7 @@ public class MainActivity
         
             //Data
             ARDataTransferDataDownloader dataManager = managerRunning.getARDataTransferDataDownloader();
-            dataManager.createDataDownloader(utilsDataManagerRunning, "", tmp);
+            dataManager.createDataDownloader(utilsListDataManagerRunning, utilsDataManagerRunning, "", tmp, this, this);
             
             Runnable dataDownloader = dataManager.getDownloaderRunnable();
             Thread dataThread = new Thread(dataDownloader);
@@ -612,9 +635,11 @@ public class MainActivity
 	        dataManager.dispose();
 	        mediasManager.dispose();
             managerRunning.dispose();
+            utilsListDataManagerRunning.closeWifiFtp();
             utilsDataManagerRunning.closeWifiFtp();
             utilsListManagerRunning.closeWifiFtp();
 	        utilsQueueManagerRunning.closeWifiFtp();
+	        utilsListDataManagerRunning.dispose();
 	        utilsDataManagerRunning.dispose();
 	        utilsListManagerRunning.dispose();
             utilsQueueManagerRunning.dispose();
@@ -781,6 +806,12 @@ public class MainActivity
         {
         	Log.d("DBG", APP_TAG + e.toString());
         }
+    }
+    
+    @Override
+    public void didDataDownloaderFileComplete(Object arg, String fileName, ARDATATRANSFER_ERROR_ENUM error)
+    {
+        Log.d("DBG", APP_TAG + "ARDataTransferDataDownloader, didDataDownloaderFileComplete: " + fileName);
     }
     
     public void didMediaProgress(Object arg, ARDataTransferMedia media, float percent)

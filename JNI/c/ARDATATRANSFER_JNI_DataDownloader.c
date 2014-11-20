@@ -2,7 +2,7 @@
  * @file ARDATATRANSFER_Manager.c
  * @brief libARDataTransfer JNI_DataDownloader c file.
  **/
-
+#define DEBUG
 #ifdef NDEBUG
 /* Android ndk-build NDK_DEBUG=0*/
 #else
@@ -25,21 +25,74 @@
 #include "libARDataTransfer/ARDATATRANSFER_DataDownloader.h"
 #include "libARDataTransfer/ARDATATRANSFER_MediasDownloader.h"
 
+#include "ARDATATRANSFER_JNI.h"
+
 #define ARDATATRANSFER_JNI_DATADOWNLOADER_TAG       "JNI"
 
-JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jUtilsManager, jstring jRemoteDirectory, jstring jLocalDirectory)
+
+jmethodID methodId_DDListener_didDataDownloaderFileComplete = NULL;
+
+JNIEXPORT jboolean Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeStaticInit(JNIEnv *env, jclass jClass)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
-    ARUTILS_Manager_t *nativeUtilsManager = (ARUTILS_Manager_t*)(intptr_t)jUtilsManager;
+    jboolean jret = JNI_FALSE;
+    int error = JNI_OK;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+
+    if (env == NULL)
+    {
+        error = JNI_FAILED;
+    }
+
+    if (error == JNI_OK)
+    {
+        error = ARDATATRANSFER_JNI_DataDownloader_NewListenersJNI(env);
+    }
+
+    if (error == JNI_OK)
+    {
+        jret = JNI_TRUE;
+    }
+
+    return jret;
+}
+
+JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jUtilsListManager, jlong jUtilsDataManager, jstring jRemoteDirectory, jstring jLocalDirectory, jobject fileCompletionListener, jobject fileCompletionArg)
+{
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
+    ARUTILS_Manager_t *nativeUtilsListManager = (ARUTILS_Manager_t*)(intptr_t)jUtilsListManager;
+    ARUTILS_Manager_t *nativeUtilsDataManager = (ARUTILS_Manager_t*)(intptr_t)jUtilsDataManager;
     const char *nativeRemoteDirectory = (*env)->GetStringUTFChars(env, jRemoteDirectory, 0);
     const char *nativeLocalDirectory = (*env)->GetStringUTFChars(env, jLocalDirectory, 0);
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    int error = JNI_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s, %s", nativeRemoteDirectory ? nativeRemoteDirectory : "null", nativeLocalDirectory ? nativeLocalDirectory : "null");
 
-    result = ARDATATRANSFER_DataDownloader_New(nativeManager, NULL, nativeUtilsManager, nativeRemoteDirectory, nativeLocalDirectory, NULL, NULL);
+    error = ARDATATRANSFER_JNI_DataDownloader_NewListenersJNI(env);
+
+    if (error == JNI_OK)
+    {
+        error = ARDATATRANSFER_JNI_DataDownloader_NewDataDownloaderCallbacks(env, &nativeJniManager->dataDownloaderCallbacks, fileCompletionListener, fileCompletionArg);
+    }
+
+    if (error != JNI_OK)
+    {
+        result = ARDATATRANSFER_ERROR_ALLOC;
+    }
+
+    if (result == ARDATATRANSFER_OK)
+    {
+        result = ARDATATRANSFER_DataDownloader_New(nativeManager, nativeUtilsListManager, nativeUtilsDataManager, nativeRemoteDirectory, nativeLocalDirectory, ARDATATRANSFER_JNI_DataDownloader_FileCompletionCallback, nativeJniManager->dataDownloaderCallbacks);
+    }
 
     //cleanup
+    if (error != JNI_OK)
+    {
+        ARDATATRANSFER_JNI_DataDownloader_FreeDataDownloaderCallbacks(env, &nativeJniManager->dataDownloaderCallbacks);
+    }
+
     if (nativeRemoteDirectory != NULL)
     {
         (*env)->ReleaseStringUTFChars(env, jRemoteDirectory, nativeRemoteDirectory);
@@ -55,19 +108,43 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeDelete(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
 
     result = ARDATATRANSFER_DataDownloader_Delete(nativeManager);
 
+    ARDATATRANSFER_JNI_DataDownloader_FreeDataDownloaderCallbacks(env, &nativeJniManager->dataDownloaderCallbacks);
+    ARDATATRANSFER_JNI_DataDownloader_FreeListenersJNI(env);
+
     return result;
+}
+
+JNIEXPORT jlong JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeGetAvailableFiles(JNIEnv *env, jobject jThis, jlong jManager)
+{
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    long filesNumber = 0;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+
+    result = ARDATATRANSFER_DataDownloader_GetAvailableFiles(nativeManager, &filesNumber);
+
+    if (result != ARDATATRANSFER_OK)
+    {
+        ARDATATRANSFER_JNI_Manager_ThrowARDataTransferException(env, result);
+    }
+
+    return (jlong)filesNumber;
 }
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeThreadRun(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
 
@@ -78,7 +155,8 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownloader_nativeCancelThread(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
@@ -88,5 +166,210 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
     return result;
 }
 
+/*****************************************
+ *
+ *             Private implementation:
+ *
+ *****************************************/
 
+void ARDATATRANSFER_JNI_DataDownloader_FileCompletionCallback(void* arg, const char *fileName, eARDATATRANSFER_ERROR nativeError)
+{
+    ARDATATRANSFER_JNI_DataDownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_DataDownloaderCallbacks_t*)arg;
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x, %d", (int)arg, nativeError);
+
+    if (callbacks != NULL)
+    {
+        if (ARDATATRANSFER_JNI_Manager_VM != NULL)
+        {
+            JNIEnv *env = NULL;
+            jstring jFileName = NULL;
+            jobject jError = NULL;
+			jint jResultEnv = 0;
+			int error = JNI_OK;
+
+			jResultEnv = (*ARDATATRANSFER_JNI_Manager_VM)->GetEnv(ARDATATRANSFER_JNI_Manager_VM, (void **) &env, JNI_VERSION_1_6);
+
+			if (jResultEnv == JNI_EDETACHED)
+			{
+				 (*ARDATATRANSFER_JNI_Manager_VM)->AttachCurrentThread(ARDATATRANSFER_JNI_Manager_VM, &env, NULL);
+			}
+
+			if (env == NULL)
+			{
+				error = JNI_FAILED;
+				ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "error no env");
+			}
+
+			if ((env != NULL) && (callbacks->jFileCompletionListener != NULL) && (methodId_DDListener_didDataDownloaderFileComplete != NULL))
+			{
+				int error = JNI_OK;
+
+				if ((error == JNI_OK) && (fileName != NULL))
+				{
+                    jFileName = (*env)->NewStringUTF(env, fileName);
+                    if (jFileName == NULL)
+                    {
+                        error = JNI_FAILED;
+                        ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "error %d", error);
+                    }
+                }
+
+				if (error == JNI_OK)
+				{
+					jError = ARDATATRANSFER_JNI_Manager_NewERROR_ENUM(env, nativeError);
+
+					if (jError == NULL)
+					{
+						error = JNI_FAILED;
+						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "error %d", error);
+					}
+				}
+
+				if ((error == JNI_OK) && (methodId_DDListener_didDataDownloaderFileComplete != NULL))
+				{
+					 (*env)->CallVoidMethod(env, callbacks->jFileCompletionListener, methodId_DDListener_didDataDownloaderFileComplete, callbacks->jFileCompletionArg, jFileName, jError);
+				}
+			}
+
+			if (env != NULL)
+			{
+                if (jFileName != NULL)
+                {
+                    (*env)->DeleteLocalRef(env, jFileName);
+                }
+			    if (jError != NULL)
+			    {
+			        (*env)->DeleteLocalRef(env, jError);
+			    }
+			}
+
+			if ((jResultEnv == JNI_EDETACHED) && (env != NULL))
+			{
+				(*ARDATATRANSFER_JNI_Manager_VM)->DetachCurrentThread(ARDATATRANSFER_JNI_Manager_VM);
+			}
+        }
+    }
+}
+
+int ARDATATRANSFER_JNI_DataDownloader_NewDataDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DataDownloaderCallbacks_t **callbacksAddr, jobject jFileCompletionListener, jobject jFileCompletionArg)
+{
+    int error = JNI_OK;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+
+    if (callbacksAddr != NULL)
+    {
+        ARDATATRANSFER_JNI_DataDownloaderCallbacks_t *callbacks = calloc(1, sizeof(ARDATATRANSFER_JNI_DataDownloaderCallbacks_t));
+        if (callbacks == NULL)
+        {
+            error = JNI_FAILED;
+        }
+
+        if ((error == ARDATATRANSFER_OK) && (jFileCompletionListener != NULL))
+        {
+            callbacks->jFileCompletionListener = (*env)->NewGlobalRef(env, jFileCompletionListener);
+            if (callbacks->jFileCompletionListener == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+        if ((error == ARDATATRANSFER_OK) && (jFileCompletionArg != NULL))
+        {
+            callbacks->jFileCompletionArg = (*env)->NewGlobalRef(env, jFileCompletionArg);
+            if (callbacks->jFileCompletionArg == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        *callbacksAddr = callbacks;
+    }
+
+    return error;
+}
+
+void ARDATATRANSFER_JNI_DataDownloader_FreeDataDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DataDownloaderCallbacks_t **callbacksAddr)
+{
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+
+    if (callbacksAddr != NULL)
+    {
+        ARDATATRANSFER_JNI_DataDownloaderCallbacks_t *callbacks = *callbacksAddr;
+
+        if (callbacks != NULL)
+        {
+            if (env != NULL)
+            {
+                if (callbacks->jFileCompletionListener != NULL)
+                {
+                    (*env)->DeleteGlobalRef(env, callbacks->jFileCompletionListener);
+                }
+                if (callbacks->jFileCompletionArg != NULL)
+                {
+                    (*env)->DeleteGlobalRef(env, callbacks->jFileCompletionArg);
+                }
+            }
+            free(callbacks);
+        }
+        *callbacksAddr = NULL;
+    }
+}
+
+int ARDATATRANSFER_JNI_DataDownloader_NewListenersJNI(JNIEnv *env)
+{
+    jclass classDDCompletionListener = NULL;
+    int error = JNI_OK;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+
+     if (env == NULL)
+    {
+        error = JNI_FAILED;
+    }
+
+    if (methodId_DDListener_didDataDownloaderFileComplete == NULL)
+    {
+        if (error == JNI_OK)
+        {
+            classDDCompletionListener = (*env)->FindClass(env, "com/parrot/arsdk/ardatatransfer/ARDataTransferDataDownloaderFileCompletionListener");
+
+            if (classDDCompletionListener == NULL)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "ARDataTransferDataDownloaderFileCompletionListener class not found");
+                error = JNI_FAILED;
+            }
+        }
+
+        if (error == JNI_OK)
+        {
+            methodId_DDListener_didDataDownloaderFileComplete = (*env)->GetMethodID(env, classDDCompletionListener, "didDataDownloaderFileComplete", "(Ljava/lang/Object;Ljava/lang/String;Lcom/parrot/arsdk/ardatatransfer/ARDATATRANSFER_ERROR_ENUM;)V");
+
+            if (methodId_DDListener_didDataDownloaderFileComplete == NULL)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "Listener didDataDownloaderFileComplete method not found");
+                error = JNI_FAILED;
+            }
+        }
+    }
+
+    return error;
+}
+
+void ARDATATRANSFER_JNI_DataDownloader_FreeListenersJNI(JNIEnv *env)
+{
+    int error = JNI_OK;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+
+    if (env == NULL)
+    {
+        error = JNI_FAILED;
+    }
+
+    if (error == JNI_OK)
+    {
+        methodId_DDListener_didDataDownloaderFileComplete = NULL;
+    }
+}

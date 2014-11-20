@@ -64,7 +64,8 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDo
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jFtpManager, jstring jRemotePath, jstring jLocalPath, jobject jProgressListener, jobject jProgressArg, jobject jCompletionListener, jobject jCompletionArg, jint jResume)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARUTILS_Manager_t *nativeFtpManager = (ARUTILS_Manager_t *)(intptr_t)jFtpManager;
     ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = NULL;
     const char *nativeRemotePath = (*env)->GetStringUTFChars(env, jRemotePath, 0);
@@ -78,47 +79,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownlo
 
     if (error == JNI_OK)
     {
-        callbacks = calloc(1, sizeof(ARDATATRANSFER_JNI_DownloaderCallbacks_t));
-        if (callbacks == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jProgressListener != NULL))
-    {
-        callbacks->jProgressListener = (*env)->NewGlobalRef(env, jProgressListener);
-        if (callbacks->jProgressListener == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jProgressArg != NULL))
-    {
-        callbacks->jProgressArg = (*env)->NewGlobalRef(env, jProgressArg);
-        if (callbacks->jProgressArg == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jCompletionListener != NULL))
-    {
-        callbacks->jCompletionListener = (*env)->NewGlobalRef(env, jCompletionListener);
-        if (callbacks->jCompletionListener == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jCompletionArg != NULL))
-    {
-        callbacks->jCompletionArg = (*env)->NewGlobalRef(env, jCompletionArg);
-        if (callbacks->jCompletionArg == NULL)
-        {
-            error = JNI_FAILED;
-        }
+        error = ARDATATRANSFER_JNI_Downloader_NewDownloaderCallbacks(env,  &callbacks, jProgressListener, jProgressArg, jCompletionListener, jCompletionArg);
     }
 
     if (error != JNI_OK)
@@ -153,19 +114,23 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownlo
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownloader_nativeDelete(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "");
 
     result = ARDATATRANSFER_Downloader_Delete(nativeManager);
 
+    ARDATATRANSFER_JNI_Downloader_FreeListenersJNI(env);
+
     return result;
 }
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownloader_nativeThreadRun(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "");
 
@@ -176,7 +141,8 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownlo
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDownloader_nativeCancelThread(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "");
@@ -210,6 +176,7 @@ void ARDATATRANSFER_JNI_Downloader_ProgressCallback(void* arg, float percent)
             if (env == NULL)
             {
                 error = JNI_FAILED;
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "error no env");
             }
 
             if ((error == JNI_OK) && (methodId_DListener_didDownloadProgress != NULL))
@@ -299,13 +266,73 @@ ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_Downlo
     }
 }
 
-void ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DownloaderCallbacks_t **callbacksParam)
+int ARDATATRANSFER_JNI_Downloader_NewDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DownloaderCallbacks_t **callbacksAddr, jobject jProgressListener, jobject jProgressArg, jobject jCompletionListener, jobject jCompletionArg)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "%x", callbacksParam ? *callbacksParam : 0);
+    int error = JNI_OK;
 
-    if (callbacksParam != NULL)
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "");
+
+    if (callbacksAddr != NULL)
     {
-        ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = *callbacksParam;
+        ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = calloc(1, sizeof(ARDATATRANSFER_JNI_DownloaderCallbacks_t));
+        if (callbacks == NULL)
+        {
+            error = JNI_FAILED;
+        }
+
+        if ((error == JNI_OK) && (jProgressListener != NULL))
+        {
+            callbacks->jProgressListener = (*env)->NewGlobalRef(env, jProgressListener);
+            if (callbacks->jProgressListener == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jProgressArg != NULL))
+        {
+            callbacks->jProgressArg = (*env)->NewGlobalRef(env, jProgressArg);
+            if (callbacks->jProgressArg == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jCompletionListener != NULL))
+        {
+            callbacks->jCompletionListener = (*env)->NewGlobalRef(env, jCompletionListener);
+            if (callbacks->jCompletionListener == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jCompletionArg != NULL))
+        {
+            callbacks->jCompletionArg = (*env)->NewGlobalRef(env, jCompletionArg);
+            if (callbacks->jCompletionArg == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        *callbacksAddr = callbacks;
+    }
+    else
+    {
+        error = JNI_FAILED;
+    }
+
+    return error;
+}
+
+void ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DownloaderCallbacks_t **callbacksAddr)
+{
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+
+    if (callbacksAddr != NULL)
+    {
+        ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = *callbacksAddr;
 
         if (callbacks != NULL)
         {
@@ -335,7 +362,7 @@ void ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks(JNIEnv *env, ARDATATR
             free(callbacks);
         }
 
-        *callbacksParam = NULL;
+        *callbacksAddr = NULL;
     }
 }
 

@@ -86,27 +86,39 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMa
 
 JNIEXPORT jlong JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManager_nativeNew(JNIEnv *env, jobject jThis)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = NULL;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
 
-    nativeManager = ARDATATRANSFER_Manager_New(&result);
-
-    if (error == JNI_OK)
+    nativeJniManager = calloc(1, sizeof(ARDATATRANSFER_JNI_Manager_t));
+    if (nativeJniManager == NULL)
     {
-        error = ARDATATRANSFER_JNI_Manager_NewARDataTransferExceptionJNI(env);
+        result = ARDATATRANSFER_ERROR_ALLOC;
     }
 
-    if (error == JNI_OK)
+    if (result == ARDATATRANSFER_OK)
     {
-        error = ARDATATRANSFER_JNI_Manager_NewERROR_ENUM_JNI(env);
+        nativeJniManager->nativeManager = ARDATATRANSFER_Manager_New(&result);
     }
 
-    if (error != JNI_OK)
+    if (result == ARDATATRANSFER_OK)
     {
-        result = ARDATATRANSFER_ERROR_SYSTEM;
+        if (error == JNI_OK)
+        {
+            error = ARDATATRANSFER_JNI_Manager_NewARDataTransferExceptionJNI(env);
+        }
+
+        if (error == JNI_OK)
+        {
+            error = ARDATATRANSFER_JNI_Manager_NewERROR_ENUM_JNI(env);
+        }
+
+        if (error != JNI_OK)
+        {
+            result = ARDATATRANSFER_ERROR_SYSTEM;
+        }
     }
 
     if (result == ARDATATRANSFER_OK)
@@ -117,32 +129,41 @@ JNIEXPORT jlong JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManag
     {
         ARSAL_PRINT (ARSAL_PRINT_ERROR, ARDATATRANSFER_JNI_MANAGER_TAG, "error: %d occurred", result);
 
+        if (nativeJniManager != NULL)
+        {
+            ARDATATRANSFER_Manager_Delete(&nativeJniManager->nativeManager);
+            free(nativeJniManager);
+            nativeJniManager = NULL;
+        }
+
         ARDATATRANSFER_JNI_Manager_ThrowARDataTransferException(env, result);
     }
 
-    return (long)nativeManager;
+    return (long)nativeJniManager;
 }
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManager_nativeDelete(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*) (intptr_t) jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
 
-    ARDATATRANSFER_Manager_Delete (&nativeManager);
-
-    if (ARDATATRANSFER_Manager_Count > 0)
+    if (nativeJniManager != NULL)
     {
-        ARDATATRANSFER_Manager_Count--;
+        ARDATATRANSFER_Manager_Delete(&nativeJniManager->nativeManager);
 
-        if (ARDATATRANSFER_Manager_Count == 0)
+        if (ARDATATRANSFER_Manager_Count > 0)
         {
-            ARDATATRANSFER_JNI_Manager_FreeARDataTransferExceptionJNI(env);
-            ARDATATRANSFER_JNI_Manager_FreeERROR_ENUM_JNI(env);
+            ARDATATRANSFER_Manager_Count--;
 
-            ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(env);
-            ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(env);
+            if (ARDATATRANSFER_Manager_Count == 0)
+            {
+                ARDATATRANSFER_JNI_Manager_FreeARDataTransferExceptionJNI(env);
+                ARDATATRANSFER_JNI_Manager_FreeERROR_ENUM_JNI(env);
+            }
         }
+
+        free(nativeJniManager);
     }
 }
 

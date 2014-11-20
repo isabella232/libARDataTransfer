@@ -17,7 +17,7 @@
  * @param error The error status to indicate the media downloaded status
  * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
  */
-typedef void (*ARDATATRANSFER_DataDownloader_DataCompletionCallback_t) (void* arg, const char *fileName, eARDATATRANSFER_ERROR error);
+typedef void (*ARDATATRANSFER_DataDownloader_FileCompletionCallback_t) (void* arg, const char *fileName, eARDATATRANSFER_ERROR error);
 
 /**
  * @brief Create a new ARDataTransfer DataDownloader
@@ -30,7 +30,7 @@ typedef void (*ARDATATRANSFER_DataDownloader_DataCompletionCallback_t) (void* ar
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_DataDownloader_Delete ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpListManager, ARUTILS_Manager_t *ftpDataManager, const char *remoteDirectory, const char *localDirectory, ARDATATRANSFER_DataDownloader_DataCompletionCallback_t dataCompletionCallback, void *dataCompletionArg);
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpListManager, ARUTILS_Manager_t *ftpDataManager, const char *remoteDirectory, const char *localDirectory, ARDATATRANSFER_DataDownloader_FileCompletionCallback_t fileCompletionCallback, void *fileCompletionArg);
 
 /**
  * @brief Delete an ARDataTransfer DataDownloader

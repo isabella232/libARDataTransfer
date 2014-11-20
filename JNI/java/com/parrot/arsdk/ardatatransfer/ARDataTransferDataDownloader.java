@@ -13,8 +13,10 @@ import com.parrot.arsdk.arutils.ARUtilsManager;
 public class ARDataTransferDataDownloader
 {
     /* Native Functions */
-    private native int nativeNew(long manager, long utilsManager, String remoteDirectory, String localDirectory);
+    private native static boolean nativeStaticInit();
+    private native int nativeNew(long manager, long utilsListManager, long utilsDataManager, String remoteDirectory, String localDirectory, ARDataTransferDataDownloaderFileCompletionListener fileCompletionListener, Object fileCompletionArg);
     private native int nativeDelete(long manager);
+    private native long nativeGetAvailableFiles(long manager) throws ARDataTransferException;
     private native void nativeThreadRun (long manager);
     private native int nativeCancelThread (long manager);
 
@@ -46,9 +48,9 @@ public class ARDataTransferDataDownloader
      * @return void
      * @throws ARDataTransferException if error
      */
-    public void createDataDownloader(ARUtilsManager utilsManager, String remoteDirectory, String localDirectory) throws ARDataTransferException
+    public void createDataDownloader(ARUtilsManager utilsListManager, ARUtilsManager utilsDataManager, String remoteDirectory, String localDirectory, ARDataTransferDataDownloaderFileCompletionListener fileCompletionListener, Object fileCompletionArg) throws ARDataTransferException
     {
-        int result = nativeNew(nativeManager, utilsManager.getManager(), remoteDirectory, localDirectory);
+        int result = nativeNew(nativeManager, utilsListManager.getManager(), utilsDataManager.getManager(), remoteDirectory, localDirectory, fileCompletionListener, fileCompletionArg);
 
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
 
@@ -108,6 +110,13 @@ public class ARDataTransferDataDownloader
         }
     }
 
+    public long getAvailableFiles()  throws ARDataTransferException
+    {
+        long result = nativeGetAvailableFiles(nativeManager);
+
+        return result;
+    }
+
     /**
      * Gets the ARDataTransfer DataDownloader {@link Runnable} to start as new {@link Thread}
      * @return DataDownloader Runnable
@@ -134,5 +143,11 @@ public class ARDataTransferDataDownloader
 
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
         return error;
+    }
+
+    /*  Static Block */
+    static
+    {
+        nativeStaticInit();
     }
 }

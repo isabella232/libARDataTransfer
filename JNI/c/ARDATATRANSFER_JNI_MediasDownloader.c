@@ -77,7 +77,8 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMe
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jftpListManager, jlong jftpQueueManager, jstring jRemoteDirectory, jstring jLocalDirectory)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARUTILS_Manager_t *nativeFtpListManager = (ARUTILS_Manager_t *)(intptr_t)jftpListManager;
     ARUTILS_Manager_t *nativeFtpQueueManager = (ARUTILS_Manager_t *)(intptr_t)jftpQueueManager;
     const char *nativeRemoteDirectory = (*env)->GetStringUTFChars(env, jRemoteDirectory, 0);
@@ -118,19 +119,24 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeDelete(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
 
     result = ARDATATRANSFER_MediasDownloader_Delete(nativeManager);
 
+    ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(env);
+    ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(env);
+
     return result;
 }
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediasSync(JNIEnv *env, jobject jThis, jlong jManager, jboolean jWithThumbnail)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int count = 0;
 
@@ -150,7 +156,8 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT jobject JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediaAtIndex(JNIEnv *env, jobject jThis, jlong jManager, jint jIndex)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     int nativeIndex = (int)jIndex;
     ARDATATRANSFER_Media_t *nativeMedia = NULL;
     jobject jMedia = NULL;
@@ -178,7 +185,8 @@ JNIEXPORT jobject JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMed
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetAvailableMediasAsync(JNIEnv *env, jobject jThis, jlong jManager, jobject jAvailableMediaListener, jobject jAvailableMediaArg)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
@@ -218,7 +226,8 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeCancelGetAvailableMedias(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     result = ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(nativeManager);
@@ -228,7 +237,8 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeDeleteMedia(JNIEnv *env, jobject jThis, jlong jManager, jobject jMedia)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARDATATRANSFER_Media_t nativeMedia;
     int error = JNI_OK;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
@@ -250,13 +260,13 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     return result;
 }
 
-void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t **callbacksParam)
+void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%x", callbacksParam ? *callbacksParam : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
 
-    if (callbacksParam != NULL)
+    if (callbacksAddr != NULL)
     {
-        ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = *callbacksParam;
+        ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = *callbacksAddr;
 
         if (callbacks != NULL)
         {
@@ -291,13 +301,14 @@ void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *e
             free(callbacks);
         }
 
-        *callbacksParam = NULL;
+        *callbacksAddr = NULL;
     }
 }
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeAddMediaToQueue(JNIEnv *env, jobject jThis, jlong jManager, jobject jMedia, jobject jProgressListener, jobject jProgressArg, jobject jCompletionListener, jobject jCompletionArg)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t *callbacks = NULL;
     ARDATATRANSFER_Media_t nativeMedia;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
@@ -363,7 +374,8 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeQueueThreadRun(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
 
@@ -374,7 +386,8 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeCancelQueueThread(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
@@ -915,7 +928,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     }
     if (jThumbnail != NULL)
     {
-        (*env)->DeleteLocalRef(env, jThumbnail);   
+        (*env)->DeleteLocalRef(env, jThumbnail);
     }
 
     return jMedia;

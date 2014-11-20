@@ -64,7 +64,8 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUp
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUploader_nativeNew(JNIEnv *env, jobject jThis, jlong jManager, jlong jFtpManager, jstring jRemotePath, jstring jLocalPath, jobject jProgressListener, jobject jProgressArg, jobject jCompletionListener, jobject jCompletionArg, jint jResume)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     ARUTILS_Manager_t *nativeFtpManager = (ARUTILS_Manager_t *)(intptr_t)jFtpManager;
     ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = NULL;
     const char *nativeRemotePath = (*env)->GetStringUTFChars(env, jRemotePath, 0);
@@ -78,47 +79,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
 
     if (error == JNI_OK)
     {
-        callbacks = calloc(1, sizeof(ARDATATRANSFER_JNI_UploaderCallbacks_t));
-        if (callbacks == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jProgressListener != NULL))
-    {
-        callbacks->jProgressListener = (*env)->NewGlobalRef(env, jProgressListener);
-        if (callbacks->jProgressListener == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jProgressArg != NULL))
-    {
-        callbacks->jProgressArg = (*env)->NewGlobalRef(env, jProgressArg);
-        if (callbacks->jProgressArg == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jCompletionListener != NULL))
-    {
-        callbacks->jCompletionListener = (*env)->NewGlobalRef(env, jCompletionListener);
-        if (callbacks->jCompletionListener == NULL)
-        {
-            error = JNI_FAILED;
-        }
-    }
-
-    if ((error == JNI_OK) && (jCompletionArg != NULL))
-    {
-        callbacks->jCompletionArg = (*env)->NewGlobalRef(env, jCompletionArg);
-        if (callbacks->jCompletionArg == NULL)
-        {
-            error = JNI_FAILED;
-        }
+        error = ARDATATRANSFER_JNI_Uploader_NewUploaderCallbacks(env, &callbacks, jProgressListener, jProgressArg, jCompletionListener, jCompletionArg);
     }
 
     if (error != JNI_OK)
@@ -150,22 +111,25 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
     return result;
 }
 
-
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUploader_nativeDelete(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
 
     result = ARDATATRANSFER_Uploader_Delete(nativeManager);
 
+    ARDATATRANSFER_JNI_Uploader_FreeListenersJNI(env);
+
     return result;
 }
 
 JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUploader_nativeThreadRun(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
 
@@ -176,13 +140,13 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
 
 JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUploader_nativeCancelThread(JNIEnv *env, jobject jThis, jlong jManager)
 {
-    ARDATATRANSFER_Manager_t *nativeManager = (ARDATATRANSFER_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
 
     result = ARDATATRANSFER_Uploader_CancelThread(nativeManager);
-
 
     return result;
 }
@@ -229,7 +193,7 @@ void ARDATATRANSFER_JNI_Uploader_ProgressCallback(void* arg, float percent)
 
 void ARDATATRANSFER_JNI_Uploader_CompletionCallback(void* arg, eARDATATRANSFER_ERROR nativeError)
 {
-ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_UploaderCallbacks_t*)arg;
+    ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_UploaderCallbacks_t*)arg;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%x, %d", (int)arg, nativeError);
 
@@ -240,6 +204,7 @@ ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_Uploader
             JNIEnv *env = NULL;
             jobject jError = NULL;
 			jint jResultEnv = 0;
+            int error = JNI_OK;
 
 			jResultEnv = (*ARDATATRANSFER_JNI_Manager_VM)->GetEnv(ARDATATRANSFER_JNI_Manager_VM, (void **) &env, JNI_VERSION_1_6);
 
@@ -250,15 +215,12 @@ ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_Uploader
 
 			if (env == NULL)
 			{
-				//error = JNI_FAILED;
+				error = JNI_FAILED;
 				ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "error no env");
 			}
 
 			if ((env != NULL) && (callbacks->jCompletionListener != NULL) && (methodId_DListener_didUploadComplete != NULL))
 			{
-				int error = JNI_OK;
-
-
 				if (error == JNI_OK)
 				{
 					jError = ARDATATRANSFER_JNI_Manager_NewERROR_ENUM(env, nativeError);
@@ -299,13 +261,71 @@ ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_Uploader
     }
 }
 
-void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacksParam)
+int ARDATATRANSFER_JNI_Uploader_NewUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacksAddr, jobject jProgressListener, jobject jProgressArg, jobject jCompletionListener, jobject jCompletionArg)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%x", callbacksParam ? *callbacksParam : 0);
+    int error = JNI_OK;
 
-    if (callbacksParam != NULL)
+    if (callbacksAddr != NULL)
     {
-        ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = *callbacksParam;
+        ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = calloc(1, sizeof(ARDATATRANSFER_JNI_UploaderCallbacks_t));
+        if (callbacks == NULL)
+        {
+            error = JNI_FAILED;
+        }
+
+        if ((error == JNI_OK) && (jProgressListener != NULL))
+        {
+            callbacks->jProgressListener = (*env)->NewGlobalRef(env, jProgressListener);
+            if (callbacks->jProgressListener == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jProgressArg != NULL))
+        {
+            callbacks->jProgressArg = (*env)->NewGlobalRef(env, jProgressArg);
+            if (callbacks->jProgressArg == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jCompletionListener != NULL))
+        {
+            callbacks->jCompletionListener = (*env)->NewGlobalRef(env, jCompletionListener);
+            if (callbacks->jCompletionListener == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        if ((error == JNI_OK) && (jCompletionArg != NULL))
+        {
+            callbacks->jCompletionArg = (*env)->NewGlobalRef(env, jCompletionArg);
+            if (callbacks->jCompletionArg == NULL)
+            {
+                error = JNI_FAILED;
+            }
+        }
+
+        *callbacksAddr = callbacks;
+    }
+    else
+    {
+        error = JNI_FAILED;
+    }
+
+    return error;
+}
+
+void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacksAddr)
+{
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+
+    if (callbacksAddr != NULL)
+    {
+        ARDATATRANSFER_JNI_UploaderCallbacks_t *callbacks = *callbacksAddr;
 
         if (callbacks != NULL)
         {
@@ -335,10 +355,9 @@ void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSF
             free(callbacks);
         }
 
-        *callbacksParam = NULL;
+        *callbacksAddr = NULL;
     }
 }
-
 
 int ARDATATRANSFER_JNI_Uploader_NewListenersJNI(JNIEnv *env)
 {
