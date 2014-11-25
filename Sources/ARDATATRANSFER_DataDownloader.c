@@ -377,13 +377,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                             errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpDataManager, remotePath, localPath, NULL, NULL, FTP_RESUME_TRUE);
 
-                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
-                            if (manager->dataDownloader->fileCompletionCallback != NULL)
-                            {
-                                char *fileNameSrc = fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX);
-                                manager->dataDownloader->fileCompletionCallback(manager->dataDownloader->fileCompletionArg ,fileNameSrc, (errorFtp == ARUTILS_OK) ? ARDATATRANSFER_OK : ARDATATRANSFER_ERROR_FTP);
-                            }
-
                             if (errorFtp == ARUTILS_OK)
                             {
                                 errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpDataManager, remotePath);
@@ -393,6 +386,13 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                                 strncat(restoreName, fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX), ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
 
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
+                            }
+                            
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+                            if (manager->dataDownloader->fileCompletionCallback != NULL)
+                            {
+                                char *fileNameSrc = fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX);
+                                manager->dataDownloader->fileCompletionCallback(manager->dataDownloader->fileCompletionArg ,fileNameSrc, (errorFtp == ARUTILS_OK) ? ARDATATRANSFER_OK : ARDATATRANSFER_ERROR_FTP);
                             }
                         }
                     }
@@ -435,12 +435,6 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                                 errorFtp = ARUTILS_Manager_Ftp_Get(manager->dataDownloader->ftpDataManager, remotePath, localPath, NULL, NULL, FTP_RESUME_FALSE);
                             }
 
-                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
-                            if (manager->dataDownloader->fileCompletionCallback != NULL)
-                            {
-                                manager->dataDownloader->fileCompletionCallback(manager->dataDownloader->fileCompletionArg ,fileName, (errorFtp == ARUTILS_OK) ? ARDATATRANSFER_OK : ARDATATRANSFER_ERROR_FTP);
-                            }
-
                             if (errorFtp == ARUTILS_OK)
                             {
                                 errorFtp = ARUTILS_Manager_Ftp_Delete(manager->dataDownloader->ftpDataManager, remotePath);
@@ -449,6 +443,12 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                                 restoreName[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                                 strncat(restoreName, fileNameCopy, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
+                            }
+                            
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+                            if (manager->dataDownloader->fileCompletionCallback != NULL)
+                            {
+                                manager->dataDownloader->fileCompletionCallback(manager->dataDownloader->fileCompletionArg ,fileName, (errorFtp == ARUTILS_OK) ? ARDATATRANSFER_OK : ARDATATRANSFER_ERROR_FTP);
                             }
                         }
                     }
