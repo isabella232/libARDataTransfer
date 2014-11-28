@@ -74,7 +74,7 @@
 
 #define ARDATATRANSFER_DATA_DOWNLOADER_TAG                    "DataDownloader"
 
-#define ARDATATRANSFER_DATA_DOWNLOADER_WAIT_TIME_IN_SECONDS   10
+#define ARDATATRANSFER_DATA_DOWNLOADER_WAIT_TIME_IN_SECONDS   5
 #define ARDATATRANSFER_DATA_DOWNLOADER_FTP_ROOT               ""
 #define ARDATATRANSFER_DATA_DOWNLOADER_FTP_DATADOWNLOAD       "academy"
 #define ARDATATRANSFER_DATA_DOWNLOADER_SPACE_PERCENT          20.f
@@ -520,6 +520,16 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_
         if (resultSys != 0)
         {
             result = ARDATATRANSFER_ERROR_SYSTEM;
+        }
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->dataDownloader->ftpListManager);
+        
+        if (resultUtils != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
 
