@@ -279,9 +279,10 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
             
             if (result == ARDATATRANSFER_OK)
             {
+                char lineDataProduct[ARUTILS_FTP_MAX_PATH_SIZE];
                 ARDISCOVERY_getProductPathName(product, productPathName, sizeof(productPathName));
                 nextProduct = NULL;
-                fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL);
+                fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL, lineDataProduct,ARUTILS_FTP_MAX_PATH_SIZE);
                 
                 if (fileName != NULL)
                 {
@@ -294,12 +295,13 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                     resultUtils = ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpListManager, remoteProduct, &mediaFtpList, &mediaFtpListLen);
                     if (resultUtils == ARUTILS_OK)
                     {
+                        char lineDataMedia[ARUTILS_FTP_MAX_PATH_SIZE];
                         int fileType;
                         const char *index;
                         
                         nextMedia = NULL;
                         while ((result == ARDATATRANSFER_OK)
-                               && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize)) != NULL)
+                               && (fileName = ARUTILS_Ftp_List_GetNextItem(mediaFtpList, &nextMedia, NULL, 0, &lineItem, &lineSize, lineDataMedia,ARUTILS_FTP_MAX_PATH_SIZE)) != NULL)
                         {
                             resultUtils = ARUTILS_Manager_Ftp_Connection_IsCanceled(manager->mediasDownloader->ftpListManager);
                             
