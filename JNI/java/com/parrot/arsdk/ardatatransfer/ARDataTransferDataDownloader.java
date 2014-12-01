@@ -47,6 +47,7 @@ public class ARDataTransferDataDownloader
     private native int nativeNew(long manager, long utilsListManager, long utilsDataManager, String remoteDirectory, String localDirectory, ARDataTransferDataDownloaderFileCompletionListener fileCompletionListener, Object fileCompletionArg);
     private native int nativeDelete(long manager);
     private native long nativeGetAvailableFiles(long manager) throws ARDataTransferException;
+    private native int nativeCancelAvailableFiles(long manager);
     private native void nativeThreadRun (long manager);
     private native int nativeCancelThread (long manager);
 
@@ -140,11 +141,27 @@ public class ARDataTransferDataDownloader
         }
     }
 
+   /**
+     * Gets ARDataTransfer DataDownloader available files
+     * @return the available files count
+     */
     public long getAvailableFiles()  throws ARDataTransferException
     {
         long result = nativeGetAvailableFiles(nativeManager);
 
         return result;
+    }
+
+    /**
+     * Gets ARDataTransfer DataDownloader available files
+     * @return DataDownloader Runnable
+     */
+    public ARDATATRANSFER_ERROR_ENUM cancelAvailableFiles()
+    {
+         int result = nativeCancelAvailableFiles(nativeManager);
+
+        ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
+        return error;
     }
 
     /**
