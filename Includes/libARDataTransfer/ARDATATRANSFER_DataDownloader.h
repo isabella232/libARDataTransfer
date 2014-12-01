@@ -81,6 +81,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Delete (ARDATATRANSFER_Manag
 eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_GetAvailableFiles (ARDATATRANSFER_Manager_t *manager, long *filesNumber);
 
 /**
+ * @brief Send a cancel to the device data downloader get available files
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_DataDownloader_GetAvailableFiles ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelAvailableFiles (ARDATATRANSFER_Manager_t *manager);
+
+/**
  * @brief Process of the device data download (flights data or ride data)
  * @param manager The pointer of the ARDataTransfer Manager
  * @retval returns NULL

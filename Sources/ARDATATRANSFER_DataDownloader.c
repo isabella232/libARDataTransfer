@@ -493,6 +493,36 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
     return NULL;
 }
 
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelAvailableFiles (ARDATATRANSFER_Manager_t *manager)
+{
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "");
+    
+    if (manager == NULL)
+    {
+        result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
+    }
+    
+    if ((result == ARDATATRANSFER_OK) && (manager->dataDownloader == NULL))
+    {
+        result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->dataDownloader->ftpListManager);
+        
+        if (resultUtils != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
+        }
+    }
+    
+    return result;
+}
+
 eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_Manager_t *manager)
 {
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
@@ -520,16 +550,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelThread(ARDATATRANSFER_
         if (resultSys != 0)
         {
             result = ARDATATRANSFER_ERROR_SYSTEM;
-        }
-    }
-    
-    if (result == ARDATATRANSFER_OK)
-    {
-        resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->dataDownloader->ftpListManager);
-        
-        if (resultUtils != ARUTILS_OK)
-        {
-            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
 

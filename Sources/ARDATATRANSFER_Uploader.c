@@ -186,13 +186,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Uploader_CancelThread (ARDATATRANSFER_Manag
         {
             result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
         }
-        else
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtil = ARUTILS_Manager_Ftp_Connection_Cancel(manager->uploader->ftpManager);
+        if (resultUtil != ARUTILS_OK)
         {
-            resultUtil = ARUTILS_Manager_Ftp_Connection_Cancel(manager->uploader->ftpManager);
-            if (resultUtil != ARUTILS_OK)
-            {
-                result = ARDATATRANSFER_ERROR_FTP;
-            }
+            result = ARDATATRANSFER_ERROR_FTP;
         }
     }
     
