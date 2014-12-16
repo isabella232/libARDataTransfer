@@ -8,7 +8,7 @@
       notice, this list of conditions and the following disclaimer.
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in
-      the documentation and/or other materials provided with the 
+      the documentation and/or other materials provided with the
       distribution.
     * Neither the name of Parrot nor the names
       of its contributors may be used to endorse or promote products
@@ -22,7 +22,7 @@
     COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
     INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
     BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-    OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+    OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
     AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
     OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
@@ -391,8 +391,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
                             }
-                            
-                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED (DOWNLOADING) %s, errorFtp: %d", fileName, errorFtp);
                             if (manager->dataDownloader->fileCompletionCallback != NULL)
                             {
                                 const char *fileNameSrc = fileName + strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX);
@@ -411,7 +411,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                         {
                             char initialPath[ARUTILS_FTP_MAX_PATH_SIZE];
                             char restoreName[ARUTILS_FTP_MAX_PATH_SIZE];
-                            
+
                             strncpy(initialPath, remoteProduct, ARUTILS_FTP_MAX_PATH_SIZE);
                             initialPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                             strncat(initialPath, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(initialPath) - 1);
@@ -442,8 +442,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                                 strncat(restoreName, fileName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(restoreName) - 1);
                                 errorFtp = ARUTILS_FileSystem_Rename(localPath, restoreName);
                             }
-                            
-                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, result: %d", fileName, result);
+
+                            ARSAL_PRINT(ARSAL_PRINT_WARNING, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "DOWNLOADED %s, errorFtp: %d", fileName, errorFtp);
                             if (manager->dataDownloader->fileCompletionCallback != NULL)
                             {
                                 manager->dataDownloader->fileCompletionCallback(manager->dataDownloader->fileCompletionArg ,fileName, (errorFtp == ARUTILS_OK) ? ARDATATRANSFER_OK : ARDATATRANSFER_ERROR_FTP);
@@ -497,29 +497,29 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CancelAvailableFiles (ARDATA
 {
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
-    
+
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "");
-    
+
     if (manager == NULL)
     {
         result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
     }
-    
+
     if ((result == ARDATATRANSFER_OK) && (manager->dataDownloader == NULL))
     {
         result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
     }
-    
+
     if (result == ARDATATRANSFER_OK)
     {
         resultUtils = ARUTILS_Manager_Ftp_Connection_Cancel(manager->dataDownloader->ftpListManager);
-        
+
         if (resultUtils != ARUTILS_OK)
         {
             result = ARDATATRANSFER_ERROR_FTP;
         }
     }
-    
+
     return result;
 }
 

@@ -32,7 +32,7 @@
  * @file ARDATATRANSFER_Manager.c
  * @brief libARDataTransfer JNI_DataDownloader c file.
  **/
-#define DEBUG
+
 #ifdef NDEBUG
 /* Android ndk-build NDK_DEBUG=0*/
 #else
@@ -220,7 +220,7 @@ void ARDATATRANSFER_JNI_DataDownloader_FileCompletionCallback(void* arg, const c
     ARDATATRANSFER_JNI_DataDownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_DataDownloaderCallbacks_t*)arg;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x, %d", (int)arg, nativeError);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x, %s, %d", (int)arg, (fileName) ? fileName : "null", nativeError);
 
     if (callbacks != NULL)
     {
