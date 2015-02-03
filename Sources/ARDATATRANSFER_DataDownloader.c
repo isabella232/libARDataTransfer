@@ -201,7 +201,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_GetAvailableFiles (ARDATATRA
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_DOWNLOADER_TAG, "");
 
-    if ((manager == NULL) || (filesNumber == NULL))
+    if ((manager == NULL) || (manager->dataDownloader == NULL) || (filesNumber == NULL)) 
     {
         result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
     }
@@ -344,7 +344,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
             }
 
             product = 0;
-            while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX))
+            while ((error == ARUTILS_OK) && (product < ARDISCOVERY_PRODUCT_MAX) && (manager->dataDownloader->isCanceled == 0))
             {
                 char lineDataProduct[ARUTILS_FTP_MAX_PATH_SIZE];
                 ARDISCOVERY_getProductPathName(product, productPathName, sizeof(productPathName));
@@ -364,8 +364,9 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
                     // Resume downloading_ files loop
                     nextData = NULL;
-                    while ((error == ARUTILS_OK)
-                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX, 0, NULL, NULL, lineDataData, ARUTILS_FTP_MAX_PATH_SIZE)) != NULL))
+                    while ((error == ARUTILS_OK) 
+                        && (manager->dataDownloader->isCanceled == 0)
+                        && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX, 0, NULL, NULL, lineDataData, ARUTILS_FTP_MAX_PATH_SIZE)) != NULL))
                     {
                         if (ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0)
                         {
@@ -404,7 +405,8 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
                     // Newer files loop
                     nextData = NULL;
                     while ((error == ARUTILS_OK)
-                           && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, NULL, 0, NULL, NULL, lineDataData, ARUTILS_FTP_MAX_PATH_SIZE)) != NULL))
+                         && (manager->dataDownloader->isCanceled == 0)
+                         && ((fileName = ARUTILS_Ftp_List_GetNextItem(dataFtpList, &nextData, NULL, 0, NULL, NULL, lineDataData, ARUTILS_FTP_MAX_PATH_SIZE)) != NULL))
                     {
                         if ((ARDATATRANSFER_DataDownloader_CompareFileExtension(fileName, ARDATATRANSFER_DATA_DOWNLOADER_PUD_EXT) == 0)
                             && (strncmp(fileName, ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX, strlen(ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX)) != 0))
@@ -480,7 +482,7 @@ void* ARDATATRANSFER_DataDownloader_ThreadRun(void *managerArg)
 
             resultSys = ARSAL_Sem_Timedwait(&manager->dataDownloader->threadSem, &timeout);
         }
-        while ((resultSys == -1) && (errno == ETIMEDOUT));
+        while ((resultSys == -1) && (errno == ETIMEDOUT) && (manager->dataDownloader->isCanceled == 0));
     }
 
     if (manager != NULL && manager->dataDownloader != NULL)
