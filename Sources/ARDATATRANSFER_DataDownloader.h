@@ -55,7 +55,8 @@ typedef struct
     ARUTILS_Manager_t *ftpListManager;
     ARUTILS_Manager_t *ftpDataManager;
     char remoteDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
-    char localDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
+    char localDataDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
+    char localCrashReportsDirectory[ARUTILS_FTP_MAX_PATH_SIZE];
     ARSAL_Sem_t threadSem;
     ARDATATRANSFER_DataDownloader_FileCompletionCallback_t fileCompletionCallback;
     void *fileCompletionArg;
@@ -113,5 +114,41 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_CheckUsedMemory(const char *
  * @see strcmp C lib
  */
 int ARDATATRANSFER_DataDownloader_CompareFileExtension(const char* fileName, const char* ext);
+
+/**
+ * @brief Download PUD files from ftp
+ * @param manager The pointer of the ADataTransfer Manager
+ * @param errorUtils The pointer of the ftp error
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_DataDownloader_ThreadRun ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_DownloadPudFiles(ARDATATRANSFER_Manager_t *manager, eARUTILS_ERROR *errorUtils);
+
+/**
+ * @brief Download CrashReport files from ftp
+ * @param manager The pointer of the ADataTransfer Manager
+ * @param errorUtils The pointer of the ftp error
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_DataDownloader_ThreadRun ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_DownloadCrashReports(ARDATATRANSFER_Manager_t *managere, eARUTILS_ERROR *errorUtils);
+
+/**
+ * @brief Download CrashReport files from ftp
+ * @param manager The pointer of the ADataTransfer Manager
+ * @param remoteDirPath The remote ftp server directory
+ * @param errorUtils The pointer of the ftp error
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_DataDownloader_DownloadCrashReports ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_RemoveRemoteDir(ARDATATRANSFER_Manager_t *manager, const char* remoteDirPath, eARUTILS_ERROR *errorUtils);
+
+/**
+ * @brief Get the current CrashReport local report diretory index
+ * @param reportDir The local report directory
+ * @retval Returns the index number if any else 0
+ * @see ARDATATRANSFER_DataDownloader_DownloadCrashReports ()
+ */
+unsigned int ARDATATRANSFER_DataDownloader_GetCrashReportIndex(const char *reportDir);
 
 #endif /* _ARDATATRANSFER_DATA_DOWNLOADER_PRIVATE_H_ */
