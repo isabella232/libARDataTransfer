@@ -118,6 +118,15 @@ typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadProgressCallback_t) 
 typedef void (*ARDATATRANSFER_MediasDownloader_MediaDownloadCompletionCallback_t) (void* arg, ARDATATRANSFER_Media_t *media, eARDATATRANSFER_ERROR error);
 
 /**
+ * @brief Completion callback of the Media delete
+ * @param arg The pointer of the user custom argument
+ * @param media The media to be deleted
+ * @param error The error status to indicate the media deleted status
+ * @see ARDATATRANSFER_MediasDownloader_ThreadRun ()
+ */
+typedef void (*ARDATATRANSFER_MediasDownloader_DeleteMediaCallback_t) (void* arg, ARDATATRANSFER_Media_t *media, eARDATATRANSFER_ERROR error);
+
+/**
  * @brief Create a new ARDataTransfer MediasDownloader
  * @warning This function allocates memory
  * @param manager The address of the pointer on the ARDataTransfer Manager
@@ -186,7 +195,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(A
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_MediasDownloader_GetAvailableMedias ()
  */
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media);
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media, ARDATATRANSFER_MediasDownloader_DeleteMediaCallback_t deleteMediaCallBack, void *deleteMediaArg);
 
 /**
  * @brief Add a media to the download process queue

@@ -590,7 +590,7 @@ ARDATATRANSFER_Media_t * ARDATATRANSFER_MediasDownloader_GetAvailableMediaAtInde
     return media;
 }
 
-eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media)
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media, ARDATATRANSFER_MediasDownloader_DeleteMediaCallback_t deleteMediaCallBack, void *deleteMediaArg)
 {
     char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
     char remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE];
@@ -659,6 +659,11 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
         
         ARUTILS_Manager_Ftp_Delete(manager->mediasDownloader->ftpQueueManager, remoteThumbnail);
         
+        if (deleteMediaCallBack != NULL)
+        {
+            deleteMediaCallBack(deleteMediaArg, media, result);
+        }
+
         if (result == ARDATATRANSFER_OK)
         {
             result = ARDATATRANSFER_MediasDownloader_RemoveMediaFromMediaList(manager, media);
