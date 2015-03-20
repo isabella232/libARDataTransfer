@@ -284,7 +284,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
     if (result == ARDATATRANSFER_OK)
     {
-        result = ARDATATRANSFER_MediasDownloader_DeleteMedia(nativeManager, &nativeMedia);
+        result = ARDATATRANSFER_MediasDownloader_DeleteMedia(nativeManager, &nativeMedia, NULL, NULL);
     }
 
     return result;
