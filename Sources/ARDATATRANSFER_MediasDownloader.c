@@ -190,10 +190,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_Delete(ARDATATRANSFER_Mana
             }
             else
             {
-                ARUTILS_Manager_Ftp_Connection_Cancel(manager->mediasDownloader->ftpListManager);
-                ARUTILS_Manager_Ftp_Connection_Cancel(manager->mediasDownloader->ftpQueueManager);
-                ARDATATRANSFER_MediasDownloader_CancelQueueThread(manager);
-                
                 ARDATATRANSFER_MediasDownloader_Clear(manager);
                 
                 ARSAL_Sem_Destroy(&manager->mediasDownloader->queueSem);
@@ -796,7 +792,7 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
 
             if (ftpMedia != NULL)
             {
-                if (ftpMedia->completionCallback != NULL)
+                if ((ftpMedia->completionCallback != NULL) && (manager->mediasDownloader->isCanceled == 0))
                 {
                     ftpMedia->completionCallback(ftpMedia->completionArg, &ftpMedia->media, error);
                 }

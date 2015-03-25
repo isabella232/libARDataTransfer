@@ -176,8 +176,6 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_Delete(ARDATATRANSFER_Manage
             }
             else
             {
-                ARDATATRANSFER_DataDownloader_CancelThread(manager);
-
                 ARDATATRANSFER_DataDownloader_Clear(manager);
 
                 ARSAL_Sem_Destroy(&manager->dataDownloader->threadSem);
