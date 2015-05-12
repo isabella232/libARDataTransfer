@@ -157,9 +157,6 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
 
     result = ARDATATRANSFER_MediasDownloader_Delete(nativeManager);
 
-    ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(env);
-    ARDATATRANSFER_JNI_MediasDownloader_FreeListenersJNI(env);
-
     return result;
 }
 
