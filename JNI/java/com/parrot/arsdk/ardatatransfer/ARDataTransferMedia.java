@@ -33,12 +33,15 @@ package com.parrot.arsdk.ardatatransfer;
 
 import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * ARDataTransfer Media
  * @author david.flattin.ext@parrot.com
  * @date 19/12/2013
  */
-public class ARDataTransferMedia
+public class ARDataTransferMedia implements Parcelable
 {
     /*  Members  */
     private ARDISCOVERY_PRODUCT_ENUM product = null;
@@ -71,6 +74,79 @@ public class ARDataTransferMedia
         this.uuid = uuid;
         this.size = size;
         this.thumbnail = thumbnail;
+    }
+
+    private ARDataTransferMedia(Parcel source)
+    {
+        this.product = ARDISCOVERY_PRODUCT_ENUM.getFromValue(source.readInt());
+        this.name = readString(source);
+        this.filePath = readString(source);
+        this.date = readString(source);
+        this.uuid = readString(source);
+        this.size = source.readFloat();
+        int thumbnailSize = source.readInt();
+        if (thumbnailSize > 0)
+        {
+            this.thumbnail = new byte[thumbnailSize];
+            source.readByteArray(this.thumbnail);
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeInt(this.product.getValue());
+        writeString(dest, this.name);
+        writeString(dest, this.filePath);
+        writeString(dest, this.date);
+        writeString(dest, this.uuid);
+        dest.writeFloat(this.size);
+        int thumbnailSize = (this.thumbnail != null) ? this.thumbnail.length : 0;
+        dest.writeInt(thumbnailSize);
+        if (thumbnailSize > 0)
+        {
+            dest.writeByteArray(this.thumbnail);
+        }
+    }
+
+    public static final Parcelable.Creator<ARDataTransferMedia> CREATOR = new Creator<ARDataTransferMedia>()
+    {
+        public ARDataTransferMedia createFromParcel(Parcel source)
+        {
+            return new ARDataTransferMedia(source);
+        }
+
+        @Override
+        public ARDataTransferMedia[] newArray(int size)
+        {
+            return new ARDataTransferMedia[size];
+        }
+    };
+
+    @Override
+    public int describeContents()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    private static String readString(Parcel source)
+    {
+        byte presentByte = source.readByte();
+        if (presentByte > 0)
+        {
+            return source.readString();
+        }
+        return null;
+    }
+
+    private static void writeString(Parcel dest, String value)
+    {
+        dest.writeByte((value != null) ? (byte)1 : (byte)0);
+        if (value != null)
+        {
+            dest.writeString(value);
+        }
     }
 
     /**
