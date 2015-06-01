@@ -287,6 +287,47 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMedias
     return result;
 }
 
+JNIEXPORT jbyteArray JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferMediasDownloader_nativeGetMediaThumbnail(JNIEnv *env, jobject jThis, jlong jManager, jobject jMedia)
+{
+    ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
+    ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
+    ARDATATRANSFER_Media_t nativeMedia;
+    jbyteArray jThumbnail = NULL;
+    int error = JNI_OK;
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
+
+    error = ARDATATRANSFER_JNI_MediasDownloader_GetMedia(env, jMedia, &nativeMedia);
+
+    if (error != JNI_OK)
+    {
+        result = ARDATATRANSFER_ERROR_SYSTEM;
+    }
+
+    if (result == ARDATATRANSFER_OK)
+    {
+        result = ARDATATRANSFER_MediasDownloader_GetThumbnail(nativeManager, &nativeMedia);
+    }
+    if (result == ARDATATRANSFER_OK)
+    {
+        
+        jThumbnail = (*env)->NewByteArray(env, (&nativeMedia)->thumbnailSize);
+
+        if (jThumbnail == NULL)
+        {
+            error = JNI_FAILED;
+        }
+    
+        if ((error == JNI_OK) && ((&nativeMedia)->thumbnail != NULL))
+        {
+            (*env)->SetByteArrayRegion(env, jThumbnail, 0, (&nativeMedia)->thumbnailSize, (jbyte*)(&nativeMedia)->thumbnail);
+        }
+    }
+
+    return jThumbnail;
+}
+
 void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t **callbacksAddr)
 {
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);

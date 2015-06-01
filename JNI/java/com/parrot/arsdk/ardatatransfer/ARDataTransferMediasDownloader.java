@@ -56,6 +56,7 @@ public class ARDataTransferMediasDownloader
     private native void nativeQueueThreadRun(long manager);
     private native int nativeCancelQueueThread(long manager);
     private native int nativeCancelGetAvailableMedias(long manager);
+    private native byte[] nativeGetMediaThumbnail(long manager, ARDataTransferMedia media);
     
     /*  Members  */
     private static final String TAG = ARDataTransferMediasDownloader.class.getSimpleName ();
@@ -214,6 +215,23 @@ public class ARDataTransferMediasDownloader
         ARDATATRANSFER_ERROR_ENUM error = ARDATATRANSFER_ERROR_ENUM.getFromValue(result);
         
         return error;
+    }
+
+    /**
+     * Gets a remote media thumbnail. The {@link ARDataTransferMedia} object will be updated with the downloaded thumbnail
+     * @param media The media to get the thumbnail
+     * @return The thumbnail raw bytes if success, null otherwise
+     */
+    public byte[] getMediaThumbnail(ARDataTransferMedia media)
+    {
+        byte[] result = nativeGetMediaThumbnail(nativeManager, media);
+
+        if (result != null)
+        {
+            media.setThumbail(result);
+        }
+
+        return media.getThumbnail();
     }
     
     /**

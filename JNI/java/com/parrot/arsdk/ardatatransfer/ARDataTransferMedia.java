@@ -36,6 +36,8 @@ import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Arrays;
+
 /**
  * ARDataTransfer Media
  * @author david.flattin.ext@parrot.com
@@ -227,5 +229,15 @@ public class ARDataTransferMedia implements Parcelable
     public byte[] getThumbnail()
     {
         return this.thumbnail;
+    }
+
+    /**
+     * Sets the Media Thumbnail
+     * Data are copied into a new array
+     * @note set the Media Thumbnail
+     */
+    public void setThumbail(byte[] rawData)
+    {
+        this.thumbnail = Arrays.copyOf(rawData, rawData.length);
     }
 }
