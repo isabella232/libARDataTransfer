@@ -233,7 +233,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_GetAvailableFiles (ARDATATRA
         nextProduct = NULL;
         fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL, lineDataProduct, ARUTILS_FTP_MAX_PATH_SIZE);
 
-        if (fileName != NULL)
+        if ((fileName != NULL) && strcmp(fileName, productPathName) == 0)
         {
             char lineDataData[ARUTILS_FTP_MAX_PATH_SIZE];
             strncpy(remoteProduct, manager->dataDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
@@ -414,7 +414,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_DataDownloader_DownloadPudFiles(ARDATATRANS
             nextProduct = NULL;
             productName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL, lineDataProduct, ARUTILS_FTP_MAX_PATH_SIZE);
             
-            if (productName != NULL)
+            if ((productName != NULL) && strcmp(productName, productPathName) == 0)
             {
                 char lineDataData[ARUTILS_FTP_MAX_PATH_SIZE];
                 const char *fileName;

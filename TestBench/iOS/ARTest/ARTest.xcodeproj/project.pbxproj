@@ -10,13 +10,15 @@
 		63008330188FD83900EAC1F6 /* ARUTILS_Error.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832A188FD83900EAC1F6 /* ARUTILS_Error.c */; };
 		63008331188FD83900EAC1F6 /* ARUTILS_FileSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832B188FD83900EAC1F6 /* ARUTILS_FileSystem.c */; };
 		63008333188FD83900EAC1F6 /* ARUTILS_Http.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832E188FD83900EAC1F6 /* ARUTILS_Http.c */; };
+		63367E9E1B2B0027008BE721 /* curl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9B1B2B0027008BE721 /* curl.framework */; };
+		63367E9F1B2B0027008BE721 /* libARDiscovery.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9C1B2B0027008BE721 /* libARDiscovery.framework */; };
+		63367EA01B2B0027008BE721 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9D1B2B0027008BE721 /* openssl.framework */; };
+		63367EA21B2B0060008BE721 /* libARSAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367EA11B2B0060008BE721 /* libARSAL.framework */; };
 		634FEBF218634BEF002CA7FB /* test_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 634FEBF118634BEF002CA7FB /* test_manager.c */; };
 		635F29EA1897F6DE00F4B367 /* test_ftp_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29E91897F6DE00F4B367 /* test_ftp_connection.c */; };
 		635F29EC1897F71200F4B367 /* test_http_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29EB1897F71200F4B367 /* test_http_connection.c */; };
 		635F29EE1897F81A00F4B367 /* test_filesystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29ED1897F81A00F4B367 /* test_filesystem.c */; };
-		636868A91892624100FAE353 /* libARDiscovery.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 636868A81892624100FAE353 /* libARDiscovery.framework */; };
 		6369E0DE18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 6369E0DC18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c */; };
-		6386CF8918A239C300049996 /* libARSAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63008339188FD86F00EAC1F6 /* libARSAL.framework */; };
 		63A17C72192B98F2007238AE /* ARUTILS_BLEFtp.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C71192B98F2007238AE /* ARUTILS_BLEFtp.m */; };
 		63A17C78192C8B9C007238AE /* ARUTILS_Manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C77192C8B9C007238AE /* ARUTILS_Manager.c */; };
 		63A17C7B192CA9D6007238AE /* ARDATATRANSFER_Uploader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63A17C7A192CA9D6007238AE /* ARDATATRANSFER_Uploader.c */; };
@@ -37,7 +39,6 @@
 		63F74F7B183FA7760031D036 /* ARDATATRANSFER_Manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F71183FA7760031D036 /* ARDATATRANSFER_Manager.c */; };
 		63F74F7C183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F73183FA7760031D036 /* ARDATATRANSFER_MediasDownloader.c */; };
 		63F74F7D183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 63F74F75183FA7760031D036 /* ARDATATRANSFER_MediasQueue.c */; };
-		63F74F89183FAACA0031D036 /* libcurl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F74F88183FAACA0031D036 /* libcurl.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,13 +51,15 @@
 		63008336188FD84700EAC1F6 /* ARUTILS_Ftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Ftp.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Ftp.h; sourceTree = "<group>"; };
 		63008337188FD84700EAC1F6 /* ARUTILS_Http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUTILS_Http.h; path = ../../../../libARUtils/Includes/libARUtils/ARUTILS_Http.h; sourceTree = "<group>"; };
 		63008338188FD84700EAC1F6 /* ARUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUtils.h; path = ../../../../libARUtils/Includes/libARUtils/ARUtils.h; sourceTree = "<group>"; };
-		63008339188FD86F00EAC1F6 /* libARSAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARSAL.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARSAL.framework; sourceTree = "<group>"; };
+		63367E9B1B2B0027008BE721 /* curl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = curl.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/curl.framework; sourceTree = "<group>"; };
+		63367E9C1B2B0027008BE721 /* libARDiscovery.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARDiscovery.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/libARDiscovery.framework; sourceTree = "<group>"; };
+		63367E9D1B2B0027008BE721 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/openssl.framework; sourceTree = "<group>"; };
+		63367EA11B2B0060008BE721 /* libARSAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARSAL.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/libARSAL.framework; sourceTree = "<group>"; };
 		634FEBDB18620BF4002CA7FB /* ARDataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDataTransfer.h; path = ../../../Includes/libARDataTransfer/ARDataTransfer.h; sourceTree = "<group>"; };
 		634FEBF118634BEF002CA7FB /* test_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_manager.c; path = ../../Linux/test_manager.c; sourceTree = "<group>"; };
 		635F29E91897F6DE00F4B367 /* test_ftp_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_ftp_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_ftp_connection.c; sourceTree = "<group>"; };
 		635F29EB1897F71200F4B367 /* test_http_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_http_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_http_connection.c; sourceTree = "<group>"; };
 		635F29ED1897F81A00F4B367 /* test_filesystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_filesystem.c; path = ../../../../libARUtils/TestBench/Linux/test_filesystem.c; sourceTree = "<group>"; };
-		636868A81892624100FAE353 /* libARDiscovery.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARDiscovery.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libARDiscovery.framework; sourceTree = "<group>"; };
 		6369E0DC18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ARDATATRANSFER_DataDownloader.c; path = ../../../Sources/ARDATATRANSFER_DataDownloader.c; sourceTree = "<group>"; };
 		6369E0DD18448D9100C3F64D /* ARDATATRANSFER_DataDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_DataDownloader.h; path = ../../../Sources/ARDATATRANSFER_DataDownloader.h; sourceTree = "<group>"; };
 		6369E0DF18448DA000C3F64D /* ARDATATRANSFER_DataDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_DataDownloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_DataDownloader.h; sourceTree = "<group>"; };
@@ -100,7 +103,6 @@
 		63F74F82183FA7A20031D036 /* ARDATATRANSFER_Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_Manager.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_Manager.h; sourceTree = "<group>"; };
 		63F74F83183FA7A20031D036 /* ARDATATRANSFER_MediasDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDATATRANSFER_MediasDownloader.h; path = ../../../Includes/libARDataTransfer/ARDATATRANSFER_MediasDownloader.h; sourceTree = "<group>"; };
 		63F74F87183FA83A0031D036 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../../ARBuildUtils/Targets/iOS/Build/libARDataTransfer_armv7/config.h; sourceTree = "<group>"; };
-		63F74F88183FAACA0031D036 /* libcurl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libcurl.framework; path = ../../../../ARBuildUtils/Targets/iOS/Install/Frameworks/libcurl.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,10 +110,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63367E9E1B2B0027008BE721 /* curl.framework in Frameworks */,
 				63F6539319A1DE6400E6EAC7 /* libz.dylib in Frameworks */,
-				6386CF8918A239C300049996 /* libARSAL.framework in Frameworks */,
-				636868A91892624100FAE353 /* libARDiscovery.framework in Frameworks */,
-				63F74F89183FAACA0031D036 /* libcurl.framework in Frameworks */,
+				63367E9F1B2B0027008BE721 /* libARDiscovery.framework in Frameworks */,
+				63367EA01B2B0027008BE721 /* openssl.framework in Frameworks */,
+				63367EA21B2B0060008BE721 /* libARSAL.framework in Frameworks */,
 				63F74F35183FA6F10031D036 /* CoreGraphics.framework in Frameworks */,
 				63F74F37183FA6F10031D036 /* UIKit.framework in Frameworks */,
 				63F74F33183FA6F10031D036 /* Foundation.framework in Frameworks */,
@@ -175,10 +178,11 @@
 		63F74F31183FA6F10031D036 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63367EA11B2B0060008BE721 /* libARSAL.framework */,
+				63367E9B1B2B0027008BE721 /* curl.framework */,
+				63367E9C1B2B0027008BE721 /* libARDiscovery.framework */,
+				63367E9D1B2B0027008BE721 /* openssl.framework */,
 				63F6539219A1DE6400E6EAC7 /* libz.dylib */,
-				636868A81892624100FAE353 /* libARDiscovery.framework */,
-				63008339188FD86F00EAC1F6 /* libARSAL.framework */,
-				63F74F88183FAACA0031D036 /* libcurl.framework */,
 				63F74F32183FA6F10031D036 /* Foundation.framework */,
 				63F74F34183FA6F10031D036 /* CoreGraphics.framework */,
 				63F74F36183FA6F10031D036 /* UIKit.framework */,
@@ -448,14 +452,18 @@
 		63F74F65183FA6F10031D036 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks",
+					/Users/David/github/ARSDKBuildUtils/Targets/iOS/Install/Frameworks,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ARTest/ARTest-Prefix.pch";
 				INFOPLIST_FILE = "ARTest/ARTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -463,14 +471,18 @@
 		63F74F66183FA6F10031D036 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../../../ARBuildUtils/Targets/iOS/Install/Frameworks",
+					/Users/David/github/ARSDKBuildUtils/Targets/iOS/Install/Frameworks,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ARTest/ARTest-Prefix.pch";
 				INFOPLIST_FILE = "ARTest/ARTest-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

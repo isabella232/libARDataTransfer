@@ -280,7 +280,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                 nextProduct = NULL;
                 fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, productPathName, 1, NULL, NULL, lineDataProduct,ARUTILS_FTP_MAX_PATH_SIZE);
                 
-                if (fileName != NULL)
+                if ((fileName != NULL) && strcmp(fileName, productPathName) == 0)
                 {
                     strncpy(remoteProduct, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                     remoteProduct[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
