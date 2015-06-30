@@ -46,6 +46,10 @@ import java.util.Arrays;
 public class ARDataTransferMedia implements Parcelable
 {
     /*  Members  */
+    private static final int HASH_START = 17;
+    private static final int HASH_FIELD = 31;
+    
+    private static final String TAG = "ARDataTransferMedia";
     private ARDISCOVERY_PRODUCT_ENUM product = null;
     private String name = null;
     private String filePath = null;
@@ -240,4 +244,53 @@ public class ARDataTransferMedia implements Parcelable
     {
         this.thumbnail = Arrays.copyOf(rawData, rawData.length);
     }
+    
+    @Override
+    public boolean equals(Object other)
+    {
+        boolean isEqual = false;
+        if (other == null)
+        {
+            isEqual = false;
+        }
+        else if (other == this)
+        {
+            isEqual = true;
+        }
+        else if (!(other instanceof ARDataTransferMedia))
+        {
+            isEqual = false;
+        }
+        else
+        {
+            ARDataTransferMedia otherMedia = (ARDataTransferMedia)other;
+            
+            if ((otherMedia.getProductValue() == getProductValue()) &&
+                (((name == null) && (otherMedia.getName() == null)) || ((name != null) && (name.equals(otherMedia.getName())))) &&
+                (((filePath == null) && (otherMedia.getFilePath() == null)) || ((filePath != null) && (filePath.equals(otherMedia.getFilePath())))) &&
+                (((date == null) && (otherMedia.getDate() == null)) || ((date != null) && (date.equals(otherMedia.getDate())))) &&
+                (((uuid == null) && (otherMedia.getUUID() == null)) || ((uuid != null) && (uuid.equals(otherMedia.getUUID())))))
+            {
+                isEqual = true;
+            }
+            //NO ELSE ; isEqual = false
+        }
+        
+        return isEqual;
+    }
+    
+    @Override public int hashCode()
+    {
+        // Start with a non-zero constant.
+        int result = HASH_START;
+
+        // Include a hash for each field.
+        result = HASH_FIELD * result + product.getValue();
+        result = HASH_FIELD * result + (name == null ? 0 : name.hashCode());
+        result = HASH_FIELD * result + (filePath == null ? 0 : filePath.hashCode());
+        result = HASH_FIELD * result + (date == null ? 0 : date.hashCode());
+        result = HASH_FIELD * result + (uuid == null ? 0 : uuid.hashCode());
+
+        return result;
+   }
 }
