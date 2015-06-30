@@ -226,6 +226,16 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun (void *managerArg);
  */
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelQueueThread (ARDATATRANSFER_Manager_t *manager);
 
+/**
+ * @brief Get the media thumbnail from the device FTP server
+ * @warning This function allocates memory
+ * @param manager The address of the pointer on the ARDataTransfer Manager
+ * @param media The media for which the thumbnail is requested
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media);
+
 #endif /* _ARDATATRANSFER_MEDIAS_DOWNLOADER_H_ */
 
 
