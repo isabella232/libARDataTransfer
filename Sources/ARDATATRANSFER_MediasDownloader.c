@@ -915,6 +915,35 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelQueueThread(ARDATATR
     return result;
 }
 
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_ResetGetAvailableMedias(ARDATATRANSFER_Manager_t *manager)
+{
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    eARUTILS_ERROR resultUtils = ARUTILS_OK;
+    
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
+    
+    if (manager == NULL)
+    {
+        result = ARDATATRANSFER_ERROR_BAD_PARAMETER;
+    }
+    
+    if (result == ARDATATRANSFER_OK && (manager->mediasDownloader == NULL))
+    {
+        result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtils = ARUTILS_Manager_Ftp_Connection_Reset(manager->mediasDownloader->ftpListManager);
+        if (resultUtils != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
+        }
+    }
+    
+    return result;
+}
+
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(ARDATATRANSFER_Manager_t *manager)
 {
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;

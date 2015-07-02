@@ -189,6 +189,14 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync (A
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_CancelGetAvailableMedias(ARDATATRANSFER_Manager_t *manager);
 
 /**
+ * @brief Send a reset to the get media list function
+ * @param manager The pointer of the ARDataTransfer Manager
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync (), ARDATATRANSFER_MediasDownloader_GetAvailableMediasAsync ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_ResetGetAvailableMedias(ARDATATRANSFER_Manager_t *manager);
+
+/**
  * @brief Delete the media form the Device
  * @param manager The pointer of the ARDataTransfer Manager
  * @param media The media to delete
