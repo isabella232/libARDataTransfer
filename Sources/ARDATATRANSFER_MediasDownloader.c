@@ -71,6 +71,7 @@
 
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG            "jpg"
 #define ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4            "mp4"
+#define ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV            "mov"
 
 /*****************************************
  *
@@ -321,6 +322,10 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                     fileType = 1;
                                 }
                                 else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
+                                {
+                                    fileType = 1;
+                                }
+                                else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV) == 0)
                                 {
                                     fileType = 1;
                                 }
@@ -624,6 +629,10 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
             {
                 prefixType = index;
             }
+            else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV) == 0)
+            {
+                prefixType = index;
+            }
         }
         
         ARDISCOVERY_getProductPathName(media->product, productPathName, sizeof(productPathName));
@@ -641,7 +650,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DeleteMedia(ARDATATRANSFER
         strncat(remoteThumbnail, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
-        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
+        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0 ||
+            strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV) == 0)
         {
             strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         }
@@ -1057,6 +1067,10 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
             {
                 prefixType = index;
             }
+            else if (strcmp(index, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV) == 0)
+            {
+                prefixType = index;
+            }
         }
         
         ARDISCOVERY_getProductPathName(media->product, productPathName, sizeof(productPathName));
@@ -1066,7 +1080,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFE
         strncat(remoteThumbnail, productPathName, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_THUMB "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         strncat(remoteThumbnail, media->name, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
-        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0)
+        if (strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MP4) == 0 ||
+            strcmp(prefixType, ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_MOV) == 0)
         {
             strncat(remoteThumbnail, "." ARDATATRANSFER_MEDIAS_DOWNLOADER_EXT_JPG, ARUTILS_FTP_MAX_PATH_SIZE - strlen(remoteThumbnail) - 1);
         }
