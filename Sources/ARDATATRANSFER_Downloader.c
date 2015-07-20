@@ -141,6 +141,31 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_Delete (ARDATATRANSFER_Manager_t
     return result;
 }
 
+eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_GetSize (ARDATATRANSFER_Manager_t *manager, double *fileSize)
+{
+    eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
+    eARUTILS_ERROR resultUtil = ARUTILS_OK;
+    
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "%p", manager);
+    
+    if ((manager == NULL) || (manager->downloader ==  NULL))
+    {
+        result = ARDATATRANSFER_ERROR_NOT_INITIALIZED;
+    }
+    
+    if (result == ARDATATRANSFER_OK)
+    {
+        resultUtil = ARUTILS_Manager_Ftp_Size(manager->downloader->ftpManager, manager->downloader->remotePath, fileSize);
+        
+        if (resultUtil != ARUTILS_OK)
+        {
+            result = ARDATATRANSFER_ERROR_FTP;
+        }
+    }
+    
+    return result;
+}
+
 void* ARDATATRANSFER_Downloader_ThreadRun (void *managerArg)
 {
     ARDATATRANSFER_Manager_t *manager = (ARDATATRANSFER_Manager_t *)managerArg;

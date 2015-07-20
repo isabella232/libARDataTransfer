@@ -72,12 +72,19 @@ typedef void (*ARDATATRANSFER_Downloader_CompletionCallback_t) (void* arg, eARDA
  * @warning This function allocates memory
  * @param manager The address of the pointer on the ARDataTransfer Manager
  * @param ftpManager The Ftp Manager
- * @param remotePath The remote path server to upload
- * @param localPath The local path system to upload
+ * @param remotePath The remote path server to download
+ * @param localPath The local path system to download
  * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
  * @see ARDATATRANSFER_Downloader_Delete ()
  */
 eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_New (ARDATATRANSFER_Manager_t *manager, ARUTILS_Manager_t *ftpManager, const char *remotePath, const char *localPath, ARDATATRANSFER_Downloader_ProgressCallback_t progressCallback, void *progressArg, ARDATATRANSFER_Downloader_CompletionCallback_t completionCallback, void *completionArg, eARDATATRANSFER_DOWNLOADER_RESUME resume);
+
+/**
+ * @brief Get ARDataTransfer Downloader remote file size
+ * @retval On success, returns ARDATATRANSFER_OK. Otherwise, it returns an error number of eARDATATRANSFER_ERROR.
+ * @see ARDATATRANSFER_Downloader_New ()
+ */
+eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_GetSize (ARDATATRANSFER_Manager_t *manager, double *fileSize);
 
 /**
  * @brief Delete an ARDataTransfer Downloader
@@ -89,7 +96,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_New (ARDATATRANSFER_Manager_t *m
 eARDATATRANSFER_ERROR ARDATATRANSFER_Downloader_Delete (ARDATATRANSFER_Manager_t *manager);
 
 /**
- * @brief Process of the device upload
+ * @brief Process of the device download
  * @param manager The pointer of the ARDataTransfer Manager
  * @retval returns NULL
  * @see ARDATATRANSFER_Downloader_New ()
