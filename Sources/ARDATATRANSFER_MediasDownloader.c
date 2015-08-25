@@ -1174,7 +1174,8 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
     }
     else
     {
-        remove(localPath);
+        // Don't remove localPath, keep it for resume, and manage older file in App
+        //remove(localPath);
     }
 
     return result;
