@@ -400,7 +400,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                         
                                         if ((begin != NULL)  && (tag != NULL) && (end != NULL))
                                         {
-                                            int len = tag - begin - 1;
+                                            long len = tag - begin - 1;
                                             len = (len < ARDATATRANSFER_MEDIA_DATE_SIZE) ? len : (ARDATATRANSFER_MEDIA_DATE_SIZE - 1);
                                             strncpy(media->date, begin, len);
                                             media->date[len] = '\0';
@@ -1119,7 +1119,7 @@ eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_DownloadMedia(ARDATATRANSF
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR errorResume = ARUTILS_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
-    uint32_t localSize = 0;
+    int64_t localSize = 0;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "");
 

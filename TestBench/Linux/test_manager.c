@@ -711,7 +711,7 @@ void * test_manager_checking_thread_medias_list(void *arg)
     int i;
     
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "%s: %d", "");
-    srand(time(NULL));
+    srand((unsigned)time(NULL));
     
     do
     {
@@ -757,7 +757,7 @@ void test_manager_checking_running_async(const char *tmp)
     void *resultThreadMediasList = NULL;
     unsigned int timeout;
     
-    srand(time(NULL));
+    srand((unsigned)time(NULL));
     ARSAL_Sem_Init(&semRunning, 0, 0);
     
     manager = ARDATATRANSFER_Manager_New(&result);

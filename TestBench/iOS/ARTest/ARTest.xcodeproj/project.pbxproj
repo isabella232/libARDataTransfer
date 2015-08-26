@@ -12,9 +12,9 @@
 		63008333188FD83900EAC1F6 /* ARUTILS_Http.c in Sources */ = {isa = PBXBuildFile; fileRef = 6300832E188FD83900EAC1F6 /* ARUTILS_Http.c */; };
 		63367E9E1B2B0027008BE721 /* curl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9B1B2B0027008BE721 /* curl.framework */; };
 		63367E9F1B2B0027008BE721 /* libARDiscovery.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9C1B2B0027008BE721 /* libARDiscovery.framework */; };
-		63367EA01B2B0027008BE721 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367E9D1B2B0027008BE721 /* openssl.framework */; };
 		63367EA21B2B0060008BE721 /* libARSAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63367EA11B2B0060008BE721 /* libARSAL.framework */; };
 		634FEBF218634BEF002CA7FB /* test_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 634FEBF118634BEF002CA7FB /* test_manager.c */; };
+		6359E9A31B8DA2AC0052F8B5 /* libressl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6359E9A21B8DA2AC0052F8B5 /* libressl.framework */; };
 		635F29EA1897F6DE00F4B367 /* test_ftp_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29E91897F6DE00F4B367 /* test_ftp_connection.c */; };
 		635F29EC1897F71200F4B367 /* test_http_connection.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29EB1897F71200F4B367 /* test_http_connection.c */; };
 		635F29EE1897F81A00F4B367 /* test_filesystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 635F29ED1897F81A00F4B367 /* test_filesystem.c */; };
@@ -53,10 +53,10 @@
 		63008338188FD84700EAC1F6 /* ARUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARUtils.h; path = ../../../../libARUtils/Includes/libARUtils/ARUtils.h; sourceTree = "<group>"; };
 		63367E9B1B2B0027008BE721 /* curl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = curl.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/curl.framework; sourceTree = "<group>"; };
 		63367E9C1B2B0027008BE721 /* libARDiscovery.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARDiscovery.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/libARDiscovery.framework; sourceTree = "<group>"; };
-		63367E9D1B2B0027008BE721 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/openssl.framework; sourceTree = "<group>"; };
 		63367EA11B2B0060008BE721 /* libARSAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libARSAL.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/libARSAL.framework; sourceTree = "<group>"; };
 		634FEBDB18620BF4002CA7FB /* ARDataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARDataTransfer.h; path = ../../../Includes/libARDataTransfer/ARDataTransfer.h; sourceTree = "<group>"; };
 		634FEBF118634BEF002CA7FB /* test_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_manager.c; path = ../../Linux/test_manager.c; sourceTree = "<group>"; };
+		6359E9A21B8DA2AC0052F8B5 /* libressl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libressl.framework; path = ../../../../ARSDKBuildUtils/Targets/iOS/Install/Frameworks/libressl.framework; sourceTree = "<group>"; };
 		635F29E91897F6DE00F4B367 /* test_ftp_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_ftp_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_ftp_connection.c; sourceTree = "<group>"; };
 		635F29EB1897F71200F4B367 /* test_http_connection.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_http_connection.c; path = ../../../../libARUtils/TestBench/Linux/test_http_connection.c; sourceTree = "<group>"; };
 		635F29ED1897F81A00F4B367 /* test_filesystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test_filesystem.c; path = ../../../../libARUtils/TestBench/Linux/test_filesystem.c; sourceTree = "<group>"; };
@@ -113,10 +113,10 @@
 				63367E9E1B2B0027008BE721 /* curl.framework in Frameworks */,
 				63F6539319A1DE6400E6EAC7 /* libz.dylib in Frameworks */,
 				63367E9F1B2B0027008BE721 /* libARDiscovery.framework in Frameworks */,
-				63367EA01B2B0027008BE721 /* openssl.framework in Frameworks */,
 				63367EA21B2B0060008BE721 /* libARSAL.framework in Frameworks */,
 				63F74F35183FA6F10031D036 /* CoreGraphics.framework in Frameworks */,
 				63F74F37183FA6F10031D036 /* UIKit.framework in Frameworks */,
+				6359E9A31B8DA2AC0052F8B5 /* libressl.framework in Frameworks */,
 				63F74F33183FA6F10031D036 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -178,10 +178,10 @@
 		63F74F31183FA6F10031D036 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6359E9A21B8DA2AC0052F8B5 /* libressl.framework */,
 				63367EA11B2B0060008BE721 /* libARSAL.framework */,
 				63367E9B1B2B0027008BE721 /* curl.framework */,
 				63367E9C1B2B0027008BE721 /* libARDiscovery.framework */,
-				63367E9D1B2B0027008BE721 /* openssl.framework */,
 				63F6539219A1DE6400E6EAC7 /* libz.dylib */,
 				63F74F32183FA6F10031D036 /* Foundation.framework */,
 				63F74F34183FA6F10031D036 /* CoreGraphics.framework */,
@@ -282,7 +282,7 @@
 		63F74F27183FA6F10031D036 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "Parrot SA";
 			};
 			buildConfigurationList = 63F74F2A183FA6F10031D036 /* Build configuration list for PBXProject "ARTest" */;
@@ -452,7 +452,6 @@
 		63F74F65183FA6F10031D036 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -471,7 +470,6 @@
 		63F74F66183FA6F10031D036 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
