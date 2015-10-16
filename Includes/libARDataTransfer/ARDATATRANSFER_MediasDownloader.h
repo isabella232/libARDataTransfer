@@ -84,6 +84,8 @@ typedef struct
     char filePath[ARDATATRANSFER_MEDIA_PATH_SIZE];
     char date[ARDATATRANSFER_MEDIA_DATE_SIZE];
     char uuid[ARDATATRANSFER_MEDIA_UUID_SIZE];
+    char remotePath[ARUTILS_FTP_MAX_PATH_SIZE];
+    char remoteThumb[ARUTILS_FTP_MAX_PATH_SIZE];
     double size;
     uint8_t *thumbnail;
     uint32_t thumbnailSize;

@@ -32,6 +32,7 @@
 package com.parrot.arsdk.ardatatransfer;
 
 import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
+import com.parrot.arsdk.arsal.ARSALPrint;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -55,6 +56,8 @@ public class ARDataTransferMedia implements Parcelable
     private String filePath = null;
     private String date = null;
     private String uuid = null;
+    private String remotePath = null;
+    private String remoteThumb = null;
     private float size = 0.f;
     private byte[] thumbnail = null;
 
@@ -71,13 +74,15 @@ public class ARDataTransferMedia implements Parcelable
      * @param thumbnail byte[] Media Thumbnail
      * @return void
      */
-    protected ARDataTransferMedia(int productValue, String name, String filePath, String date, String uuid, float size, byte[] thumbnail)
+    protected ARDataTransferMedia(int productValue, String name, String filePath, String date, String uuid, String remotePath, String remoteThumb, float size, byte[] thumbnail)
     {
         this.product = ARDISCOVERY_PRODUCT_ENUM.getFromValue(productValue);
         this.name = name;
         this.filePath = filePath;
         this.date = date;
         this.uuid = uuid;
+        this.remotePath = remotePath;
+        this.remoteThumb = remoteThumb;
         this.size = size;
         this.thumbnail = thumbnail;
     }
@@ -89,6 +94,8 @@ public class ARDataTransferMedia implements Parcelable
         this.filePath = readString(source);
         this.date = readString(source);
         this.uuid = readString(source);
+        this.remotePath = readString(source);
+        this.remoteThumb = readString(source);
         this.size = source.readFloat();
         int thumbnailSize = source.readInt();
         if (thumbnailSize > 0)
@@ -106,6 +113,8 @@ public class ARDataTransferMedia implements Parcelable
         writeString(dest, this.filePath);
         writeString(dest, this.date);
         writeString(dest, this.uuid);
+        writeString(dest, this.remotePath);
+        writeString(dest, this.remoteThumb);
         dest.writeFloat(this.size);
         int thumbnailSize = (this.thumbnail != null) ? this.thumbnail.length : 0;
         dest.writeInt(thumbnailSize);
@@ -204,7 +213,7 @@ public class ARDataTransferMedia implements Parcelable
     {
         return this.date;
     }
-    
+
     /**
      * Gets the Media UUID
      * @note get the Media UUID
@@ -213,6 +222,26 @@ public class ARDataTransferMedia implements Parcelable
     public String getUUID()
     {
         return this.uuid;
+    }
+
+    /**
+     * Gets the Media remote path
+     * @note get the Media remote path
+     * @return String media remote path
+     */
+    public String getRemotePath()
+    {
+        return this.remotePath;
+    }
+
+    /**
+     * Gets the Media remote thumbnail path
+     * @note get the Media remote thumbnail path
+     * @return String media remote thumbnail path
+     */
+    public String getRemoteThumb()
+    {
+        return this.remoteThumb;
     }
 
     /**
@@ -268,6 +297,8 @@ public class ARDataTransferMedia implements Parcelable
             if ((otherMedia.getProductValue() == getProductValue()) &&
                 (((name == null) && (otherMedia.getName() == null)) || ((name != null) && (name.equals(otherMedia.getName())))) &&
                 (((filePath == null) && (otherMedia.getFilePath() == null)) || ((filePath != null) && (filePath.equals(otherMedia.getFilePath())))) &&
+                (((remotePath == null) && (otherMedia.getRemotePath() == null)) || (remotePath != null) && (remotePath.equals(otherMedia.getRemotePath()))) &&
+                (((remoteThumb == null) && (otherMedia.getRemoteThumb() == null)) || (remoteThumb != null) && (remoteThumb.equals(otherMedia.getRemoteThumb()))) &&
                 (((date == null) && (otherMedia.getDate() == null)) || ((date != null) && (date.equals(otherMedia.getDate())))) &&
                 (((uuid == null) && (otherMedia.getUUID() == null)) || ((uuid != null) && (uuid.equals(otherMedia.getUUID())))))
             {
@@ -290,6 +321,8 @@ public class ARDataTransferMedia implements Parcelable
         result = HASH_FIELD * result + (filePath == null ? 0 : filePath.hashCode());
         result = HASH_FIELD * result + (date == null ? 0 : date.hashCode());
         result = HASH_FIELD * result + (uuid == null ? 0 : uuid.hashCode());
+        result = HASH_FIELD * result + (remotePath == null ? 0 : remotePath.hashCode());
+        result = HASH_FIELD * result + (remoteThumb == null ? 0 : remoteThumb.hashCode());
 
         return result;
    }

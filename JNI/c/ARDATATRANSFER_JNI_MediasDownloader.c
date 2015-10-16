@@ -68,6 +68,8 @@ jmethodID methodId_MDMedia_getName = NULL;
 jmethodID methodId_MDMedia_getFilePath = NULL;
 jmethodID methodId_MDMedia_getDate = NULL;
 jmethodID methodId_MDMedia_getUuid = NULL;
+jmethodID methodId_MDMedia_getRemotePath = NULL;
+jmethodID methodId_MDMedia_getRemoteThumb = NULL;
 jmethodID methodId_MDMedia_getSize = NULL;
 jmethodID methodId_MDMedia_getThumbnail = NULL;
 
@@ -671,7 +673,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
-            methodId_MDMedia_init = (*env)->GetMethodID(env, classMDMedia, "<init>", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;F[B)V");
+            methodId_MDMedia_init = (*env)->GetMethodID(env, classMDMedia, "<init>", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;F[B)V");
 
             if (methodId_MDMedia_init == NULL)
             {
@@ -737,6 +739,28 @@ int ARDATATRANSFER_JNI_MediasDownloader_NewMediaJNI(JNIEnv *env)
 
         if (error == JNI_OK)
         {
+            methodId_MDMedia_getRemotePath = (*env)->GetMethodID(env, classMDMedia, "getRemotePath", "()Ljava/lang/String;");
+
+            if (methodId_MDMedia_getRemotePath == NULL)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "Media getRemotePath method not found");
+                error = JNI_FAILED;
+            }
+        }
+
+        if (error == JNI_OK)
+        {
+            methodId_MDMedia_getRemoteThumb = (*env)->GetMethodID(env, classMDMedia, "getRemoteThumb", "()Ljava/lang/String;");
+
+            if (methodId_MDMedia_getRemoteThumb == NULL)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "Media getRemoteThumb method not found");
+                error = JNI_FAILED;
+            }
+        }
+
+        if (error == JNI_OK)
+        {
             methodId_MDMedia_getSize = (*env)->GetMethodID(env, classMDMedia, "getSize", "()F");
 
             if (methodId_MDMedia_getSize == NULL)
@@ -779,6 +803,8 @@ void ARDATATRANSFER_JNI_MediasDownloader_FreeMediaJNI(JNIEnv *env)
         methodId_MDMedia_getFilePath = NULL;
         methodId_MDMedia_getDate = NULL;
         methodId_MDMedia_getUuid = NULL;
+        methodId_MDMedia_getRemotePath = NULL;
+        methodId_MDMedia_getRemoteThumb = NULL;
         methodId_MDMedia_getSize = NULL;
         methodId_MDMedia_getThumbnail = NULL;
     }
@@ -791,11 +817,15 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
     jstring jFilePath = NULL;
     jstring jDate = NULL;
     jstring jUuid = NULL;
+    jstring jRemotePath = NULL;
+    jstring jRemoteThumb = NULL;
     jfloat jSize = 0.f;
     const char *nativeName = NULL;
     const char *nativeFilePath = NULL;
     const char *nativeDate = NULL;
     const char *nativeUuid = NULL;
+    const char *nativeRemotePath = NULL;
+    const char *nativeRemoteThumb = NULL;
     int error = JNI_OK;
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "");
@@ -814,6 +844,8 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
             (methodId_MDMedia_getFilePath == NULL) ||
             (methodId_MDMedia_getDate == NULL) ||
             (methodId_MDMedia_getUuid == NULL) ||
+            (methodId_MDMedia_getRemotePath == NULL) ||
+            (methodId_MDMedia_getRemoteThumb == NULL) ||
             (methodId_MDMedia_getSize == NULL))
         {
             ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "wrong JNI parameters");
@@ -828,6 +860,8 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         jFilePath = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getFilePath);
         jDate = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getDate);
         jUuid = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getUuid);
+        jRemotePath = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getRemotePath);
+        jRemoteThumb = (*env)->CallObjectMethod(env, jMedia, methodId_MDMedia_getRemoteThumb);
         jSize = (*env)->CallFloatMethod(env, jMedia, methodId_MDMedia_getSize);
     }
 
@@ -851,6 +885,16 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         nativeUuid = (*env)->GetStringUTFChars(env, jUuid, 0);
     }
 
+    if ((error == JNI_OK) && (jRemotePath != NULL))
+    {
+        nativeRemotePath = (*env)->GetStringUTFChars(env, jRemotePath, 0);
+    }
+
+    if ((error == JNI_OK) && (jRemoteThumb != NULL))
+    {
+        nativeRemoteThumb = (*env)->GetStringUTFChars(env, jRemoteThumb, 0);
+    }
+
 
     if (error == JNI_OK)
     {
@@ -859,6 +903,8 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
         strcpy(media->filePath, nativeFilePath ? nativeFilePath : "");
         strcpy(media->date, nativeDate ? nativeDate : "");
         strcpy(media->uuid, nativeUuid ? nativeUuid : "");
+        strcpy(media->remotePath, nativeRemotePath ? nativeRemotePath : "");
+        strcpy(media->remoteThumb, nativeRemoteThumb ? nativeRemoteThumb : "");
         media->size = (double)jSize;
     }
 
@@ -870,7 +916,7 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
 
     if (nativeFilePath != NULL)
     {
-        (*env)->ReleaseStringUTFChars(env, jName, nativeFilePath);
+        (*env)->ReleaseStringUTFChars(env, jFilePath, nativeFilePath);
     }
 
     if (nativeDate != NULL)
@@ -880,7 +926,17 @@ int ARDATATRANSFER_JNI_MediasDownloader_GetMedia(JNIEnv *env, jobject jMedia, AR
 
     if (nativeUuid != NULL)
     {
-        (*env)->ReleaseStringUTFChars(env, jDate, nativeUuid);
+        (*env)->ReleaseStringUTFChars(env, jUuid, nativeUuid);
+    }
+
+    if (nativeRemotePath != NULL)
+    {
+        (*env)->ReleaseStringUTFChars(env, jRemotePath, nativeRemotePath);
+    }
+
+    if (nativeRemoteThumb != NULL)
+    {
+        (*env)->ReleaseStringUTFChars(env, jRemoteThumb, nativeRemoteThumb);
     }
 
     return error;
@@ -893,6 +949,8 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     jstring jFilePath = NULL;
     jstring jDate = NULL;
     jstring jUuid = NULL;
+    jstring jRemotePath = NULL;
+    jstring jRemoteThumb = NULL;
     jbyteArray jThumbnail = NULL;
     int error = JNI_OK;
 
@@ -951,6 +1009,26 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
+    if ((error == JNI_OK) && (media->remotePath != NULL))
+    {
+        jRemotePath = (*env)->NewStringUTF(env, media->remotePath);
+
+        if (jRemotePath == NULL)
+        {
+            error = JNI_FAILED;
+        }
+    }
+
+    if ((error == JNI_OK) && (media->remoteThumb != NULL))
+    {
+        jRemoteThumb = (*env)->NewStringUTF(env, media->remoteThumb);
+
+        if (jRemoteThumb == NULL)
+        {
+            error = JNI_FAILED;
+        }
+    }
+
     if (error == JNI_OK)
     {
         jThumbnail = (*env)->NewByteArray(env, media->thumbnailSize);
@@ -968,7 +1046,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
 
     if (error == JNI_OK)
     {
-        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, jUuid, (jfloat)media->size, jThumbnail);
+        jMedia = (*env)->NewObject(env, classMDMedia, methodId_MDMedia_init, (jint)media->product, jName, jFilePath, jDate, jUuid, jRemotePath, jRemoteThumb, (jfloat)media->size, jThumbnail);
     }
 
     ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "return jMedia %d", (int)jMedia);
@@ -994,6 +1072,17 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     {
         (*env)->DeleteLocalRef(env, jUuid);
     }
+
+    if (jRemotePath != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jRemotePath);
+    }
+
+    if (jRemoteThumb != NULL)
+    {
+        (*env)->DeleteLocalRef(env, jRemoteThumb);
+    }
+
     if (jThumbnail != NULL)
     {
         (*env)->DeleteLocalRef(env, jThumbnail);
