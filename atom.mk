@@ -2,49 +2,34 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CATEGORY_PATH := dragon/libs
 LOCAL_MODULE := libARDataTransfer
 LOCAL_DESCRIPTION := ARSDK DataTransfer
+LOCAL_CATEGORY_PATH := dragon/libs
 
-LOCAL_LIBRARIES := ARSDKBuildUtils libARSAL libARDiscovery libARCommands libARUtils
+LOCAL_MODULE_FILENAME := libardatatransfer.so
 
-# Copy in build dir so bootstrap files are generated in build dir
-LOCAL_AUTOTOOLS_COPY_TO_BUILD_DIR := 1
+LOCAL_LIBRARIES := libARSAL libARDiscovery libARCommands libARUtils
 
-# Configure script is not at the root
-LOCAL_AUTOTOOLS_CONFIGURE_SCRIPT := Build/configure
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/Includes \
+	$(LOCAL_PATH)/Sources
 
-# Autotools variable
-LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
-	--with-libARDiscoveryInstallDir="" \
-	--with-libARUtilsInstallDir="" \
-	--with-libARSALInstallDir="" \
-	--with-libCurlInstallDir=""
+LOCAL_SRC_FILES := \
+	Sources/ARDATATRANSFER_DataDownloader.c \
+	Sources/ARDATATRANSFER_Downloader.c \
+	Sources/ARDATATRANSFER_Manager.c \
+	Sources/ARDATATRANSFER_MediasDownloader.c \
+	Sources/ARDATATRANSFER_MediasQueue.c \
+	Sources/ARDATATRANSFER_Uploader.c \
+	gen/Sources/ARDATATRANSFER_Error.c
 
-ifeq ("$(TARGET_OS_FLAVOUR)","android")
+LOCAL_INSTALL_HEADERS := \
+	Includes/libARDataTransfer/ARDataTransfer.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_DataDownloader.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_Downloader.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_Error.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_Manager.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_MediasDownloader.h:usr/include/libARDataTransfer/ \
+	Includes/libARDataTransfer/ARDATATRANSFER_Uploader.h:usr/include/libARDataTransfer/
 
-LOCAL_AUTOTOOLS_CONFIGURE_ARGS += \
-	--disable-static \
-	--enable-shared \
-	--disable-so-version
-
-else ifneq ($(filter iphoneos iphonesimulator, $(TARGET_OS_FLAVOUR)),)
-
-LOCAL_AUTOTOOLS_CONFIGURE_ARGS += \
-	--enable-static \
-	--disable-shared \
-	CCASFLAGS=" -x assembler-with-cpp -std=gnu99 $(TARGET_GLOBAL_CFLAGS)" \
-	OBJCFLAGS=" -x objective-c -fobjc-arc -std=gnu99 $(TARGET_GLOBAL_CFLAGS)" \
-	OBJC="$(TARGET_CC)" \
-	CFLAGS=" -std=gnu99 -x c $(TARGET_GLOBAL_CFLAGS)"
-
-endif
-
-define LOCAL_AUTOTOOLS_CMD_POST_UNPACK
-	$(Q) cd $(PRIVATE_SRC_DIR)/Build && ./bootstrap
-endef
-
-LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/Includes
-LOCAL_EXPORT_LDLIBS := -lardatatransfer
-
-include $(BUILD_AUTOTOOLS)
+include $(BUILD_LIBRARY)
