@@ -886,7 +886,7 @@ int ARDATATRANSFER_DataDownloader_CompareFileExtension(const char* fileName, con
     return result;
 }
 
-int ARDATATRANSFER_DataDownloader_UsedMemoryCallback(const char* fpath, const struct stat *sb, eARSAL_FTW_TYPE typeflag)
+static int ARDATATRANSFER_DataDownloader_UsedMemoryCallback(const char* fpath, const struct stat *sb, eARSAL_FTW_TYPE typeflag)
 {
     if(typeflag == ARSAL_FTW_F)
     {
@@ -896,7 +896,7 @@ int ARDATATRANSFER_DataDownloader_UsedMemoryCallback(const char* fpath, const st
 	return 0;
 }
 
-int ARDATATRANSFER_DataDownloader_RemoveDataCallback(const char* fpath, const struct stat *sb, eARSAL_FTW_TYPE typeflag)
+static int ARDATATRANSFER_DataDownloader_RemoveDataCallback(const char* fpath, const struct stat *sb, eARSAL_FTW_TYPE typeflag)
 {
     // don't remove downloading_ file
     if (strstr(fpath, ARDATATRANSFER_MANAGER_DOWNLOADER_DOWNLOADING_PREFIX) == NULL)
