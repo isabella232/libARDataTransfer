@@ -67,6 +67,6 @@ typedef enum
  *
  * @note User should NEVER try to modify a returned string
  */
-char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error);
+const char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error);
 
 #endif /* _LIBARDATATRANSFER_ERROR_H_ */
