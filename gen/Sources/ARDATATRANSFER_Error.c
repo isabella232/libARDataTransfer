@@ -81,7 +81,6 @@ const char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error)
         return "File error";
         break;
     default:
-        return "Unknown value";
         break;
     }
     return "Unknown value";
