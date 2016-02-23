@@ -1060,6 +1060,7 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
                 }
 
                 free(ftpMedia);
+                ftpMedia = NULL;
             }
         }
         while (manager->mediasDownloader->isCanceled == 0);
