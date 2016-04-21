@@ -1287,8 +1287,6 @@ void ARDATATRANSFER_MediasDownloader_Clear(ARDATATRANSFER_Manager_t *manager)
 
 eARDATATRANSFER_ERROR ARDATATRANSFER_MediasDownloader_GetThumbnail(ARDATATRANSFER_Manager_t *manager, ARDATATRANSFER_Media_t *media)
 {
-    char remoteThumbnail[ARUTILS_FTP_MAX_PATH_SIZE];
-    char productPathName[ARUTILS_FTP_MAX_PATH_SIZE];
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR error = ARUTILS_OK;
 
