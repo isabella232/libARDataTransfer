@@ -242,8 +242,6 @@ void ARDATATRANSFER_Uploader_Ftp_ProgressCallback(void* arg, float percent)
 {
     ARDATATRANSFER_Manager_t *manager = (ARDATATRANSFER_Manager_t *)arg;
     
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_DATA_UPLOADER_TAG, "");
-    
     if (manager->uploader->progressCallback != NULL)
     {
         manager->uploader->progressCallback(manager->uploader->progressArg, percent);
