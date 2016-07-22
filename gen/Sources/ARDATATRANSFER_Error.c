@@ -40,7 +40,7 @@
 
 #include <libARDataTransfer/ARDATATRANSFER_Error.h>
 
-char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error)
+const char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error)
 {
     switch (error)
     {
@@ -81,7 +81,6 @@ char* ARDATATRANSFER_Error_ToString (eARDATATRANSFER_ERROR error)
         return "File error";
         break;
     default:
-        return "Unknown value";
         break;
     }
     return "Unknown value";

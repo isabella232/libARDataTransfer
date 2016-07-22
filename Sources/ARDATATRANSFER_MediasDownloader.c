@@ -513,7 +513,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                         }
 
                         ARDATATRANSFER_Media_t **oldMedias = manager->mediasDownloader->medias.medias;
-                        manager->mediasDownloader->medias.medias = realloc(oldMedias, (manager->mediasDownloader->medias.count + 1) * sizeof *media);
+                        manager->mediasDownloader->medias.medias = realloc(oldMedias, (manager->mediasDownloader->medias.count + 1) * sizeof(ARDATATRANSFER_Media_t *));
                         if (manager->mediasDownloader->medias.medias == NULL)
                         {
                             manager->mediasDownloader->medias.medias = oldMedias;
@@ -1060,6 +1060,7 @@ void* ARDATATRANSFER_MediasDownloader_QueueThreadRun(void *managerArg)
                 }
 
                 free(ftpMedia);
+                ftpMedia = NULL;
             }
         }
         while (manager->mediasDownloader->isCanceled == 0);
