@@ -954,7 +954,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
     jbyteArray jThumbnail = NULL;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s", (media->name != NULL) ? media->name : "null");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%s", media->name);
 
     if ((env == NULL) || (media == NULL))
     {
@@ -969,7 +969,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->name != NULL))
+    if (error == JNI_OK)
     {
         jName = (*env)->NewStringUTF(env, media->name);
 
@@ -979,7 +979,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->filePath != NULL))
+    if (error == JNI_OK)
     {
         jFilePath = (*env)->NewStringUTF(env, media->filePath);
 
@@ -989,7 +989,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->date != NULL))
+    if (error == JNI_OK)
     {
         jDate = (*env)->NewStringUTF(env, media->date);
 
@@ -999,7 +999,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->uuid != NULL))
+    if (error == JNI_OK)
     {
         jUuid = (*env)->NewStringUTF(env, media->uuid);
 
@@ -1009,7 +1009,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->remotePath != NULL))
+    if (error == JNI_OK)
     {
         jRemotePath = (*env)->NewStringUTF(env, media->remotePath);
 
@@ -1019,7 +1019,7 @@ jobject ARDATATRANSFER_JNI_MediasDownloader_NewMedia(JNIEnv *env, ARDATATRANSFER
         }
     }
 
-    if ((error == JNI_OK) && (media->remoteThumb != NULL))
+    if (error == JNI_OK)
     {
         jRemoteThumb = (*env)->NewStringUTF(env, media->remoteThumb);
 
