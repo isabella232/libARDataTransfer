@@ -332,7 +332,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransfer
 
 void ARDATATRANSFER_JNI_MediasDownloader_FreeMediasDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_MediasDownloaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {
@@ -546,7 +546,7 @@ void ARDATATRANSFER_JNI_MediasDownloader_CompletionCallback(void* arg, ARDATATRA
 					if (jError == NULL)
 					{
 						error = JNI_FAILED;
-						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "error %d, %x", error, jError);
+						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MEDIADOWNLOADER_TAG, "error %d, %p", error, jError);
 					}
 				}
 

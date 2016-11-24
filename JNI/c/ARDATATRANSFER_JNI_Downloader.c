@@ -263,7 +263,7 @@ ARDATATRANSFER_JNI_DownloaderCallbacks_t *callbacks = (ARDATATRANSFER_JNI_Downlo
 					if (jError == NULL)
 					{
 						error = JNI_FAILED;
-						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "error %d, %x", error, jError);
+						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "error %d, %p", error, jError);
 					}
 				}
 
@@ -358,7 +358,7 @@ int ARDATATRANSFER_JNI_Downloader_NewDownloaderCallbacks(JNIEnv *env, ARDATATRAN
 
 void ARDATATRANSFER_JNI_Downloader_FreeDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DownloaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DOWNLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {

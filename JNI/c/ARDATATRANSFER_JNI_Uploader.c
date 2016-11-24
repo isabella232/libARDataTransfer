@@ -258,7 +258,7 @@ void ARDATATRANSFER_JNI_Uploader_CompletionCallback(void* arg, eARDATATRANSFER_E
 					if (jError == NULL)
 					{
 						error = JNI_FAILED;
-						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "error %d, %x", error, jError);
+						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "error %d, %p", error, jError);
 					}
 				}
 
@@ -351,7 +351,7 @@ int ARDATATRANSFER_JNI_Uploader_NewUploaderCallbacks(JNIEnv *env, ARDATATRANSFER
 
 void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {
