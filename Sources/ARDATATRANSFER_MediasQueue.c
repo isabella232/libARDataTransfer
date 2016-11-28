@@ -232,7 +232,7 @@ ARDATATRANSFER_FtpMedia_t * ARDATATRANSFER_MediasQueue_Pop(ARDATATRANSFER_Medias
         ARSAL_Mutex_Unlock(&queue->lock);
     }
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIASQUEUE_TAG, "retrun %x, %d", ftpMedia, result);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_MEDIASQUEUE_TAG, "retrun %p, %d", ftpMedia, result);
 
     *error = result;
     return ftpMedia;
