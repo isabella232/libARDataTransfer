@@ -120,7 +120,7 @@ JNIEXPORT jlong JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManag
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
     nativeJniManager = calloc(1, sizeof(ARDATATRANSFER_JNI_Manager_t));
     if (nativeJniManager == NULL)
@@ -176,7 +176,7 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferManage
 {
     ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
     if (nativeJniManager != NULL)
     {
@@ -210,7 +210,7 @@ int ARDATATRANSFER_JNI_Manager_NewARDataTransferExceptionJNI(JNIEnv *env)
 
     if (classDTException == NULL)
     {
-        ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+        ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
         if (env == NULL)
         {
@@ -256,7 +256,7 @@ int ARDATATRANSFER_JNI_Manager_NewARDataTransferExceptionJNI(JNIEnv *env)
 
 void ARDATATRANSFER_JNI_Manager_FreeARDataTransferExceptionJNI(JNIEnv *env)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
     if (env != NULL)
     {
@@ -333,7 +333,7 @@ int ARDATATRANSFER_JNI_Manager_NewERROR_ENUM_JNI(JNIEnv *env)
 
     if (classDTERROR_ENUM == NULL)
     {
-        ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+        ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
         if (env == NULL)
         {
@@ -379,7 +379,7 @@ int ARDATATRANSFER_JNI_Manager_NewERROR_ENUM_JNI(JNIEnv *env)
 
 void ARDATATRANSFER_JNI_Manager_FreeERROR_ENUM_JNI(JNIEnv *env)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_MANAGER_TAG, "%s", "");
 
     if (env != NULL)
     {

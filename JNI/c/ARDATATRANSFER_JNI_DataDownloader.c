@@ -67,7 +67,7 @@ JNIEXPORT jboolean Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDownlo
     jboolean jret = JNI_FALSE;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     if (env == NULL)
     {
@@ -142,7 +142,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_DataDownloader_Delete(nativeManager);
 
@@ -159,7 +159,7 @@ JNIEXPORT jlong JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataD
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     long filesNumber = 0;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_DataDownloader_GetAvailableFiles(nativeManager, &filesNumber);
 
@@ -177,7 +177,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_DataDownloader_CancelAvailableFiles(nativeManager);
 
@@ -189,7 +189,7 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
     ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     ARDATATRANSFER_DataDownloader_ThreadRun(nativeManager);
 
@@ -202,7 +202,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferDataDo
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_DataDownloader_CancelThread(nativeManager);
 
@@ -300,7 +300,7 @@ int ARDATATRANSFER_JNI_DataDownloader_NewDataDownloaderCallbacks(JNIEnv *env, AR
 {
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {
@@ -335,7 +335,7 @@ int ARDATATRANSFER_JNI_DataDownloader_NewDataDownloaderCallbacks(JNIEnv *env, AR
 
 void ARDATATRANSFER_JNI_DataDownloader_FreeDataDownloaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_DataDownloaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {
@@ -365,7 +365,7 @@ int ARDATATRANSFER_JNI_DataDownloader_NewListenersJNI(JNIEnv *env)
     jclass classDDCompletionListener = NULL;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
      if (env == NULL)
     {
@@ -404,7 +404,7 @@ void ARDATATRANSFER_JNI_DataDownloader_FreeListenersJNI(JNIEnv *env)
 {
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_DATADOWNLOADER_TAG, "%s", "");
 
     if (env == NULL)
     {

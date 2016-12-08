@@ -72,7 +72,7 @@ JNIEXPORT jboolean JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUp
     jboolean jret = JNI_FALSE;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     if (env == NULL)
     {
@@ -147,7 +147,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_Uploader_Delete(nativeManager);
 
@@ -161,7 +161,7 @@ JNIEXPORT void JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
     ARDATATRANSFER_JNI_Manager_t *nativeJniManager = (ARDATATRANSFER_JNI_Manager_t*)(intptr_t)jManager;
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     ARDATATRANSFER_Uploader_ThreadRun(nativeManager);
 
@@ -174,7 +174,7 @@ JNIEXPORT jint JNICALL Java_com_parrot_arsdk_ardatatransfer_ARDataTransferUpload
     ARDATATRANSFER_Manager_t *nativeManager = (nativeJniManager->nativeManager) ? nativeJniManager->nativeManager : NULL;
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     result = ARDATATRANSFER_Uploader_CancelThread(nativeManager);
 
@@ -258,7 +258,7 @@ void ARDATATRANSFER_JNI_Uploader_CompletionCallback(void* arg, eARDATATRANSFER_E
 					if (jError == NULL)
 					{
 						error = JNI_FAILED;
-						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "error %d, %x", error, jError);
+						ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "error %d, %p", error, jError);
 					}
 				}
 
@@ -351,7 +351,7 @@ int ARDATATRANSFER_JNI_Uploader_NewUploaderCallbacks(JNIEnv *env, ARDATATRANSFER
 
 void ARDATATRANSFER_JNI_Uploader_FreeUploaderCallbacks(JNIEnv *env, ARDATATRANSFER_JNI_UploaderCallbacks_t **callbacksAddr)
 {
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%x", callbacksAddr ? *callbacksAddr : 0);
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%p", callbacksAddr ? *callbacksAddr : 0);
 
     if (callbacksAddr != NULL)
     {
@@ -395,7 +395,7 @@ int ARDATATRANSFER_JNI_Uploader_NewListenersJNI(JNIEnv *env)
     jclass classDCompletionListener = NULL;
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     if (env == NULL)
     {
@@ -459,7 +459,7 @@ void ARDATATRANSFER_JNI_Uploader_FreeListenersJNI(JNIEnv *env)
 {
     int error = JNI_OK;
 
-    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "");
+    ARSAL_PRINT(ARSAL_PRINT_DEBUG, ARDATATRANSFER_JNI_UPLOADER_TAG, "%s", "");
 
     if (env == NULL)
     {
