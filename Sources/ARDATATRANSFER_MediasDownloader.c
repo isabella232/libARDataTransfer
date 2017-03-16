@@ -241,6 +241,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
     eARDATATRANSFER_ERROR result = ARDATATRANSFER_OK;
     eARUTILS_ERROR resultUtils = ARUTILS_OK;
     int count = 0;
+    int hasDCIM = 0;
 
     if (manager == NULL)
     {
@@ -293,12 +294,15 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
             fileName = ARUTILS_Ftp_List_GetNextItem(productFtpList, &nextProduct, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_DCIM, 1, NULL, NULL, lineDataDcim, ARUTILS_FTP_MAX_PATH_SIZE);
             if ((fileName != NULL) && strcmp(fileName, ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_DCIM) == 0)
             {
-                // We have it. First, list the thumbnails, we will need them for every file
+                // We have it.
+                hasDCIM = 1;
+                //First, list the thumbnails, we will need them for every file
                 strncpy(thumbPath, manager->mediasDownloader->remoteDirectory, ARUTILS_FTP_MAX_PATH_SIZE);
                 thumbPath[ARUTILS_FTP_MAX_PATH_SIZE - 1] = '\0';
                 strncat(thumbPath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_META "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(thumbPath) - 1);
                 if (ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpListManager, thumbPath, &metaThumbList, &metaThumbListLen) != ARUTILS_OK)
                 {
+                    result = ARDATATRANSFER_ERROR_FTP;
                     ARSAL_PRINT(ARSAL_PRINT_ERROR, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "Unable to list thumbnails");
                     goto end_search_dcim;
                 }
@@ -316,6 +320,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                 strncat(remotePath, "/" ARDATATRANSFER_MEDIAS_DOWNLOADER_FTP_DCIM "/", ARUTILS_FTP_MAX_PATH_SIZE - strlen(remotePath) - 1);
                 if (ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpListManager, remotePath, &dcimFtpList, &dcimFtpListLen) != ARUTILS_OK)
                 {
+                    result = ARDATATRANSFER_ERROR_FTP;
                     ARSAL_PRINT(ARSAL_PRINT_ERROR, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "Unable to list DCIM");
                     goto end_search_dcim;
                 }
@@ -347,6 +352,7 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
 
                     if (ARUTILS_Manager_Ftp_List(manager->mediasDownloader->ftpListManager, remotePath, &mediaFtpList, &mediaFtpListLen) != ARUTILS_OK)
                     {
+                        result = ARDATATRANSFER_ERROR_FTP;
                         ARSAL_PRINT(ARSAL_PRINT_ERROR, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "Unable to list DCIM/%s", fileName);
                         goto end_search_dcim;
                     }
@@ -732,6 +738,17 @@ int ARDATATRANSFER_MediasDownloader_GetAvailableMediasSync(ARDATATRANSFER_Manage
                                     }
                                 }
                             }
+                        }
+                    }
+                    else
+                    {
+                        ARSAL_PRINT(ARSAL_PRINT_ERROR, ARDATATRANSFER_MEDIAS_DOWNLOADER_TAG, "List of %s failed with error  = %i",
+                            remoteProduct, resultUtils);
+                        // only set the error if the product has no DCIM folder
+                        // if it has a DCIM folder, we assume that the pictures are in it.
+                        if (!hasDCIM)
+                        {
+                            result = ARDATATRANSFER_ERROR_FTP;
                         }
                     }
 
